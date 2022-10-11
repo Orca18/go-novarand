@@ -1,9 +1,9 @@
 | rel/stable <br> [![CircleCI](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fstable.svg?style=svg)](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fstable) | rel/beta  <br> [![CircleCI](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fbeta.svg?style=svg)](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fbeta) | rel/nightly  <br> [![CircleCI](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fnightly.svg?style=svg)](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fnightly) |
 | --- | --- | --- |
 
-go-algorand
+go-novarand
 ====================
-Algorand's official implementation in Go.
+Novarand's official implementation in Go.
 
 Algorand is a permissionless, pure proof-of-stake blockchain that delivers
 decentralization, scalability, security, and transaction finality.
@@ -34,13 +34,13 @@ requirements.
 
 Initial environment setup:
 ```bash
-git clone https://github.com/algorand/go-algorand
-cd go-algorand
+git clone https://github.com/algorand/go-novarand
+cd go-novarand
 ./scripts/configure_dev.sh
 ./scripts/buildtools/install_buildtools.sh
 ```
 
-At this point, you are ready to build go-algorand. We use `make` and have a
+At this point, you are ready to build go-novarand. We use `make` and have a
 number of targets to automate common tasks.
 
 #### build
