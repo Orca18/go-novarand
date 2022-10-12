@@ -30,12 +30,12 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/components/mocks"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/bloom"
+	"github.com/Orca18/go-novarand/components/mocks"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/bloom"
 )
 
 func TestMain(m *testing.M) {

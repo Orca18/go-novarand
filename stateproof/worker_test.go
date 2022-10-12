@@ -29,22 +29,22 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 	"github.com/algorand/go-deadlock"
 )
 
@@ -92,7 +92,7 @@ func (s *testWorkerStubs) addBlock(spNextRound basics.Round) {
 
 	var stateProofBasic = bookkeeping.StateProofTrackingData{
 		StateProofVotersCommitment:  make([]byte, stateproof.HashSize),
-		StateProofOnlineTotalWeight: basics.MicroAlgos{},
+		StateProofOnlineTotalWeight: basics.MicroNovas{},
 		StateProofNextRound:         0,
 	}
 	stateProofBasic.StateProofOnlineTotalWeight.Raw = uint64(s.totalWeight)
@@ -175,7 +175,7 @@ func (s *testWorkerStubs) VotersForStateProof(r basics.Round) (*ledgercore.Voter
 	voters := &ledgercore.VotersForRound{
 		Proto:       config.Consensus[protocol.ConsensusCurrentVersion],
 		AddrToPos:   make(map[basics.Address]uint64),
-		TotalWeight: basics.MicroAlgos{Raw: uint64(s.totalWeight)},
+		TotalWeight: basics.MicroNovas{Raw: uint64(s.totalWeight)},
 	}
 
 	for i, k := range s.keysForVoters {

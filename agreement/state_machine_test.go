@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 const truncateIOTrace = false

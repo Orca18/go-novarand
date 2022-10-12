@@ -19,8 +19,8 @@ package apply
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
 )
 
 func getParams(balances Balances, aidx basics.AssetIndex) (params basics.AssetParams, creator basics.Address, err error) {

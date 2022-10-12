@@ -20,8 +20,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 	"github.com/algorand/go-deadlock"
 )
 

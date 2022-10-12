@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/algorand/go-algorand/network/limitlistener"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/network/limitlistener"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 const defaultMaxOpenFiles = 256

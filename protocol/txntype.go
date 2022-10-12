@@ -44,6 +44,9 @@ const (
 	// StateProofTx records a state proof
 	StateProofTx TxType = "stpf"
 
+	// (추가) 새로만들 트랜잭션 타입 정의!!
+	AddressPrintTx TxType = "addrprint"
+
 	// UnknownTx signals an error
 	UnknownTx TxType = "unknown"
 )

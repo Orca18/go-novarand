@@ -20,11 +20,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/stretchr/testify/require"
 )
 

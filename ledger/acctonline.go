@@ -29,13 +29,13 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/util/db"
-	"github.com/algorand/go-algorand/util/metrics"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/util/db"
+	"github.com/Orca18/go-novarand/util/metrics"
 )
 
 type modifiedOnlineAccount struct {
@@ -505,7 +505,7 @@ func (ao *onlineAccounts) postCommitUnlocked(ctx context.Context, dcc *deferredC
 }
 
 // onlineTotals return the total online balance for the given round.
-func (ao *onlineAccounts) onlineTotals(rnd basics.Round) (basics.MicroAlgos, error) {
+func (ao *onlineAccounts) onlineTotals(rnd basics.Round) (basics.MicroNovas, error) {
 	ao.accountsMu.RLock()
 	defer ao.accountsMu.RUnlock()
 	return ao.onlineTotalsImpl(rnd)
@@ -513,7 +513,7 @@ func (ao *onlineAccounts) onlineTotals(rnd basics.Round) (basics.MicroAlgos, err
 
 // onlineTotalsEx return the total online balance for the given round for extended rounds range
 // by looking into DB
-func (ao *onlineAccounts) onlineTotalsEx(rnd basics.Round) (basics.MicroAlgos, error) {
+func (ao *onlineAccounts) onlineTotalsEx(rnd basics.Round) (basics.MicroNovas, error) {
 	ao.accountsMu.RLock()
 	totalsOnline, err := ao.onlineTotalsImpl(rnd)
 	ao.accountsMu.RUnlock()
@@ -531,15 +531,15 @@ func (ao *onlineAccounts) onlineTotalsEx(rnd basics.Round) (basics.MicroAlgos, e
 }
 
 // onlineTotalsImpl returns the online totals of all accounts at the end of round rnd.
-func (ao *onlineAccounts) onlineTotalsImpl(rnd basics.Round) (basics.MicroAlgos, error) {
+func (ao *onlineAccounts) onlineTotalsImpl(rnd basics.Round) (basics.MicroNovas, error) {
 	offset, err := ao.roundParamsOffset(rnd)
 	if err != nil {
 		ao.log.Warnf("onlineAccounts failed to fetch online totals for rnd: %d", rnd)
-		return basics.MicroAlgos{}, err
+		return basics.MicroNovas{}, err
 	}
 
 	onlineRoundParams := ao.onlineRoundParamsData[offset]
-	return basics.MicroAlgos{Raw: onlineRoundParams.OnlineSupply}, nil
+	return basics.MicroNovas{Raw: onlineRoundParams.OnlineSupply}, nil
 }
 
 // LookupOnlineAccountData returns the online account data for a given address at a given round.
@@ -550,7 +550,7 @@ func (ao *onlineAccounts) LookupOnlineAccountData(rnd basics.Round, addr basics.
 		return
 	}
 
-	data.MicroAlgosWithRewards = oad.MicroAlgosWithRewards
+	data.MicroNovasWithRewards = oad.MicroNovasWithRewards
 	data.VotingData.VoteID = oad.VotingData.VoteID
 	data.VotingData.SelectionID = oad.VotingData.SelectionID
 	data.VotingData.StateProofID = oad.VotingData.StateProofID
@@ -747,7 +747,7 @@ func (ao *onlineAccounts) lookupOnlineAccountData(rnd basics.Round, addr basics.
 // not participate in round == voteRnd.
 // See the normalization description in AccountData.NormalizedOnlineBalance().
 // The return value of totalOnlineStake represents the total stake that is online for voteRnd: it is an approximation since voteRnd did not yet occur.
-func (ao *onlineAccounts) TopOnlineAccounts(rnd basics.Round, voteRnd basics.Round, n uint64, params *config.ConsensusParams, rewardsLevel uint64) (topOnlineAccounts []*ledgercore.OnlineAccount, totalOnlineStake basics.MicroAlgos, err error) {
+func (ao *onlineAccounts) TopOnlineAccounts(rnd basics.Round, voteRnd basics.Round, n uint64, params *config.ConsensusParams, rewardsLevel uint64) (topOnlineAccounts []*ledgercore.OnlineAccount, totalOnlineStake basics.MicroNovas, err error) {
 	genesisProto := ao.ledger.GenesisProto()
 	ao.accountsMu.RLock()
 	for {
@@ -759,7 +759,7 @@ func (ao *onlineAccounts) TopOnlineAccounts(rnd basics.Round, voteRnd basics.Rou
 			var roundOffsetError *RoundOffsetError
 			if !errors.As(err, &roundOffsetError) {
 				ao.accountsMu.RUnlock()
-				return nil, basics.MicroAlgos{}, err
+				return nil, basics.MicroNovas{}, err
 			}
 			// the round number cannot be found in deltas, it is in history
 			inMemory = false
@@ -824,7 +824,7 @@ func (ao *onlineAccounts) TopOnlineAccounts(rnd basics.Round, voteRnd basics.Rou
 			})
 			ledgerAccountsonlinetopMicros.AddMicrosecondsSince(start, nil)
 			if err != nil {
-				return nil, basics.MicroAlgos{}, err
+				return nil, basics.MicroNovas{}, err
 			}
 
 			if dbRound != currentDbRound {
@@ -864,7 +864,7 @@ func (ao *onlineAccounts) TopOnlineAccounts(rnd basics.Round, voteRnd basics.Rou
 		}
 		if dbRound < currentDbRound && dbRound != basics.Round(0) {
 			ao.log.Errorf("onlineAccounts.onlineTop: database round %d is behind in-memory round %d", dbRound, currentDbRound)
-			return nil, basics.MicroAlgos{}, &StaleDatabaseRoundError{databaseRound: dbRound, memoryRound: currentDbRound}
+			return nil, basics.MicroNovas{}, &StaleDatabaseRoundError{databaseRound: dbRound, memoryRound: currentDbRound}
 		}
 
 		// Now update the candidates based on the in-memory deltas.
@@ -894,19 +894,19 @@ func (ao *onlineAccounts) TopOnlineAccounts(rnd basics.Round, voteRnd basics.Rou
 
 		totalOnlineStake, err = ao.onlineTotalsEx(rnd)
 		if err != nil {
-			return nil, basics.MicroAlgos{}, err
+			return nil, basics.MicroNovas{}, err
 		}
 		ot := basics.OverflowTracker{}
 		for _, oa := range invalidOnlineAccounts {
-			totalOnlineStake = ot.SubA(totalOnlineStake, oa.MicroAlgos)
+			totalOnlineStake = ot.SubA(totalOnlineStake, oa.MicroNovas)
 			if ot.Overflowed {
-				return nil, basics.MicroAlgos{}, fmt.Errorf("TopOnlineAccounts: overflow in stakeOfflineInVoteRound")
+				return nil, basics.MicroNovas{}, fmt.Errorf("TopOnlineAccounts: overflow in stakeOfflineInVoteRound")
 			}
 			if params.StateProofExcludeTotalWeightWithRewards {
-				rewards := basics.PendingRewards(&ot, *params, oa.MicroAlgos, oa.RewardsBase, rewardsLevel)
+				rewards := basics.PendingRewards(&ot, *params, oa.MicroNovas, oa.RewardsBase, rewardsLevel)
 				totalOnlineStake = ot.SubA(totalOnlineStake, rewards)
 				if ot.Overflowed {
-					return nil, basics.MicroAlgos{}, fmt.Errorf("TopOnlineAccounts: overflow in stakeOfflineInVoteRound rewards")
+					return nil, basics.MicroNovas{}, fmt.Errorf("TopOnlineAccounts: overflow in stakeOfflineInVoteRound rewards")
 				}
 			}
 		}

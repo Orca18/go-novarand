@@ -24,9 +24,9 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 var numRegex = regexp.MustCompile(`^\d+$`)

@@ -17,8 +17,8 @@
 package ledgercore
 
 import (
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
 )
 
 // ValidatedBlock represents the result of a block validation.  It can

@@ -29,10 +29,10 @@ linters-settings:
   errcheck:
     exclude-functions:
       # data/transactions/logic/assembler.go uses ops.error, warn, to append log messages: OK to ignore for this case
-    - (*github.com/algorand/go-algorand/data/transactions/logic.OpStream).errorf
-    - (*github.com/algorand/go-algorand/data/transactions/logic.OpStream).error
-    - (*github.com/algorand/go-algorand/data/transactions/logic.OpStream).warnf
-    - (*github.com/algorand/go-algorand/data/transactions/logic.OpStream).warn
+    - (*github.com/Orca18/go-novarand/data/transactions/logic.OpStream).errorf
+    - (*github.com/Orca18/go-novarand/data/transactions/logic.OpStream).error
+    - (*github.com/Orca18/go-novarand/data/transactions/logic.OpStream).warnf
+    - (*github.com/Orca18/go-novarand/data/transactions/logic.OpStream).warn
 
 issues:
   # Work our way back over time to be clean against all these

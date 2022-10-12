@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
 )
 
 // NetworkFetcher is the struct used to export fetchBlock function from universalFetcher

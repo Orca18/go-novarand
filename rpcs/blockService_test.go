@@ -27,16 +27,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type mockUnicastPeer struct {
@@ -337,11 +337,11 @@ func makeLedger(t *testing.T, namePostfix string) *data.Ledger {
 	genesis := make(map[basics.Address]basics.AccountData)
 	genesis[sinkAddr] = basics.AccountData{
 		Status:     basics.Online,
-		MicroAlgos: basics.MicroAlgos{Raw: proto.MinBalance * 2000000},
+		MicroNovas: basics.MicroNovas{Raw: proto.MinBalance * 2000000},
 	}
 	genesis[poolAddr] = basics.AccountData{
 		Status:     basics.Online,
-		MicroAlgos: basics.MicroAlgos{Raw: proto.MinBalance * 2000000},
+		MicroNovas: basics.MicroNovas{Raw: proto.MinBalance * 2000000},
 	}
 
 	log := logging.TestingLog(t)
@@ -352,7 +352,7 @@ func makeLedger(t *testing.T, namePostfix string) *data.Ledger {
 
 	ledger, err := data.LoadLedger(
 		log, t.Name()+namePostfix, inMem, protocol.ConsensusCurrentVersion, genBal, "", genHash,
-		nil, cfg,
+		nil, nil, cfg,
 	)
 	require.NoError(t, err)
 	return ledger

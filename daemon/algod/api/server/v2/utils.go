@@ -27,12 +27,12 @@ import (
 	"github.com/algorand/go-codec/codec"
 	"github.com/labstack/echo/v4"
 
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/node"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/node"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // returnError logs an internal message while returning the encoded response.

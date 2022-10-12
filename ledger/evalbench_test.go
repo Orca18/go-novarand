@@ -30,26 +30,26 @@ import (
 	"github.com/algorand/go-deadlock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
-var minFee basics.MicroAlgos
+var minFee basics.MicroNovas
 
 func init() {
 	params := config.Consensus[protocol.ConsensusCurrentVersion]
-	minFee = basics.MicroAlgos{Raw: params.MinTxnFee}
+	minFee = basics.MicroNovas{Raw: params.MinTxnFee}
 }
 
 // BenchTxnGenerator generates transactions as long as asked for
@@ -89,7 +89,7 @@ func (g *BenchPaymentTxnGenerator) Txn(tb testing.TB, addrs []basics.Address, ke
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addrs[receiver],
-			Amount:   basics.MicroAlgos{Raw: 100},
+			Amount:   basics.MicroNovas{Raw: 100},
 		},
 	}
 	stxn := txn.Sign(keys[sender])
@@ -219,7 +219,7 @@ func (g *benchAppOptInsTxnGenerator) generatePaymentTransaction(tb testing.TB, a
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addrs[receiverIdx],
-			Amount:   basics.MicroAlgos{Raw: 100},
+			Amount:   basics.MicroNovas{Raw: 100},
 		},
 	}
 	stxn := txn.Sign(keys[senderIdx])

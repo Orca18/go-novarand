@@ -17,8 +17,8 @@
 package messagetracer
 
 import (
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 // MessageTracer interface for configuring trace client and sending trace messages

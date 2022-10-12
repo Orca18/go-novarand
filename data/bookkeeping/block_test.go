@@ -26,16 +26,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
-var delegatesMoney = basics.MicroAlgos{Raw: 1000 * 1000 * 1000}
+var delegatesMoney = basics.MicroNovas{Raw: 1000 * 1000 * 1000}
 
 var proto1 = protocol.ConsensusVersion("Test1")
 var proto2 = protocol.ConsensusVersion("Test2")
@@ -263,7 +263,7 @@ func TestRewardsLevel(t *testing.T) {
 	prev.RewardsRate = 10
 
 	rewardUnits := uint64(10)
-	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroAlgos{}, rewardUnits, log)
+	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroNovas{}, rewardUnits, log)
 	require.Equal(t, uint64(2), state.RewardsLevel)
 	require.Equal(t, uint64(0), state.RewardsResidue)
 
@@ -285,7 +285,7 @@ func TestRewardsLevelWithResidue(t *testing.T) {
 	prev.RewardsRate = 1
 
 	rewardUnits := uint64(10)
-	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroAlgos{}, rewardUnits, log)
+	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroNovas{}, rewardUnits, log)
 	require.Equal(t, uint64(11), state.RewardsLevel)
 	require.Equal(t, uint64(0), state.RewardsResidue)
 
@@ -306,7 +306,7 @@ func TestRewardsLevelNoUnits(t *testing.T) {
 	prev.RewardsResidue = 2
 
 	rewardUnits := uint64(0)
-	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroAlgos{}, rewardUnits, log)
+	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroNovas{}, rewardUnits, log)
 	require.Equal(t, prev.RewardsLevel, state.RewardsLevel)
 	require.Equal(t, prev.RewardsResidue, state.RewardsResidue)
 
@@ -327,7 +327,7 @@ func TestTinyLevel(t *testing.T) {
 	prev.RewardsRate = 10 * unitsInAlgos
 	algosInSystem := uint64(1000 * 1000 * 1000)
 	rewardUnits := algosInSystem * unitsInAlgos / proto.RewardUnit
-	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroAlgos{}, rewardUnits, log)
+	state := prev.NextRewardsState(prev.Round()+1, proto, basics.MicroNovas{}, rewardUnits, log)
 	require.True(t, state.RewardsLevel > 0 || state.RewardsResidue > 0)
 
 	assert.Zero(t, buf.Len())
@@ -348,7 +348,7 @@ func TestRewardsRate(t *testing.T) {
 	// next round should NOT refresh
 	prev.BlockHeader.Round = basics.Round(proto.RewardsRateRefreshInterval)
 	prev.BlockHeader.RewardsRecalculationRound = prev.BlockHeader.Round
-	incentivePoolBalance := basics.MicroAlgos{Raw: 1000 * uint64(proto.RewardsRateRefreshInterval)}
+	incentivePoolBalance := basics.MicroNovas{Raw: 1000 * uint64(proto.RewardsRateRefreshInterval)}
 
 	// make sure that RewardsRate stays the same
 	state := prev.NextRewardsState(prev.Round()+1, proto, incentivePoolBalance, 0, log)
@@ -373,7 +373,7 @@ func TestRewardsRateRefresh(t *testing.T) {
 	// next round SHOULD refresh
 	prev.BlockHeader.Round = basics.Round(proto.RewardsRateRefreshInterval - 1)
 	prev.BlockHeader.RewardsRecalculationRound = prev.Round() + 1
-	incentivePoolBalance := basics.MicroAlgos{Raw: 1000 * uint64(proto.RewardsRateRefreshInterval)}
+	incentivePoolBalance := basics.MicroNovas{Raw: 1000 * uint64(proto.RewardsRateRefreshInterval)}
 	// make sure that RewardsRate was recomputed
 	nextRound := prev.Round() + 1
 	state := prev.NextRewardsState(nextRound, proto, incentivePoolBalance, 0, log)
@@ -475,7 +475,7 @@ func TestInitialRewardsRateCalculation(t *testing.T) {
 			curRewardsState.RewardsRate = incentivePoolBalance / uint64(consensusParams.RewardsRateRefreshInterval)
 		}
 		for rnd := 1; rnd < int(consensusParams.RewardsRateRefreshInterval+2); rnd++ {
-			nextRewardState := curRewardsState.NextRewardsState(basics.Round(rnd), consensusParams, basics.MicroAlgos{Raw: incentivePoolBalance}, totalRewardUnits, log)
+			nextRewardState := curRewardsState.NextRewardsState(basics.Round(rnd), consensusParams, basics.MicroNovas{Raw: incentivePoolBalance}, totalRewardUnits, log)
 			// adjust the incentive pool balance
 			var ot basics.OverflowTracker
 
@@ -524,7 +524,7 @@ func performRewardsRateCalculation(
 	require.GreaterOrEqual(t, incentivePoolBalance, consensusParams.MinBalance)
 
 	for rnd := startingRound; rnd < startingRound+uint64(consensusParams.RewardsRateRefreshInterval)*3; rnd++ {
-		nextRewardState := curRewardsState.NextRewardsState(basics.Round(rnd), consensusParams, basics.MicroAlgos{Raw: incentivePoolBalance}, totalRewardUnits, log)
+		nextRewardState := curRewardsState.NextRewardsState(basics.Round(rnd), consensusParams, basics.MicroNovas{Raw: incentivePoolBalance}, totalRewardUnits, log)
 		// adjust the incentive pool balance
 		var ot basics.OverflowTracker
 
@@ -636,7 +636,7 @@ func TestNextRewardsRateWithFixUsesNewRate(t *testing.T) {
 	log.SetOutput(&buf)
 
 	newState := state.NextRewardsState(
-		state.RewardsRecalculationRound, proto, basics.MicroAlgos{Raw: 113}, 10, log)
+		state.RewardsRecalculationRound, proto, basics.MicroNovas{Raw: 113}, 10, log)
 
 	expected := RewardsState{
 		RewardsLevel:              5,
@@ -669,7 +669,7 @@ func TestNextRewardsRateWithFixPoolBalanceInsufficient(t *testing.T) {
 	log.SetOutput(&buf)
 
 	newState := state.NextRewardsState(
-		state.RewardsRecalculationRound, proto, basics.MicroAlgos{Raw: 19}, 10, log)
+		state.RewardsRecalculationRound, proto, basics.MicroNovas{Raw: 19}, 10, log)
 
 	expected := RewardsState{
 		RewardsLevel:              6,
@@ -703,7 +703,7 @@ func TestNextRewardsRateWithFixMaxSpentOverOverflow(t *testing.T) {
 	log.SetOutput(&buf)
 
 	newState := state.NextRewardsState(
-		state.RewardsRecalculationRound, proto, basics.MicroAlgos{Raw: 9009}, 10, log)
+		state.RewardsRecalculationRound, proto, basics.MicroNovas{Raw: 9009}, 10, log)
 
 	expected := RewardsState{
 		RewardsLevel:              4 + math.MaxUint64/10,
@@ -739,7 +739,7 @@ func TestNextRewardsRateWithFixRewardsWithResidueOverflow(t *testing.T) {
 	log.SetOutput(&buf)
 
 	newState := state.NextRewardsState(
-		state.RewardsRecalculationRound-1, proto, basics.MicroAlgos{Raw: 0}, 1, log)
+		state.RewardsRecalculationRound-1, proto, basics.MicroNovas{Raw: 0}, 1, log)
 	assert.Equal(t, state, newState)
 
 	assert.Contains(t, string(buf.Bytes()), "could not compute next reward level")
@@ -765,7 +765,7 @@ func TestNextRewardsRateWithFixNextRewardLevelOverflow(t *testing.T) {
 	log.SetOutput(&buf)
 
 	newState := state.NextRewardsState(
-		state.RewardsRecalculationRound-1, proto, basics.MicroAlgos{Raw: 1000}, 1, log)
+		state.RewardsRecalculationRound-1, proto, basics.MicroNovas{Raw: 1000}, 1, log)
 	assert.Equal(t, state, newState)
 
 	assert.Contains(t, string(buf.Bytes()), "could not compute next reward level")
@@ -787,7 +787,7 @@ func TestBlock_ContentsMatchHeader(t *testing.T) {
 				GenesisHash: block.BlockHeader.GenesisHash,
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
-				Amount: basics.MicroAlgos{Raw: crypto.RandUint64()},
+				Amount: basics.MicroNovas{Raw: crypto.RandUint64()},
 			},
 		}
 

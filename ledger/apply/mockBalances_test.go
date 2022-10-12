@@ -17,12 +17,12 @@
 package apply
 
 import (
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 type mockBalances struct {
@@ -104,7 +104,7 @@ func (balances mockBalances) CloseAccount(addr basics.Address) error {
 	return balances.putAccount(addr, basics.AccountData{})
 }
 
-func (balances mockBalances) Move(src, dst basics.Address, amount basics.MicroAlgos, srcRewards, dstRewards *basics.MicroAlgos) error {
+func (balances mockBalances) Move(src, dst basics.Address, amount basics.MicroNovas, srcRewards, dstRewards *basics.MicroNovas) error {
 	return nil
 }
 

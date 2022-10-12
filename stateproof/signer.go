@@ -19,12 +19,12 @@ package stateproof
 import (
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // sigFromAddr encapsulates a signature on a block header, which

@@ -20,9 +20,9 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 const (
@@ -45,7 +45,7 @@ type Participant struct {
 	// PK is the identifier used to verify the signature for a specific participant
 	PK merklesignature.Verifier `codec:"p"`
 
-	// Weight is AccountData.MicroAlgos.
+	// Weight is AccountData.MicroNovas.
 	Weight uint64 `codec:"w"`
 }
 

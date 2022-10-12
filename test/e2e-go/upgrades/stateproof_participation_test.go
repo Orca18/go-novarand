@@ -17,18 +17,19 @@
 package upgrades
 
 import (
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/stretchr/testify/require"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/stretchr/testify/require"
 )
 
 func waitUntilProtocolUpgrades(a *require.Assertions, fixture *fixtures.RestClientFixture, nodeClient libgoal.Client) {
@@ -115,7 +116,7 @@ func registerKeyInto(client *libgoal.Client, a *require.Assertions, lastValid ui
 	cparams := config.Consensus[ver]
 
 	tx := partKey.GenerateRegistrationTransaction(
-		basics.MicroAlgos{Raw: 1000},
+		basics.MicroNovas{Raw: 1000},
 		0,
 		100,
 		[32]byte{},

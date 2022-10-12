@@ -21,7 +21,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/algorand/go-algorand/util"
+	"github.com/Orca18/go-novarand/util"
 )
 
 // rateLimitingTransport is the transport for execute a single HTTP transaction, obtaining the Response for a given Request.

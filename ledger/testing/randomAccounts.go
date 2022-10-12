@@ -20,15 +20,15 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
 
-	//"github.com/algorand/go-algorand/data/bookkeeping"
+	//"github.com/Orca18/go-novarand/data/bookkeeping"
 
-	"github.com/algorand/go-algorand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
 )
 
 var testPoolAddr = basics.Address{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
@@ -53,7 +53,7 @@ func RandomAccountData(rewardsBase uint64) basics.AccountData {
 	var data basics.AccountData
 
 	// Avoid overflowing totals
-	data.MicroAlgos.Raw = crypto.RandUint64() % (1 << 32)
+	data.MicroNovas.Raw = crypto.RandUint64() % (1 << 32)
 
 	switch crypto.RandUint64() % 3 {
 	case 0:
@@ -74,7 +74,7 @@ func RandomAccountData(rewardsBase uint64) basics.AccountData {
 // RandomOnlineAccountData is similar to RandomAccountData but always creates online account
 func RandomOnlineAccountData(rewardsBase uint64) basics.AccountData {
 	var data basics.AccountData
-	data.MicroAlgos.Raw = crypto.RandUint64() % (1 << 32)
+	data.MicroNovas.Raw = crypto.RandUint64() % (1 << 32)
 	data.Status = basics.Online
 	data.VoteLastValid = 1000
 	data.VoteFirstValid = 0
@@ -440,7 +440,7 @@ func RandomDeltasImpl(niter int, base map[basics.Address]basics.AccountData, rew
 					updates.UpsertAssetResource(addr, aidx, res.Params, res.Holding)
 				}
 			}
-			imbalance += int64(old.WithUpdatedRewards(proto, rewardsLevel).MicroAlgos.Raw - new.MicroAlgos.Raw)
+			imbalance += int64(old.WithUpdatedRewards(proto, rewardsLevel).MicroNovas.Raw - new.MicroNovas.Raw)
 			totals[addr] = new
 		}
 	}
@@ -494,7 +494,7 @@ func RandomDeltasImpl(niter int, base map[basics.Address]basics.AccountData, rew
 				updates.UpsertAssetResource(addr, aidx, res.Params, res.Holding)
 			}
 		}
-		imbalance += int64(old.WithUpdatedRewards(proto, rewardsLevel).MicroAlgos.Raw - new.MicroAlgos.Raw)
+		imbalance += int64(old.WithUpdatedRewards(proto, rewardsLevel).MicroNovas.Raw - new.MicroNovas.Raw)
 		totals[addr] = new
 	}
 
@@ -527,7 +527,7 @@ func RandomDeltasBalancedImpl(niter int, base map[basics.Address]basics.AccountD
 
 	oldPool := base[testPoolAddr]
 	newPoolData := oldPool
-	newPoolData.MicroAlgos.Raw += uint64(imbalance)
+	newPoolData.MicroNovas.Raw += uint64(imbalance)
 
 	newPool := ledgercore.ToAccountData(newPoolData)
 	updates.Upsert(testPoolAddr, newPool)

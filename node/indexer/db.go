@@ -21,8 +21,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 const (

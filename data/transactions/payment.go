@@ -19,8 +19,8 @@ package transactions
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 // PaymentTxnFields captures the fields used by payment transactions.
@@ -28,7 +28,7 @@ type PaymentTxnFields struct {
 	_struct struct{} `codec:",omitempty,omitemptyarray"`
 
 	Receiver basics.Address    `codec:"rcv"`
-	Amount   basics.MicroAlgos `codec:"amt"`
+	Amount   basics.MicroNovas `codec:"amt"`
 
 	// When CloseRemainderTo is set, it indicates that the
 	// transaction is requesting that the account should be

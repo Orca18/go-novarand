@@ -20,10 +20,10 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 type netPrioResponse struct {
@@ -85,7 +85,7 @@ func (node *AlgorandFullNode) MakePrioResponse(challenge string) []byte {
 			continue
 		}
 
-		weight := data.MicroAlgosWithRewards.ToUint64()
+		weight := data.MicroNovasWithRewards.ToUint64()
 		if weight > maxWeight {
 			maxPart = part
 			maxWeight = weight
@@ -148,5 +148,5 @@ func (node *AlgorandFullNode) GetPrioWeight(addr basics.Address) uint64 {
 		return 0
 	}
 
-	return data.MicroAlgosWithRewards.ToUint64()
+	return data.MicroNovasWithRewards.ToUint64()
 }

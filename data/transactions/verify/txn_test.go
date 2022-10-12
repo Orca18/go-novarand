@@ -24,15 +24,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 var feeSink = basics.Address{0x7, 0xda, 0xcb, 0x4b, 0x6d, 0x9e, 0xd1, 0x41, 0xb1, 0x75, 0x76, 0xbd, 0x45, 0x9a, 0xe6, 0x42, 0x1d, 0x48, 0x6d, 0xa3, 0xd4, 0xef, 0x22, 0x47, 0xc4, 0x9, 0xa3, 0x96, 0xb8, 0x2e, 0xa2, 0x21}
@@ -112,14 +112,14 @@ func generateMultiSigTxn(numTxs, numAccs int, blockRound basics.Round, t *testin
 			Type: protocol.PaymentTx,
 			Header: transactions.Header{
 				Sender:      multiAddress[s],
-				Fee:         basics.MicroAlgos{Raw: f},
+				Fee:         basics.MicroNovas{Raw: f},
 				FirstValid:  basics.Round(iss),
 				LastValid:   basics.Round(exp),
 				GenesisHash: crypto.Hash([]byte{1, 2, 3, 4, 5}),
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
 				Receiver: multiAddress[r],
-				Amount:   basics.MicroAlgos{Raw: uint64(a)},
+				Amount:   basics.MicroNovas{Raw: uint64(a)},
 			},
 		}
 		signed[i].Txn = txs[i]
@@ -196,14 +196,14 @@ func generateTestObjects(numTxs, numAccs int, blockRound basics.Round) ([]transa
 			Type: protocol.PaymentTx,
 			Header: transactions.Header{
 				Sender:      addresses[s],
-				Fee:         basics.MicroAlgos{Raw: f},
+				Fee:         basics.MicroNovas{Raw: f},
 				FirstValid:  basics.Round(iss),
 				LastValid:   basics.Round(exp),
 				GenesisHash: crypto.Hash([]byte{1, 2, 3, 4, 5}),
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
 				Receiver: addresses[r],
-				Amount:   basics.MicroAlgos{Raw: uint64(a)},
+				Amount:   basics.MicroNovas{Raw: uint64(a)},
 			},
 		}
 		signed[i] = txs[i].Sign(secrets[s])
@@ -317,21 +317,21 @@ func TestTxnValidationStateProof(t *testing.T) {
 
 	stxn2 := stxn
 	stxn2.Txn.Type = protocol.PaymentTx
-	stxn2.Txn.Header.Fee = basics.MicroAlgos{Raw: proto.MinTxnFee}
+	stxn2.Txn.Header.Fee = basics.MicroNovas{Raw: proto.MinTxnFee}
 	err = verifyTxn(&stxn2, 0, groupCtx)
 	require.Error(t, err, "payment txn %#v verified from StateProofSender", stxn2)
 
 	secret := keypair()
 	stxn2 = stxn
 	stxn2.Txn.Header.Sender = basics.Address(secret.SignatureVerifier)
-	stxn2.Txn.Header.Fee = basics.MicroAlgos{Raw: proto.MinTxnFee}
+	stxn2.Txn.Header.Fee = basics.MicroNovas{Raw: proto.MinTxnFee}
 	stxn2 = stxn2.Txn.Sign(secret)
 	err = verifyTxn(&stxn2, 0, groupCtx)
 	require.Error(t, err, "state proof txn %#v verified from non-StateProofSender", stxn2)
 
 	// state proof txns are not allowed to have non-zero values for many fields
 	stxn2 = stxn
-	stxn2.Txn.Header.Fee = basics.MicroAlgos{Raw: proto.MinTxnFee}
+	stxn2.Txn.Header.Fee = basics.MicroNovas{Raw: proto.MinTxnFee}
 	err = verifyTxn(&stxn2, 0, groupCtx)
 	require.Error(t, err, "state proof txn %#v verified", stxn2)
 
@@ -716,14 +716,14 @@ func TestTxnGroupCacheUpdateLogicWithMultiSig(t *testing.T) {
 			Type: protocol.PaymentTx,
 			Header: transactions.Header{
 				Sender:      multiAddress[s],
-				Fee:         basics.MicroAlgos{Raw: f},
+				Fee:         basics.MicroNovas{Raw: f},
 				FirstValid:  basics.Round(1),
 				LastValid:   basics.Round(100),
 				GenesisHash: crypto.Hash([]byte{1, 2, 3, 4, 5}),
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
 				Receiver: multiAddress[r],
-				Amount:   basics.MicroAlgos{Raw: uint64(a)},
+				Amount:   basics.MicroNovas{Raw: uint64(a)},
 			},
 		}
 		// add a simple logic that verifies this condition:

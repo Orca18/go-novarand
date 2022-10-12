@@ -22,8 +22,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/stretchr/testify/require"
 )
 

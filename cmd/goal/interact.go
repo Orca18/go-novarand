@@ -29,11 +29,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/crypto"
-	apiclient "github.com/algorand/go-algorand/daemon/algod/api/client"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/crypto"
+	apiclient "github.com/Orca18/go-novarand/daemon/algod/api/client"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
 )
 
 var (
@@ -607,7 +607,7 @@ var appExecuteCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {

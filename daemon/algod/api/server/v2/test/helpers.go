@@ -22,23 +22,23 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	v2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/node"
-	"github.com/algorand/go-algorand/node/indexer"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	v2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/node"
+	"github.com/Orca18/go-novarand/node/indexer"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var cannedStatusReportGolden = node.StatusReport{
@@ -153,8 +153,8 @@ func (m mockNode) GetPendingTxnsFromPool() ([]transactions.SignedTxn, error) {
 	return txnPoolGolden, m.err
 }
 
-func (m mockNode) SuggestedFee() basics.MicroAlgos {
-	return basics.MicroAlgos{Raw: 1}
+func (m mockNode) SuggestedFee() basics.MicroNovas {
+	return basics.MicroNovas{Raw: 1}
 }
 
 // unused by handlers:
@@ -275,7 +275,7 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*d
 		roots[i] = root
 		parts[i] = part.Participation
 
-		startamt := basics.MicroAlgos{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))}
+		startamt := basics.MicroNovas{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))}
 		short := root.Address()
 
 		if offlineAccounts && i > P/2 {
@@ -289,13 +289,13 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*d
 		part.Close()
 	}
 
-	genesis[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 100000 * uint64(proto.RewardsRateRefreshInterval)})
+	genesis[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 100000 * uint64(proto.RewardsRateRefreshInterval)})
 
 	program := logic.Program(retOneProgram)
 	lhash := crypto.HashObj(&program)
 	var addr basics.Address
 	copy(addr[:], lhash[:])
-	ad := basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 100000 * uint64(proto.RewardsRateRefreshInterval)})
+	ad := basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 100000 * uint64(proto.RewardsRateRefreshInterval)})
 	ad.AppLocalStates = map[basics.AppIndex]basics.AppLocalState{1: {}}
 	genesis[addr] = ad
 
@@ -305,7 +305,7 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*d
 	const inMem = true
 	cfg := config.GetDefaultLocal()
 	cfg.Archival = true
-	ledger, err := data.LoadLedger(logging.Base(), t.Name(), inMem, protocol.ConsensusCurrentVersion, bootstrap, genesisID, genesisHash, nil, cfg)
+	ledger, err := data.LoadLedger(logging.Base(), t.Name(), inMem, protocol.ConsensusCurrentVersion, bootstrap, genesisID, genesisHash, nil, nil, cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -324,21 +324,21 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*d
 		saddr := roots[send].Address()
 		raddr := roots[recv].Address()
 
-		if proto.MinTxnFee+uint64(maxFee) > bal[saddr].MicroAlgos.Raw {
+		if proto.MinTxnFee+uint64(maxFee) > bal[saddr].MicroNovas.Raw {
 			continue
 		}
 
 		xferMax := transferredMoney
-		if uint64(xferMax) > bal[saddr].MicroAlgos.Raw-proto.MinTxnFee-uint64(maxFee) {
-			xferMax = int(bal[saddr].MicroAlgos.Raw - proto.MinTxnFee - uint64(maxFee))
+		if uint64(xferMax) > bal[saddr].MicroNovas.Raw-proto.MinTxnFee-uint64(maxFee) {
+			xferMax = int(bal[saddr].MicroNovas.Raw - proto.MinTxnFee - uint64(maxFee))
 		}
 
 		if xferMax == 0 {
 			continue
 		}
 
-		amt := basics.MicroAlgos{Raw: uint64(gen.Int() % xferMax)}
-		fee := basics.MicroAlgos{Raw: uint64(gen.Int()%maxFee) + proto.MinTxnFee}
+		amt := basics.MicroNovas{Raw: uint64(gen.Int() % xferMax)}
+		fee := basics.MicroNovas{Raw: uint64(gen.Int()%maxFee) + proto.MinTxnFee}
 
 		t := transactions.Transaction{
 			Type: protocol.PaymentTx,
@@ -360,16 +360,16 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*d
 		tx[i] = t.Sign(roots[send].Secrets())
 
 		sbal := bal[saddr]
-		sbal.MicroAlgos.Raw -= fee.Raw
-		sbal.MicroAlgos.Raw -= amt.Raw
+		sbal.MicroNovas.Raw -= fee.Raw
+		sbal.MicroNovas.Raw -= amt.Raw
 		bal[saddr] = sbal
 
 		ibal := bal[poolAddr]
-		ibal.MicroAlgos.Raw += fee.Raw
+		ibal.MicroNovas.Raw += fee.Raw
 		bal[poolAddr] = ibal
 
 		rbal := bal[raddr]
-		rbal.MicroAlgos.Raw += amt.Raw
+		rbal.MicroNovas.Raw += amt.Raw
 		bal[raddr] = rbal
 	}
 

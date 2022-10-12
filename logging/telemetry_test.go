@@ -28,9 +28,9 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/logging/telemetryspec"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/logging/telemetryspec"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type mockTelemetryHook struct {

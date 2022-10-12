@@ -31,23 +31,23 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	sp "github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/nodecontrol"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	sp "github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/nodecontrol"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type accountFetcher struct {
@@ -182,7 +182,7 @@ func verifyStateProofsCreation(t *testing.T, fixture *fixtures.RestClientFixture
 		if (rnd % consensusParams.StateProofInterval) == 0 {
 			// Must have a merkle commitment for participants
 			r.True(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment) > 0)
-			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroAlgos{})
+			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroNovas{})
 
 			// Special case: bootstrap validation with the first block
 			// that has a merkle root.
@@ -191,7 +191,7 @@ func verifyStateProofsCreation(t *testing.T, fixture *fixtures.RestClientFixture
 			}
 		} else {
 			r.True(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment) == 0)
-			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight == basics.MicroAlgos{})
+			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight == basics.MicroNovas{})
 		}
 
 		for lastStateProofBlock.Round()+basics.Round(consensusParams.StateProofInterval) < blk.StateProofTracking[protocol.StateProofBasic].StateProofNextRound &&
@@ -297,7 +297,7 @@ func TestStateProofOverlappingKeys(t *testing.T) {
 		if (rnd % consensusParams.StateProofInterval) == 0 {
 			// Must have a merkle commitment for participants
 			r.True(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment) > 0)
-			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroAlgos{})
+			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroNovas{})
 
 			// Special case: bootstrap validation with the first block
 			// that has a merkle root.
@@ -528,7 +528,7 @@ func TestRecoverFromLaggingStateProofChain(t *testing.T) {
 		if (rnd % consensusParams.StateProofInterval) == 0 {
 			// Must have a merkle commitment for participants
 			r.True(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment) > 0)
-			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroAlgos{})
+			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroNovas{})
 
 			// Special case: bootstrap validation with the first block
 			// that has a merkle root.
@@ -622,7 +622,7 @@ func TestUnableToRecoverFromLaggingStateProofChain(t *testing.T) {
 		if (rnd % consensusParams.StateProofInterval) == 0 {
 			// Must have a merkle commitment for participants
 			r.True(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment) > 0)
-			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroAlgos{})
+			r.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroNovas{})
 
 			// Special case: bootstrap validation with the first block
 			// that has a merkle root.
@@ -750,7 +750,7 @@ func TestAttestorsChange(t *testing.T) {
 		if (rnd % consensusParams.StateProofInterval) == 0 {
 			// Must have a merkle commitment for participants
 			a.True(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment) > 0)
-			a.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroAlgos{})
+			a.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight != basics.MicroNovas{})
 
 			stake := blk.BlockHeader.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight.ToUint64()
 
@@ -762,7 +762,7 @@ func TestAttestorsChange(t *testing.T) {
 				lastStateProofBlock = blk
 			}
 		} else {
-			a.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight == basics.MicroAlgos{})
+			a.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight == basics.MicroNovas{})
 		}
 
 		for lastStateProofBlock.Round()+basics.Round(consensusParams.StateProofInterval) < blk.StateProofTracking[protocol.StateProofBasic].StateProofNextRound &&
@@ -829,7 +829,7 @@ func TestTotalWeightChanges(t *testing.T) {
 			// Must have a merkle commitment for participants
 			a.Greater(len(blk.StateProofTracking[protocol.StateProofBasic].StateProofVotersCommitment), 0)
 			totalStake := blk.BlockHeader.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight.ToUint64()
-			a.NotEqual(basics.MicroAlgos{}, totalStake)
+			a.NotEqual(basics.MicroNovas{}, totalStake)
 
 			if rnd <= consensusParams.StateProofInterval {
 				a.Equal(uint64(10000000000000000), totalStake)
@@ -843,7 +843,7 @@ func TestTotalWeightChanges(t *testing.T) {
 				lastStateProofBlock = blk
 			}
 		} else {
-			a.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight == basics.MicroAlgos{})
+			a.True(blk.StateProofTracking[protocol.StateProofBasic].StateProofOnlineTotalWeight == basics.MicroNovas{})
 		}
 
 		for lastStateProofBlock.Round()+basics.Round(consensusParams.StateProofInterval) < blk.StateProofTracking[protocol.StateProofBasic].StateProofNextRound &&

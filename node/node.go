@@ -27,32 +27,33 @@ import (
 	"sync"
 	"time"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/agreement/gossip"
-	"github.com/algorand/go-algorand/catchup"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/data/pools"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/network/messagetracer"
-	"github.com/algorand/go-algorand/node/indexer"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/rpcs"
-	"github.com/algorand/go-algorand/stateproof"
-	"github.com/algorand/go-algorand/util/db"
-	"github.com/algorand/go-algorand/util/execpool"
-	"github.com/algorand/go-algorand/util/metrics"
-	"github.com/algorand/go-algorand/util/timers"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/agreement/gossip"
+	"github.com/Orca18/go-novarand/catchup"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/data/listener"
+	"github.com/Orca18/go-novarand/data/pools"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/network/messagetracer"
+	"github.com/Orca18/go-novarand/node/indexer"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/rpcs"
+	"github.com/Orca18/go-novarand/stateproof"
+	"github.com/Orca18/go-novarand/util/db"
+	"github.com/Orca18/go-novarand/util/execpool"
+	"github.com/Orca18/go-novarand/util/metrics"
+	"github.com/Orca18/go-novarand/util/timers"
 	"github.com/algorand/go-deadlock"
 )
 
@@ -210,7 +211,15 @@ func MakeFull(log logging.Logger, rootDir string, cfg config.Local, phonebookAdd
 	node.cryptoPool = execpool.MakePool(node)
 	node.lowPriorityCryptoVerificationPool = execpool.MakeBacklog(node.cryptoPool, 2*node.cryptoPool.GetParallelism(), execpool.LowPriority, node)
 	node.highPriorityCryptoVerificationPool = execpool.MakeBacklog(node.cryptoPool, 2*node.cryptoPool.GetParallelism(), execpool.HighPriority, node)
-	node.ledger, err = data.LoadLedger(node.log, ledgerPathnamePrefix, false, genesis.Proto, genalloc, node.genesisID, node.genesisHash, []ledger.BlockListener{}, cfg)
+
+	var validateBlockListener ledger.ValidateBlockListener
+
+	// 원장 생성
+	node.ledger, err = data.LoadLedger(node.log, ledgerPathnamePrefix, false, genesis.Proto, genalloc, node.genesisID, node.genesisHash, []ledger.BlockListener{}, validateBlockListener, cfg)
+
+	// (로그)
+	fmt.Println("node.ledger, err = data.LoadLedger()")
+
 	if err != nil {
 		log.Errorf("Cannot initialize ledger (%s): %v", ledgerPathnamePrefix, err)
 		return nil, err
@@ -223,10 +232,17 @@ func MakeFull(log logging.Logger, rootDir string, cfg config.Local, phonebookAdd
 		node,
 	}
 
+	// 블록트래킹 리스너 생성
+	listener := listener.MakeBlockTrackingListener(node.ledger.Ledger, node.log)
+
 	if node.config.EnableTopAccountsReporting {
 		blockListeners = append(blockListeners, &accountListener)
 	}
 	node.ledger.RegisterBlockListeners(blockListeners)
+
+	// stateDelta 트래커에 blockTracking리스너를 등록한다.
+	node.ledger.RegisterBlockTrackingListener(listener)
+
 	node.txHandler = data.MakeTxHandler(node.transactionPool, node.ledger, node.net, node.genesisID, node.genesisHash, node.lowPriorityCryptoVerificationPool)
 
 	// Indexer setup
@@ -718,7 +734,7 @@ func (node *AlgorandFullNode) PoolStats() PoolStats {
 	r := node.ledger.Latest()
 	last, err := node.ledger.Block(r)
 	if err != nil {
-		node.log.Warnf("AlgorandFullNode: could not read ledger's last round: %v", err)
+		node.log.Warnf("NovarandFullNode: could not read ledger's last round: %v", err)
 		return PoolStats{}
 	}
 
@@ -731,8 +747,8 @@ func (node *AlgorandFullNode) PoolStats() PoolStats {
 
 // SuggestedFee returns the suggested fee per byte recommended to ensure a new transaction is processed in a timely fashion.
 // Caller should set fee to max(MinTxnFee, SuggestedFee() * len(encoded SignedTxn))
-func (node *AlgorandFullNode) SuggestedFee() basics.MicroAlgos {
-	return basics.MicroAlgos{Raw: node.transactionPool.FeePerByte()}
+func (node *AlgorandFullNode) SuggestedFee() basics.MicroNovas {
+	return basics.MicroNovas{Raw: node.transactionPool.FeePerByte()}
 }
 
 // GetPendingTxnsFromPool returns a snapshot of every pending transactions from the node's transaction pool in a slice.
@@ -903,7 +919,7 @@ func (node *AlgorandFullNode) loadParticipationKeys() error {
 	genesisDir := filepath.Join(node.rootDir, node.genesisID)
 	files, err := os.ReadDir(genesisDir)
 	if err != nil {
-		return fmt.Errorf("AlgorandFullNode.loadPartitipationKeys: could not read directory %v: %v", genesisDir, err)
+		return fmt.Errorf("NovarandFullNode.loadPartitipationKeys: could not read directory %v: %v", genesisDir, err)
 	}
 
 	// For each of these files
@@ -924,7 +940,7 @@ func (node *AlgorandFullNode) loadParticipationKeys() error {
 				// we can safely ignore that fail case.
 				continue
 			}
-			return fmt.Errorf("AlgorandFullNode.loadParticipationKeys: cannot load db %v: %v", filename, err)
+			return fmt.Errorf("NovarandFullNode.loadParticipationKeys: cannot load db %v: %v", filename, err)
 		}
 
 		// Fetch an account.Participation from the database
@@ -944,7 +960,7 @@ func (node *AlgorandFullNode) loadParticipationKeys() error {
 					node.log.Warn("loadParticipationKeys: failed to rename unsupported participation key file '%s' to '%s': %v", fullname, renamedFileName, err)
 				}
 			} else {
-				return fmt.Errorf("AlgorandFullNode.loadParticipationKeys: cannot load account at %v: %v", info.Name(), err)
+				return fmt.Errorf("NovarandFullNode.loadParticipationKeys: cannot load account at %v: %v", info.Name(), err)
 			}
 		} else {
 			// Tell the AccountManager about the Participation (dupes don't matter)
@@ -1254,10 +1270,10 @@ func (node *AlgorandFullNode) AssembleBlock(round basics.Round) (agreement.Valid
 			ledgerNextRound := node.ledger.NextRound()
 			if ledgerNextRound == round {
 				// we've asked for the right round.. and the ledger doesn't think it's stale.
-				node.log.Errorf("AlgorandFullNode.AssembleBlock: could not generate a proposal for round %d, ledger and proposal generation are synced: %v", round, err)
+				node.log.Errorf("NovarandFullNode.AssembleBlock: could not generate a proposal for round %d, ledger and proposal generation are synced: %v", round, err)
 			} else if ledgerNextRound < round {
 				// from some reason, the ledger is behind the round that we're asking. That shouldn't happen, but error if it does.
-				node.log.Errorf("AlgorandFullNode.AssembleBlock: could not generate a proposal for round %d, ledger next round is %d: %v", round, ledgerNextRound, err)
+				node.log.Errorf("NovarandFullNode.AssembleBlock: could not generate a proposal for round %d, ledger next round is %d: %v", round, ledgerNextRound, err)
 			}
 			// the case where ledgerNextRound > round was not implemented here on purpose. This is the "normal case" where the
 			// ledger was advancing faster then the agreement by the catchup.
@@ -1276,7 +1292,7 @@ func getOfflineClosedStatus(acctData basics.OnlineAccountData) int {
 		rval = rval | bitAccountOffline
 	}
 
-	isClosed := isOffline && acctData.MicroAlgosWithRewards.Raw == 0
+	isClosed := isOffline && acctData.MicroNovasWithRewards.Raw == 0
 	if isClosed {
 		rval = rval | bitAccountIsClosed
 	}

@@ -1,7 +1,7 @@
 agents:
   - name: cicd.ubuntu.amd64
     dockerFilePath: docker/build/cicd.ubuntu.Dockerfile
-    image: algorand/go-algorand-ci-linux-ubuntu
+    image: Orca18/go-novarand-ci-linux-ubuntu
     version: scripts/configure_dev-deps.sh
     arch: amd64
     env:
@@ -17,7 +17,7 @@ agents:
       - GOARCH=amd64
   - name: cicd.centos.amd64
     dockerFilePath: docker/build/cicd.centos.Dockerfile
-    image: algorand/go-algorand-ci-linux-centos
+    image: Orca18/go-novarand-ci-linux-centos
     version: scripts/configure_dev-deps.sh
     arch: amd64
     env:
@@ -31,7 +31,7 @@ agents:
       - ARCH=amd64
   - name: cicd.centos8.amd64
     dockerFilePath: docker/build/cicd.centos8.Dockerfile
-    image: algorand/go-algorand-ci-linux-centos8
+    image: Orca18/go-novarand-ci-linux-centos8
     version: scripts/configure_dev-deps.sh
     arch: amd64
     env:
@@ -45,7 +45,7 @@ agents:
       - ARCH=amd64
   - name: cicd.ubuntu.arm64
     dockerFilePath: docker/build/cicd.ubuntu.Dockerfile
-    image: algorand/go-algorand-ci-linux-ubuntu
+    image: Orca18/go-novarand-ci-linux-ubuntu
     version: scripts/configure_dev-deps.sh
     arch: arm64v8
     env:
@@ -61,7 +61,7 @@ agents:
       - GOARCH=arm64
   - name: cicd.ubuntu.arm
     dockerFilePath: docker/build/cicd.ubuntu.Dockerfile
-    image: algorand/go-algorand-ci-linux
+    image: Orca18/go-novarand-ci-linux
     version: scripts/configure_dev-deps.sh
     arch: arm32v7
     env:
@@ -77,7 +77,7 @@ agents:
       - GOARCH=armv6l
   - name: docker-ubuntu
     dockerFilePath: docker/build/docker.ubuntu.Dockerfile
-    image: algorand/go-algorand-docker-linux-ubuntu
+    image: Orca18/go-novarand-docker-linux-ubuntu
     version: scripts/configure_dev-deps.sh
     env:
       - TRAVIS_BRANCH=${GIT_BRANCH}
@@ -91,7 +91,7 @@ agents:
       - /var/run/docker.sock:/var/run/docker.sock
   - name: docker-ubuntu-signer
     dockerFilePath: docker/build/docker.ubuntu.Dockerfile
-    image: algorand/go-algorand-docker-linux-ubuntu
+    image: Orca18/go-novarand-docker-linux-ubuntu
     version: scripts/configure_dev-deps.sh
     env:
       - TRAVIS_BRANCH=${GIT_BRANCH}

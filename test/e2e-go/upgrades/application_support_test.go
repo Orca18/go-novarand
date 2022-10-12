@@ -23,13 +23,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 // consensusTestUnupgradedProtocol is a version of ConsensusCurrentVersion
@@ -113,7 +113,7 @@ func TestApplicationsUpgradeOverREST(t *testing.T) {
 	ad, err = client.AccountData(user)
 	a.NoError(err)
 	a.Zero(len(ad.AppParams))
-	a.Equal(basics.MicroAlgos{Raw: 10000000000}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 10000000000}, ad.MicroNovas)
 
 	counter := `#pragma version 2
 // a simple global and local calls counter app
@@ -289,7 +289,7 @@ int 1
 	a.True(ok)
 	a.Equal(uint64(1), value.Uint)
 
-	a.Equal(basics.MicroAlgos{Raw: 10000000000 - fee}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 10000000000 - fee}, ad.MicroNovas)
 
 	app, err := client.ApplicationInformation(uint64(appIdx))
 	a.NoError(err)
@@ -359,7 +359,7 @@ func TestApplicationsUpgradeOverGossip(t *testing.T) {
 	ad, err = client.AccountData(user)
 	a.NoError(err)
 	a.Zero(len(ad.AppParams))
-	a.Equal(basics.MicroAlgos{Raw: 10000000000}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 10000000000}, ad.MicroNovas)
 
 	counter := `#pragma version 2
 // a simple global and local calls counter app
@@ -544,7 +544,7 @@ int 1
 	a.True(ok)
 	a.Equal(uint64(1), value.Uint)
 
-	a.Equal(basics.MicroAlgos{Raw: 10000000000 - fee}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 10000000000 - fee}, ad.MicroNovas)
 
 	app, err := client.ApplicationInformation(uint64(appIdx))
 	a.NoError(err)

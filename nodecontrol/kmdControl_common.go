@@ -22,7 +22,7 @@ package nodecontrol
 import (
 	"os"
 
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 func (kc *KMDController) isDirectorySafe(dirStats os.FileInfo) bool {

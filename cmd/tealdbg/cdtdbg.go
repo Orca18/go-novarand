@@ -26,7 +26,7 @@ import (
 	"github.com/algorand/go-deadlock"
 	"github.com/gorilla/mux"
 
-	"github.com/algorand/go-algorand/cmd/tealdbg/cdt"
+	"github.com/Orca18/go-novarand/cmd/tealdbg/cdt"
 )
 
 // CdtFrontend is Chrome DevTools frontend
@@ -145,7 +145,7 @@ func (a *CdtFrontend) enableWebsocketEndpoint(
 	desc := cdt.TabDescription{
 		Description:               "",
 		ID:                        uuid,
-		Title:                     "Algorand TEAL program",
+		Title:                     "Novarand TEAL program",
 		TabType:                   "node",
 		URL:                       "https://algorand.com/",
 		DevtoolsFrontendURL:       "devtools://devtools/bundled/js_app.html?experiments=true&v8only=false&ws=" + address,
@@ -171,7 +171,7 @@ func (a *CdtFrontend) versionHandler(w http.ResponseWriter, r *http.Request) {
 		ProtocolVersion string `json:"Protocol-Version"`
 	}
 
-	version := devtoolsVersion{Browser: "Algorand TEAL Debugger", ProtocolVersion: "1.1"}
+	version := devtoolsVersion{Browser: "Novarand TEAL Debugger", ProtocolVersion: "1.1"}
 	enc, err := json.Marshal(version)
 	if err != nil {
 		return

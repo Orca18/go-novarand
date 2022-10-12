@@ -24,14 +24,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func checkEvalDelta(t *testing.T, client *libgoal.Client, startRnd, endRnd uint64, gval uint64, lval uint64) {
@@ -123,7 +123,7 @@ func TestAccountInformationV2(t *testing.T) {
 	ad, err = client.AccountData(user)
 	a.NoError(err)
 	a.Zero(len(ad.AppParams))
-	a.Equal(basics.MicroAlgos{Raw: 10000000000}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 10000000000}, ad.MicroNovas)
 
 	counter := `#pragma version 2
 // a simple global and local calls counter app
@@ -285,7 +285,7 @@ int 1
 	// 2 global state update in total, 1 local state updates
 	checkEvalDelta(t, &client, txnRound, txnRound+1, 2, 1)
 
-	a.Equal(basics.MicroAlgos{Raw: 10000000000 - fee}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 10000000000 - fee}, ad.MicroNovas)
 
 	app, err := client.ApplicationInformation(uint64(appIdx))
 	a.NoError(err)

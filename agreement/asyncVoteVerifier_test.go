@@ -22,8 +22,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 type expiredExecPool struct {

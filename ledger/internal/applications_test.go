@@ -22,13 +22,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type creatableLocator struct {
@@ -62,10 +62,10 @@ func (c *mockCowForLogicLedger) getAccount(addr basics.Address, withPendingRewar
 	return br, nil
 }
 
-func (c *mockCowForLogicLedger) MinBalance(addr basics.Address, proto *config.ConsensusParams) (res basics.MicroAlgos, err error) {
+func (c *mockCowForLogicLedger) MinBalance(addr basics.Address, proto *config.ConsensusParams) (res basics.MicroNovas, err error) {
 	br, ok := c.brs[addr]
 	if !ok {
-		return basics.MicroAlgos{}, fmt.Errorf("addr %s not in mock cow", addr.String())
+		return basics.MicroNovas{}, fmt.Errorf("addr %s not in mock cow", addr.String())
 	}
 	return br.MinBalance(proto), nil
 }
@@ -189,11 +189,11 @@ func TestLogicLedgerBalances(t *testing.T) {
 	a.NotNil(l)
 
 	addr1 := ledgertesting.RandomAddress()
-	ble := basics.MicroAlgos{Raw: 100}
-	c.brs = map[basics.Address]basics.AccountData{addr1: {MicroAlgos: ble}}
+	ble := basics.MicroNovas{Raw: 100}
+	c.brs = map[basics.Address]basics.AccountData{addr1: {MicroNovas: ble}}
 	acct, err := l.AccountData(addr1)
 	a.NoError(err)
-	a.Equal(ble, acct.MicroAlgos)
+	a.Equal(ble, acct.MicroNovas)
 }
 
 func TestLogicLedgerGetters(t *testing.T) {

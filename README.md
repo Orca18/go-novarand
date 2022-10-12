@@ -1,4 +1,4 @@
-| rel/stable <br> [![CircleCI](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fstable.svg?style=svg)](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fstable) | rel/beta  <br> [![CircleCI](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fbeta.svg?style=svg)](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fbeta) | rel/nightly  <br> [![CircleCI](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fnightly.svg?style=svg)](https://circleci.com/gh/algorand/go-algorand/tree/rel%2Fnightly) |
+| rel/stable <br> [![CircleCI](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fstable.svg?style=svg)](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fstable) | rel/beta  <br> [![CircleCI](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fbeta.svg?style=svg)](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fbeta) | rel/nightly  <br> [![CircleCI](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fnightly.svg?style=svg)](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fnightly) |
 | --- | --- | --- |
 
 go-novarand
@@ -109,7 +109,7 @@ daemons, as well as other tools and commands:
     locally by the node as well as parameters that must be agreed upon by the
     protocol.
   - `data` defines various types used throughout the codebase.
-     - `basics` hold basic types such as MicroAlgos, account data, and
+     - `basics` hold basic types such as MicroNovas, account data, and
        addresses.
      - `account` defines accounts, including "root" accounts (which can
        spend money) and "participation" accounts (which can participate in

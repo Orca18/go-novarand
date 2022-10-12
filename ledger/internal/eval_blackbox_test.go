@@ -26,28 +26,28 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/txntest"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/txntest"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
-var minFee basics.MicroAlgos
+var minFee basics.MicroNovas
 
 func init() {
 	params := config.Consensus[protocol.ConsensusCurrentVersion]
-	minFee = basics.MicroAlgos{Raw: params.MinTxnFee}
+	minFee = basics.MicroNovas{Raw: params.MinTxnFee}
 }
 
 func TestBlockEvaluator(t *testing.T) {
@@ -78,7 +78,7 @@ func TestBlockEvaluator(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addrs[1],
-			Amount:   basics.MicroAlgos{Raw: 100},
+			Amount:   basics.MicroNovas{Raw: 100},
 		},
 	}
 
@@ -144,7 +144,7 @@ func TestBlockEvaluator(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addrs[2],
-			Amount:   basics.MicroAlgos{Raw: 100},
+			Amount:   basics.MicroNovas{Raw: 100},
 		},
 	}
 	stxn := selfTxn.Sign(keys[2])
@@ -216,9 +216,9 @@ func TestBlockEvaluator(t *testing.T) {
 	bal2new, _, _, err := l.LookupAccount(newBlock.Round(), addrs[2])
 	require.NoError(t, err)
 
-	require.Equal(t, bal0new.MicroAlgos.Raw, bal0.MicroAlgos.Raw-minFee.Raw-100)
-	require.Equal(t, bal1new.MicroAlgos.Raw, bal1.MicroAlgos.Raw+100)
-	require.Equal(t, bal2new.MicroAlgos.Raw, bal2.MicroAlgos.Raw-minFee.Raw)
+	require.Equal(t, bal0new.MicroNovas.Raw, bal0.MicroNovas.Raw-minFee.Raw-100)
+	require.Equal(t, bal1new.MicroNovas.Raw, bal1.MicroNovas.Raw+100)
+	require.Equal(t, bal2new.MicroNovas.Raw, bal2.MicroNovas.Raw-minFee.Raw)
 }
 
 func TestRekeying(t *testing.T) {
@@ -536,7 +536,7 @@ func endBlock(t testing.TB, ledger *ledger.Ledger, eval *internal.BlockEvaluator
 	// `rndBQ` gives the latest known block round added to the ledger
 	// we should wait until `rndBQ` block to be committed to blockQueue,
 	// in case there is a data race, noted in
-	// https://github.com/algorand/go-algorand/issues/4349
+	// https://github.com/Orca18/go-novarand/issues/4349
 	// where writing to `callTxnGroup` after `dl.fullBlock` caused data race,
 	// because the underlying async goroutine `go bq.syncer()` is reading `callTxnGroup`.
 	// A solution here would be wait until all new added blocks are committed,
@@ -555,7 +555,7 @@ func lookup(t testing.TB, ledger *ledger.Ledger, addr basics.Address) basics.Acc
 
 // micros gets the current microAlgo balance for an address
 func micros(t testing.TB, ledger *ledger.Ledger, addr basics.Address) uint64 {
-	return lookup(t, ledger, addr).MicroAlgos.Raw
+	return lookup(t, ledger, addr).MicroNovas.Raw
 }
 
 // holding gets the current balance and optin status for some asa for an address
@@ -699,9 +699,9 @@ func TestMinBalanceChanges(t *testing.T) {
 
 	proto := l.GenesisProto()
 	// Check balance and min balance requirement changes
-	require.Equal(t, ad0init.MicroAlgos.Raw, ad0new.MicroAlgos.Raw+1000)                   // fee
+	require.Equal(t, ad0init.MicroNovas.Raw, ad0new.MicroNovas.Raw+1000)                   // fee
 	require.Equal(t, ad0init.MinBalance(&proto).Raw, ad0new.MinBalance(&proto).Raw-100000) // create
-	require.Equal(t, ad5init.MicroAlgos.Raw, ad5new.MicroAlgos.Raw+1000)                   // fee
+	require.Equal(t, ad5init.MicroNovas.Raw, ad5new.MicroNovas.Raw+1000)                   // fee
 	require.Equal(t, ad5init.MinBalance(&proto).Raw, ad5new.MinBalance(&proto).Raw-100000) // optin
 
 	optOutTxn := txntest.Txn{

@@ -27,14 +27,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/algorand/go-algorand/config"
-	v2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/apply"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	v2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/apply"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -117,14 +117,14 @@ func TestTxnJSONInput(t *testing.T) {
 	txnGroup, err := txnGroupFromParams(&dp)
 	a.NoError(err)
 	a.Equal(1, len(txnGroup))
-	a.Equal(basics.MicroAlgos{Raw: 1176}, txnGroup[0].Txn.Fee)
+	a.Equal(basics.MicroNovas{Raw: 1176}, txnGroup[0].Txn.Fee)
 
 	dp.TxnBlob = []byte("[" + strings.Join([]string{txnSample, txnSample}, ",") + "]")
 	txnGroup, err = txnGroupFromParams(&dp)
 	a.NoError(err)
 	a.Equal(2, len(txnGroup))
-	a.Equal(basics.MicroAlgos{Raw: 1176}, txnGroup[0].Txn.Fee)
-	a.Equal(basics.MicroAlgos{Raw: 1000}, txnGroup[1].Txn.Amount)
+	a.Equal(basics.MicroNovas{Raw: 1176}, txnGroup[0].Txn.Fee)
+	a.Equal(basics.MicroNovas{Raw: 1000}, txnGroup[1].Txn.Amount)
 }
 
 func TestTxnMessagePackInput(t *testing.T) {
@@ -143,14 +143,14 @@ func TestTxnMessagePackInput(t *testing.T) {
 	txnGroup, err := txnGroupFromParams(&dp)
 	a.NoError(err)
 	a.Equal(1, len(txnGroup))
-	a.Equal(basics.MicroAlgos{Raw: 1176}, txnGroup[0].Txn.Fee)
+	a.Equal(basics.MicroNovas{Raw: 1176}, txnGroup[0].Txn.Fee)
 
 	dp.TxnBlob = append(blob, blob...)
 	txnGroup, err = txnGroupFromParams(&dp)
 	a.NoError(err)
 	a.Equal(2, len(txnGroup))
-	a.Equal(basics.MicroAlgos{Raw: 1176}, txnGroup[0].Txn.Fee)
-	a.Equal(basics.MicroAlgos{Raw: 1000}, txnGroup[1].Txn.Amount)
+	a.Equal(basics.MicroNovas{Raw: 1176}, txnGroup[0].Txn.Fee)
+	a.Equal(basics.MicroNovas{Raw: 1000}, txnGroup[1].Txn.Amount)
 }
 
 var balanceSample string = `{
@@ -213,7 +213,7 @@ func makeSampleBalanceRecord(addr basics.Address, assetIdx basics.AssetIndex, ap
 	var br basics.BalanceRecord
 	br.Addr = addr
 
-	br.MicroAlgos = basics.MicroAlgos{Raw: 500000000}
+	br.MicroNovas = basics.MicroNovas{Raw: 500000000}
 	br.Status = basics.Status(1)
 	br.AssetParams = map[basics.AssetIndex]basics.AssetParams{
 		assetIdx: {
@@ -299,7 +299,7 @@ func TestBalanceJSONInput(t *testing.T) {
 	a.NoError(err)
 	a.Equal(2, len(balances))
 	a.Equal(addr, balances[0].Addr)
-	a.Equal(basics.MicroAlgos{Raw: 500000000}, balances[1].MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 500000000}, balances[1].MicroNovas)
 }
 
 func TestBalanceMessagePackInput(t *testing.T) {
@@ -327,7 +327,7 @@ func TestBalanceMessagePackInput(t *testing.T) {
 	a.NoError(err)
 	a.Equal(2, len(balances))
 	a.Equal(addr, balances[0].Addr)
-	a.Equal(basics.MicroAlgos{Raw: 500000000}, balances[1].MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 500000000}, balances[1].MicroNovas)
 }
 
 func TestDebugEnvironment(t *testing.T) {
@@ -371,7 +371,7 @@ func TestDebugEnvironment(t *testing.T) {
 			Type: protocol.ApplicationCallTx,
 			Header: transactions.Header{
 				Sender: sender,
-				Fee:    basics.MicroAlgos{Raw: 1000},
+				Fee:    basics.MicroNovas{Raw: 1000},
 				Note:   []byte{1, 2, 3},
 			},
 			ApplicationCallTxnFields: transactions.ApplicationCallTxnFields{
@@ -891,7 +891,7 @@ func checkBalanceAdapter(
 ) {
 	ad, err := ba.Get(sender, false)
 	a.NoError(err)
-	a.Equal(basics.MicroAlgos{Raw: 500000000}, ad.MicroAlgos)
+	a.Equal(basics.MicroNovas{Raw: 500000000}, ad.MicroNovas)
 
 	holdings, ok, err := ba.GetAssetHolding(sender, assetIdx+1)
 	a.NoError(err)
@@ -1040,7 +1040,7 @@ func TestLocalBalanceAdapterIndexer(t *testing.T) {
 		case strings.HasPrefix(r.URL.Path, accountPath):
 			w.WriteHeader(200)
 			if r.URL.Path[len(accountPath):] == brs.Addr.String() {
-				account, err := v2.AccountDataToAccount(brs.Addr.String(), &brs.AccountData, 100, &config.ConsensusParams{MinBalance: 100000}, basics.MicroAlgos{Raw: 0})
+				account, err := v2.AccountDataToAccount(brs.Addr.String(), &brs.AccountData, 100, &config.ConsensusParams{MinBalance: 100000}, basics.MicroNovas{Raw: 0})
 				a.NoError(err)
 				accountResponse := AccountIndexerResponse{Account: account, CurrentRound: 100}
 				response, err := json.Marshal(accountResponse)
@@ -1136,7 +1136,7 @@ func TestDebugTxSubmit(t *testing.T) {
 			Type: protocol.ApplicationCallTx,
 			Header: transactions.Header{
 				Sender: sender,
-				Fee:    basics.MicroAlgos{Raw: 1000},
+				Fee:    basics.MicroNovas{Raw: 1000},
 				Note:   []byte{1, 2, 3},
 			},
 			ApplicationCallTxnFields: transactions.ApplicationCallTxnFields{
@@ -1228,7 +1228,7 @@ int 1`
 	br := basics.BalanceRecord{
 		Addr: sender,
 		AccountData: basics.AccountData{
-			MicroAlgos: basics.MicroAlgos{Raw: 5000000},
+			MicroNovas: basics.MicroNovas{Raw: 5000000},
 			AppParams: map[basics.AppIndex]basics.AppParams{
 				appIdx: {
 					ApprovalProgram:   prog,
@@ -1258,7 +1258,7 @@ int 1`
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("fee=%d", test.fee), func(t *testing.T) {
 
-			stxn.Txn.Fee = basics.MicroAlgos{Raw: test.fee}
+			stxn.Txn.Fee = basics.MicroNovas{Raw: test.fee}
 			encoded := protocol.EncodeJSON(&stxn)
 
 			ds := DebugParams{
@@ -1318,7 +1318,7 @@ byte 0x5ce9454909639d2d17a3f753ce7d93fa0b9ab12e // addr
 			Type: protocol.ApplicationCallTx,
 			Header: transactions.Header{
 				Sender: sender,
-				Fee:    basics.MicroAlgos{Raw: 1000},
+				Fee:    basics.MicroNovas{Raw: 1000},
 				Note:   []byte{1, 2, 3},
 			},
 			ApplicationCallTxnFields: transactions.ApplicationCallTxnFields{
@@ -1336,7 +1336,7 @@ byte 0x5ce9454909639d2d17a3f753ce7d93fa0b9ab12e // addr
 			Type: protocol.ApplicationCallTx,
 			Header: transactions.Header{
 				Sender: sender,
-				Fee:    basics.MicroAlgos{Raw: 1000},
+				Fee:    basics.MicroNovas{Raw: 1000},
 			},
 			ApplicationCallTxnFields: transactions.ApplicationCallTxnFields{
 				ApplicationID: trivialAppIdx,
@@ -1347,7 +1347,7 @@ byte 0x5ce9454909639d2d17a3f753ce7d93fa0b9ab12e // addr
 	br := basics.BalanceRecord{
 		Addr: sender,
 		AccountData: basics.AccountData{
-			MicroAlgos: basics.MicroAlgos{Raw: 5000000},
+			MicroNovas: basics.MicroNovas{Raw: 5000000},
 			AppParams: map[basics.AppIndex]basics.AppParams{
 				appIdx: {
 					ApprovalProgram:   prog,

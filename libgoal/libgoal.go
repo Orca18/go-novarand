@@ -24,25 +24,25 @@ import (
 	"path/filepath"
 	"time"
 
-	algodclient "github.com/algorand/go-algorand/daemon/algod/api/client"
-	v2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	kmdclient "github.com/algorand/go-algorand/daemon/kmd/client"
-	"github.com/algorand/go-algorand/rpcs"
+	algodclient "github.com/Orca18/go-novarand/daemon/algod/api/client"
+	v2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	kmdclient "github.com/Orca18/go-novarand/daemon/kmd/client"
+	"github.com/Orca18/go-novarand/rpcs"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/daemon/algod/api/spec/common"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	modelV2 "github.com/algorand/go-algorand/daemon/algod/api/spec/v2"
-	"github.com/algorand/go-algorand/daemon/kmd/lib/kmdapi"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/nodecontrol"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/daemon/algod/api/spec/common"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	modelV2 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v2"
+	"github.com/Orca18/go-novarand/daemon/kmd/lib/kmdapi"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/nodecontrol"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util"
 )
 
 // defaultKMDTimeoutSecs is the default number of seconds after which kmd will
@@ -598,7 +598,7 @@ func (c *Client) ConstructPayment(from, to string, fee, amount uint64, note []by
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:     fromAddr,
-			Fee:        basics.MicroAlgos{Raw: fee},
+			Fee:        basics.MicroNovas{Raw: fee},
 			FirstValid: basics.Round(fv),
 			LastValid:  basics.Round(lv),
 			Lease:      lease,
@@ -606,7 +606,7 @@ func (c *Client) ConstructPayment(from, to string, fee, amount uint64, note []by
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: toAddr,
-			Amount:   basics.MicroAlgos{Raw: amount},
+			Amount:   basics.MicroNovas{Raw: amount},
 		},
 	}
 
@@ -633,7 +633,72 @@ func (c *Client) ConstructPayment(from, to string, fee, amount uint64, note []by
 	// Fee is tricky, should taken care last. We encode the final transaction to get the size post signing and encoding
 	// Then, we multiply it by the suggested fee per byte.
 	if fee == 0 {
-		tx.Fee = basics.MulAIntSaturate(basics.MicroAlgos{Raw: params.Fee}, tx.EstimateEncodedSize())
+		tx.Fee = basics.MulAIntSaturate(basics.MicroNovas{Raw: params.Fee}, tx.EstimateEncodedSize())
+	}
+	if tx.Fee.Raw < cp.MinTxnFee {
+		tx.Fee.Raw = cp.MinTxnFee
+	}
+
+	return tx, nil
+}
+
+// 새로운 AddressPrint트랜잭션 생성
+func (c *Client) ConstructAddressPrint(from, to string, fee uint64, firstValid, lastValid basics.Round) (transactions.Transaction, error) {
+	// 보내는 계정의 주소
+	fromAddr, err := basics.UnmarshalChecksumAddress(from)
+	if err != nil {
+		return transactions.Transaction{}, err
+	}
+
+	// 받는 계정의 주소
+	var toAddr basics.Address
+	if to != "" {
+		toAddr, err = basics.UnmarshalChecksumAddress(to)
+		if err != nil {
+			return transactions.Transaction{}, err
+		}
+	}
+
+	// Get current round, protocol, genesis ID
+	params, err := c.SuggestedParams()
+	if err != nil {
+		return transactions.Transaction{}, err
+	}
+
+	cp, ok := c.consensus[protocol.ConsensusVersion(params.ConsensusVersion)]
+	if !ok {
+		return transactions.Transaction{}, fmt.Errorf("ConstructPayment: unknown consensus protocol %s", params.ConsensusVersion)
+	}
+	fv, lv, err := computeValidityRounds(uint64(firstValid), uint64(lastValid), 0, params.LastRound, cp.MaxTxnLife)
+	if err != nil {
+		return transactions.Transaction{}, err
+	}
+
+	tx := transactions.Transaction{
+		Type: protocol.AddressPrintTx,
+		Header: transactions.Header{
+			Sender:     fromAddr,
+			Fee:        basics.MicroNovas{Raw: fee},
+			FirstValid: basics.Round(fv),
+			LastValid:  basics.Round(lv),
+		},
+		AddressPrintTxnFields: transactions.AddressPrintTxnFields{
+			Receiver2: toAddr,
+		},
+	}
+
+	tx.Header.GenesisID = params.GenesisID
+
+	// Check if the protocol supports genesis hash
+	if cp.SupportGenesisHash {
+		copy(tx.Header.GenesisHash[:], params.GenesisHash)
+	}
+
+	// Default to the suggested fee, if the caller didn't supply it
+	// Fee is tricky, should taken care last. We encode the final transaction to get the size post signing and encoding
+	// Then, we multiply it by the suggested fee per byte.
+	if fee == 0 {
+		tx.Fee = basics.MulAIntSaturate(basics.MicroNovas{Raw: params.Fee}, tx.EstimateEncodedSize())
 	}
 	if tx.Fee.Raw < cp.MinTxnFee {
 		tx.Fee.Raw = cp.MinTxnFee

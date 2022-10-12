@@ -20,8 +20,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/tools/network/dnssec"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/tools/network/dnssec"
 )
 
 // ResolverIf is re-import from dnssec.ResolverIf

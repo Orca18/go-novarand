@@ -19,7 +19,7 @@ package merklearray
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/crypto"
+	"github.com/Orca18/go-novarand/crypto"
 )
 
 // Proof is used to convince a verifier about membership of leaves: h0,h1...hn

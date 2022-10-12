@@ -28,10 +28,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/gen"
-	"github.com/algorand/go-algorand/netdeploy"
-	"github.com/algorand/go-algorand/netdeploy/remote"
-	"github.com/algorand/go-algorand/util/codecs"
+	"github.com/Orca18/go-novarand/gen"
+	"github.com/Orca18/go-novarand/netdeploy"
+	"github.com/Orca18/go-novarand/netdeploy/remote"
+	"github.com/Orca18/go-novarand/util/codecs"
 )
 
 var outputFilename string

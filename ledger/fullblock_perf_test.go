@@ -28,18 +28,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 type benchConfig struct {
@@ -81,7 +81,7 @@ func setupEnv(b *testing.B, numAccts int) (bc *benchConfig) {
 	creator := basics.Address{}
 	_, err := rand.Read(creator[:])
 	require.NoError(b, err)
-	genesisInitState.Accounts[creator] = basics.MakeAccountData(basics.Offline, basics.MicroAlgos{Raw: 1234567890000000000})
+	genesisInitState.Accounts[creator] = basics.MakeAccountData(basics.Offline, basics.MicroNovas{Raw: 1234567890000000000})
 
 	logger := logging.TestingLog(b)
 	logger.SetLevel(logging.Warn)
@@ -444,7 +444,7 @@ func createPaymentTransaction(
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid:  basics.Round(round),
 			LastValid:   basics.Round(round + 1000),
 			GenesisHash: crypto.Digest{1},
@@ -452,7 +452,7 @@ func createPaymentTransaction(
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: receiver,
-			Amount:   basics.MicroAlgos{Raw: amount},
+			Amount:   basics.MicroNovas{Raw: amount},
 		},
 	}
 	return
@@ -470,7 +470,7 @@ func createAssetTransaction(
 		Type: protocol.AssetConfigTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid:  basics.Round(round),
 			LastValid:   basics.Round(round + 1000),
 			GenesisHash: crypto.Digest{1},
@@ -502,7 +502,7 @@ func sendAssetTransaction(
 		Type: protocol.AssetTransferTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid:  basics.Round(round),
 			LastValid:   basics.Round(round + 1000),
 			GenesisHash: crypto.Digest{1},
@@ -575,7 +575,7 @@ int 1
 
 	appTx.Header = transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 		FirstValid:  basics.Round(round),
 		LastValid:   basics.Round(round + 1000),
 		GenesisHash: crypto.Digest{1},
@@ -601,7 +601,7 @@ func makeOptInAppTransaction(
 
 	appTx.Header = transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 		FirstValid:  basics.Round(round),
 		LastValid:   basics.Round(round + 1000),
 		GenesisHash: crypto.Digest{1},
@@ -627,7 +627,7 @@ func callAppTransaction(
 
 	appTx.Header = transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 		FirstValid:  basics.Round(round),
 		LastValid:   basics.Round(round + 1000),
 		GenesisHash: crypto.Digest{1},

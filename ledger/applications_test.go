@@ -23,14 +23,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 // commitRound schedules a commit for known offset and dbRound
@@ -177,7 +177,7 @@ return`
 
 	txHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   t.Name(),
@@ -407,7 +407,7 @@ return`
 	genesisID := t.Name()
 	txHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   genesisID,
@@ -650,7 +650,7 @@ return`
 	genesisID := t.Name()
 	txHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   genesisID,
@@ -709,7 +709,7 @@ return`
 		ApplicationCallTxnFields: appCallFields,
 	}
 	paymentFields := transactions.PaymentTxnFields{
-		Amount:           basics.MicroAlgos{Raw: 0},
+		Amount:           basics.MicroNovas{Raw: 0},
 		Receiver:         creator,
 		CloseRemainderTo: creator,
 	}
@@ -720,7 +720,7 @@ return`
 	}
 
 	data := genesisInitState.Accounts[userLocal]
-	balance := basics.MicroAlgos{Raw: data.MicroAlgos.Raw - txHeader.Fee.Raw*3}
+	balance := basics.MicroNovas{Raw: data.MicroNovas.Raw - txHeader.Fee.Raw*3}
 	stx1 := sign(initKeys, appCall)
 	stx2 := sign(initKeys, payment)
 
@@ -804,7 +804,7 @@ return`
 	genesisID := t.Name()
 	txHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   genesisID,
@@ -842,7 +842,7 @@ return`
 		ApplicationCallTxnFields: appCallFields,
 	}
 	paymentFields := transactions.PaymentTxnFields{
-		Amount:           basics.MicroAlgos{Raw: 0},
+		Amount:           basics.MicroNovas{Raw: 0},
 		Receiver:         userLocal,
 		CloseRemainderTo: userLocal,
 	}
@@ -853,7 +853,7 @@ return`
 	}
 
 	data := genesisInitState.Accounts[creator]
-	balance := basics.MicroAlgos{Raw: data.MicroAlgos.Raw - txHeader.Fee.Raw*3}
+	balance := basics.MicroNovas{Raw: data.MicroNovas.Raw - txHeader.Fee.Raw*3}
 	stx1 := sign(initKeys, appCall)
 	stx2 := sign(initKeys, payment)
 
@@ -1000,7 +1000,7 @@ func testAppAccountDeltaIndicesCompatibility(t *testing.T, source string, accoun
 	genesisID := t.Name()
 	txHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   genesisID,
@@ -1140,7 +1140,7 @@ int 1
 			genesisID := t.Name()
 			txHeader := transactions.Header{
 				Sender:      creator,
-				Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+				Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 				FirstValid:  l.Latest() + 1,
 				LastValid:   l.Latest() + 10,
 				GenesisID:   genesisID,
@@ -1267,7 +1267,7 @@ int 1
 	genesisID := t.Name()
 	txHeader := transactions.Header{
 		Sender:      funder,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   genesisID,
@@ -1280,7 +1280,7 @@ int 1
 		Header: txHeader,
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: lsigAddr,
-			Amount:   basics.MicroAlgos{Raw: proto.MinBalance + proto.MinTxnFee},
+			Amount:   basics.MicroNovas{Raw: proto.MinBalance + proto.MinTxnFee},
 		},
 	}
 	err = l.appendUnvalidatedTx(t, genesisInitState.Accounts, initKeys, fundingPayment, transactions.ApplyData{})

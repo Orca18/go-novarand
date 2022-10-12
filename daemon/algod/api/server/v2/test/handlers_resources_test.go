@@ -23,18 +23,18 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	v2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	v2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -46,19 +46,19 @@ type mockLedger struct {
 	blocks   []bookkeeping.Block
 }
 
-func (l *mockLedger) LookupAccount(round basics.Round, addr basics.Address) (ledgercore.AccountData, basics.Round, basics.MicroAlgos, error) {
+func (l *mockLedger) LookupAccount(round basics.Round, addr basics.Address) (ledgercore.AccountData, basics.Round, basics.MicroNovas, error) {
 	ad, ok := l.accounts[addr]
 	if !ok { // return empty / not found
-		return ledgercore.AccountData{}, l.latest, basics.MicroAlgos{Raw: 0}, nil
+		return ledgercore.AccountData{}, l.latest, basics.MicroNovas{Raw: 0}, nil
 	}
-	return ledgercore.ToAccountData(ad), l.latest, basics.MicroAlgos{Raw: 0}, nil
+	return ledgercore.ToAccountData(ad), l.latest, basics.MicroNovas{Raw: 0}, nil
 }
-func (l *mockLedger) LookupLatest(addr basics.Address) (basics.AccountData, basics.Round, basics.MicroAlgos, error) {
+func (l *mockLedger) LookupLatest(addr basics.Address) (basics.AccountData, basics.Round, basics.MicroNovas, error) {
 	ad, ok := l.accounts[addr]
 	if !ok {
-		return basics.AccountData{}, l.latest, basics.MicroAlgos{Raw: 0}, nil
+		return basics.AccountData{}, l.latest, basics.MicroNovas{Raw: 0}, nil
 	}
-	return ad, l.latest, basics.MicroAlgos{Raw: 0}, nil
+	return ad, l.latest, basics.MicroNovas{Raw: 0}, nil
 }
 
 func (l *mockLedger) ConsensusParams(r basics.Round) (config.ConsensusParams, error) {

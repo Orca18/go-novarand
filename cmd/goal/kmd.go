@@ -19,8 +19,8 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/nodecontrol"
-	"github.com/algorand/go-algorand/util"
+	"github.com/Orca18/go-novarand/nodecontrol"
+	"github.com/Orca18/go-novarand/util"
 )
 
 var kmdTimeoutSecs uint64

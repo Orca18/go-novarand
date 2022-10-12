@@ -27,13 +27,13 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/gen"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/netdeploy/remote"
-	"github.com/algorand/go-algorand/util"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/gen"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/netdeploy/remote"
+	"github.com/Orca18/go-novarand/util"
 )
 
 // NetworkTemplate represents the template used for creating private named networks

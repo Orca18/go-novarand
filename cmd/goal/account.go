@@ -28,17 +28,17 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/passphrase"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	algodAcct "github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/passphrase"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	algodAcct "github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var (
@@ -696,7 +696,7 @@ func printAccountInfo(client libgoal.Client, address string, onlyShowAssetIds bo
 		fmt.Fprintf(report, "\tID %d, local state used %d/%d uints, %d/%d byte slices\n", localState.Id, usedInts, allocatedInts, usedBytes, allocatedBytes)
 	}
 
-	fmt.Fprintf(report, "Minimum Balance:\t%v microAlgos\n", account.MinBalance)
+	fmt.Fprintf(report, "Minimum Balance:\t%v microNovas\n", account.MinBalance)
 
 	if hasError {
 		fmt.Fprint(os.Stderr, errorReport.String())
@@ -708,7 +708,7 @@ func printAccountInfo(client libgoal.Client, address string, onlyShowAssetIds bo
 var balanceCmd = &cobra.Command{
 	Use:   "balance",
 	Short: "Retrieve the balances for the specified account",
-	Long:  `Retrieve the balance record for the specified account. Algo balance is displayed in microAlgos.`,
+	Long:  `Retrieve the balance record for the specified account. Algo balance is displayed in microNovas.`,
 	Args:  validateNoPosArgsFn,
 	Run: func(cmd *cobra.Command, args []string) {
 		dataDir := ensureSingleDataDir()
@@ -718,7 +718,7 @@ var balanceCmd = &cobra.Command{
 			reportErrorf(errorRequestFail, err)
 		}
 
-		fmt.Printf("%v microAlgos\n", response.Amount)
+		fmt.Printf("%v microNovas\n", response.Amount)
 	},
 }
 
@@ -753,7 +753,7 @@ var dumpCmd = &cobra.Command{
 var rewardsCmd = &cobra.Command{
 	Use:   "rewards",
 	Short: "Retrieve the rewards for the specified account",
-	Long:  `Retrieve the rewards for the specified account, including pending rewards. Units displayed are microAlgos.`,
+	Long:  `Retrieve the rewards for the specified account, including pending rewards. Units displayed are microNovas.`,
 	Args:  validateNoPosArgsFn,
 	Run: func(cmd *cobra.Command, args []string) {
 		dataDir := ensureSingleDataDir()
@@ -763,7 +763,7 @@ var rewardsCmd = &cobra.Command{
 			reportErrorf(errorRequestFail, err)
 		}
 
-		fmt.Printf("%v microAlgos\n", response.Rewards)
+		fmt.Printf("%v microNovas\n", response.Rewards)
 	},
 }
 

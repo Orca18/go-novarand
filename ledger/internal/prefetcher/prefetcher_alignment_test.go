@@ -23,17 +23,17 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/internal/prefetcher"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/internal/prefetcher"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/algorand/go-deadlock"
 )
 
@@ -319,22 +319,22 @@ func TestEvaluatorPrefetcherAlignmentPayment(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000001},
+					MicroNovas: basics.MicroNovas{Raw: 1000001},
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000002},
+					MicroNovas: basics.MicroNovas{Raw: 1000002},
 				},
 			},
 			makeAddress(3): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000003},
+					MicroNovas: basics.MicroNovas{Raw: 1000003},
 				},
 			},
 		},
@@ -365,12 +365,12 @@ func TestEvaluatorPrefetcherAlignmentCreateAsset(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000001},
+					MicroNovas: basics.MicroNovas{Raw: 1000001},
 				},
 			},
 		},
@@ -404,12 +404,12 @@ func TestEvaluatorPrefetcherAlignmentReconfigAsset(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			addr: {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:       basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:       basics.MicroNovas{Raw: 1000001},
 					TotalAssets:      1,
 					TotalAssetParams: 1,
 				},
@@ -456,19 +456,19 @@ func TestEvaluatorPrefetcherAlignmentAssetOptIn(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:       basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:       basics.MicroNovas{Raw: 1000001},
 					TotalAssets:      1,
 					TotalAssetParams: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000002},
+					MicroNovas: basics.MicroNovas{Raw: 1000002},
 				},
 			},
 		},
@@ -512,29 +512,29 @@ func TestEvaluatorPrefetcherAlignmentAssetTransfer(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:       basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:       basics.MicroNovas{Raw: 1000001},
 					TotalAssets:      1,
 					TotalAssetParams: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000002},
+					MicroNovas: basics.MicroNovas{Raw: 1000002},
 				},
 			},
 			makeAddress(3): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000003},
+					MicroNovas: basics.MicroNovas{Raw: 1000003},
 				},
 			},
 			makeAddress(4): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000004},
+					MicroNovas: basics.MicroNovas{Raw: 1000004},
 				},
 			},
 		},
@@ -579,29 +579,29 @@ func TestEvaluatorPrefetcherAlignmentAssetClawback(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:       basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:       basics.MicroNovas{Raw: 1000001},
 					TotalAssets:      1,
 					TotalAssetParams: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000002},
+					MicroNovas: basics.MicroNovas{Raw: 1000002},
 				},
 			},
 			makeAddress(3): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000003},
+					MicroNovas: basics.MicroNovas{Raw: 1000003},
 				},
 			},
 			makeAddress(4): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000003},
+					MicroNovas: basics.MicroNovas{Raw: 1000003},
 				},
 			},
 		},
@@ -660,24 +660,24 @@ func TestEvaluatorPrefetcherAlignmentAssetFreeze(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:       basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:       basics.MicroNovas{Raw: 1000001},
 					TotalAssets:      1,
 					TotalAssetParams: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000002},
+					MicroNovas: basics.MicroNovas{Raw: 1000002},
 				},
 			},
 			makeAddress(3): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000003},
+					MicroNovas: basics.MicroNovas{Raw: 1000003},
 				},
 			},
 		},
@@ -730,12 +730,12 @@ func TestEvaluatorPrefetcherAlignmentKeyreg(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			addr: {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000001},
+					MicroNovas: basics.MicroNovas{Raw: 1000001},
 				},
 			},
 		},
@@ -777,12 +777,12 @@ func TestEvaluatorPrefetcherAlignmentCreateApplication(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			addr: {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000001},
+					MicroNovas: basics.MicroNovas{Raw: 1000001},
 				},
 			},
 		},
@@ -820,12 +820,12 @@ func TestEvaluatorPrefetcherAlignmentDeleteApplication(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			addr: {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
@@ -874,19 +874,19 @@ func TestEvaluatorPrefetcherAlignmentApplicationOptIn(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000002},
+					MicroNovas: basics.MicroNovas{Raw: 1000002},
 				},
 			},
 		},
@@ -933,19 +933,19 @@ func TestEvaluatorPrefetcherAlignmentApplicationCloseOut(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000002},
+					MicroNovas:          basics.MicroNovas{Raw: 1000002},
 					TotalAppLocalStates: 1,
 				},
 			},
@@ -998,19 +998,19 @@ func TestEvaluatorPrefetcherAlignmentApplicationClearState(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000002},
+					MicroNovas:          basics.MicroNovas{Raw: 1000002},
 					TotalAppLocalStates: 1,
 				},
 			},
@@ -1063,19 +1063,19 @@ func TestEvaluatorPrefetcherAlignmentApplicationCallAccountsDeclaration(t *testi
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000002},
+					MicroNovas:          basics.MicroNovas{Raw: 1000002},
 					TotalAppLocalStates: 1,
 				},
 			},
@@ -1132,19 +1132,19 @@ func TestEvaluatorPrefetcherAlignmentApplicationCallForeignAppsDeclaration(t *te
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000002},
+					MicroNovas:          basics.MicroNovas{Raw: 1000002},
 					TotalAppLocalStates: 1,
 				},
 			},
@@ -1201,19 +1201,19 @@ func TestEvaluatorPrefetcherAlignmentApplicationCallForeignAssetsDeclaration(t *
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			makeAddress(1): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000001},
+					MicroNovas:          basics.MicroNovas{Raw: 1000001},
 					TotalAppParams:      1,
 					TotalAppLocalStates: 1,
 				},
 			},
 			makeAddress(2): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos:          basics.MicroAlgos{Raw: 1000002},
+					MicroNovas:          basics.MicroNovas{Raw: 1000002},
 					TotalAppLocalStates: 1,
 				},
 			},
@@ -1269,12 +1269,12 @@ func TestEvaluatorPrefetcherAlignmentStateProof(t *testing.T) {
 		balances: map[basics.Address]ledgercore.AccountData{
 			rewardsPool(): {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1234567890},
+					MicroNovas: basics.MicroNovas{Raw: 1234567890},
 				},
 			},
 			addr: {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 1000001},
+					MicroNovas: basics.MicroNovas{Raw: 1000001},
 				},
 			},
 		},

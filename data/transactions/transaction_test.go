@@ -24,14 +24,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func TestTransaction_EstimateEncodedSize(t *testing.T) {
@@ -48,14 +48,14 @@ func TestTransaction_EstimateEncodedSize(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: Header{
 			Sender:     addr,
-			Fee:        basics.MicroAlgos{Raw: 100},
+			Fee:        basics.MicroNovas{Raw: 100},
 			FirstValid: basics.Round(1000),
 			LastValid:  basics.Round(1000 + proto.MaxTxnLife),
 			Note:       buf,
 		},
 		PaymentTxnFields: PaymentTxnFields{
 			Receiver: addr,
-			Amount:   basics.MicroAlgos{Raw: 100},
+			Amount:   basics.MicroNovas{Raw: 100},
 		},
 	}
 
@@ -71,7 +71,7 @@ func generateDummyGoNonparticpatingTransaction(addr basics.Address) (tx Transact
 		Type: protocol.KeyRegistrationTx,
 		Header: Header{
 			Sender:     addr,
-			Fee:        basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:        basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid: 1,
 			LastValid:  300,
 		},
@@ -155,7 +155,7 @@ func TestAppCallCreateWellFormed(t *testing.T) {
 				Type: protocol.ApplicationCallTx,
 				Header: Header{
 					Sender:     addr1,
-					Fee:        basics.MicroAlgos{Raw: 1000},
+					Fee:        basics.MicroNovas{Raw: 1000},
 					LastValid:  105,
 					FirstValid: 100,
 				},
@@ -175,7 +175,7 @@ func TestAppCallCreateWellFormed(t *testing.T) {
 				Type: protocol.ApplicationCallTx,
 				Header: Header{
 					Sender:     addr1,
-					Fee:        basics.MicroAlgos{Raw: 1000},
+					Fee:        basics.MicroNovas{Raw: 1000},
 					LastValid:  105,
 					FirstValid: 100,
 				},
@@ -196,7 +196,7 @@ func TestAppCallCreateWellFormed(t *testing.T) {
 				Type: protocol.ApplicationCallTx,
 				Header: Header{
 					Sender:     addr1,
-					Fee:        basics.MicroAlgos{Raw: 1000},
+					Fee:        basics.MicroNovas{Raw: 1000},
 					LastValid:  105,
 					FirstValid: 100,
 				},
@@ -217,7 +217,7 @@ func TestAppCallCreateWellFormed(t *testing.T) {
 				Type: protocol.ApplicationCallTx,
 				Header: Header{
 					Sender:     addr1,
-					Fee:        basics.MicroAlgos{Raw: 1000},
+					Fee:        basics.MicroNovas{Raw: 1000},
 					LastValid:  105,
 					FirstValid: 100,
 				},
@@ -238,7 +238,7 @@ func TestAppCallCreateWellFormed(t *testing.T) {
 				Type: protocol.ApplicationCallTx,
 				Header: Header{
 					Sender:     addr1,
-					Fee:        basics.MicroAlgos{Raw: 1000},
+					Fee:        basics.MicroNovas{Raw: 1000},
 					LastValid:  105,
 					FirstValid: 100,
 				},
@@ -278,7 +278,7 @@ func TestWellFormedErrors(t *testing.T) {
 	v5 := []byte{0x05}
 	okHeader := Header{
 		Sender:     addr1,
-		Fee:        basics.MicroAlgos{Raw: 1000},
+		Fee:        basics.MicroNovas{Raw: 1000},
 		LastValid:  105,
 		FirstValid: 100,
 	}
@@ -293,7 +293,7 @@ func TestWellFormedErrors(t *testing.T) {
 				Type: protocol.PaymentTx,
 				Header: Header{
 					Sender: addr1,
-					Fee:    basics.MicroAlgos{Raw: 100},
+					Fee:    basics.MicroNovas{Raw: 100},
 				},
 			},
 			spec:          specialAddr,
@@ -305,7 +305,7 @@ func TestWellFormedErrors(t *testing.T) {
 				Type: protocol.PaymentTx,
 				Header: Header{
 					Sender: addr1,
-					Fee:    basics.MicroAlgos{Raw: 100},
+					Fee:    basics.MicroNovas{Raw: 100},
 				},
 			},
 			spec:  specialAddr,
@@ -316,7 +316,7 @@ func TestWellFormedErrors(t *testing.T) {
 				Type: protocol.PaymentTx,
 				Header: Header{
 					Sender:     addr1,
-					Fee:        basics.MicroAlgos{Raw: 1000},
+					Fee:        basics.MicroNovas{Raw: 1000},
 					LastValid:  100,
 					FirstValid: 105,
 				},
@@ -1248,7 +1248,7 @@ type stateproofTxnTestCase struct {
 	expectedError error
 
 	StateProofInterval uint64
-	fee                basics.MicroAlgos
+	fee                basics.MicroNovas
 	note               []byte
 	group              crypto.Digest
 	lease              [32]byte
@@ -1285,12 +1285,12 @@ func TestWellFormedStateProofTxn(t *testing.T) {
 	cases := []stateproofTxnTestCase{
 		/* 0 */ {expectedError: errStateProofNotSupported}, // StateProofInterval == 0 leads to error
 		/* 1 */ {expectedError: errBadSenderInStateProofTxn, StateProofInterval: 256, sender: basics.Address{1, 2, 3, 4}},
-		/* 2 */ {expectedError: errFeeMustBeZeroInStateproofTxn, StateProofInterval: 256, sender: StateProofSender, fee: basics.MicroAlgos{Raw: 1}},
+		/* 2 */ {expectedError: errFeeMustBeZeroInStateproofTxn, StateProofInterval: 256, sender: StateProofSender, fee: basics.MicroNovas{Raw: 1}},
 		/* 3 */ {expectedError: errNoteMustBeEmptyInStateproofTxn, StateProofInterval: 256, sender: StateProofSender, note: []byte{1, 2, 3}},
 		/* 4 */ {expectedError: errGroupMustBeZeroInStateproofTxn, StateProofInterval: 256, sender: StateProofSender, group: crypto.Digest{1, 2, 3}},
 		/* 5 */ {expectedError: errRekeyToMustBeZeroInStateproofTxn, StateProofInterval: 256, sender: StateProofSender, rekeyValue: basics.Address{1, 2, 3, 4}},
 		/* 6 */ {expectedError: errLeaseMustBeZeroInStateproofTxn, StateProofInterval: 256, sender: StateProofSender, lease: [32]byte{1, 2, 3, 4}},
-		/* 7 */ {expectedError: nil, StateProofInterval: 256, fee: basics.MicroAlgos{Raw: 0}, note: nil, group: crypto.Digest{}, lease: [32]byte{}, rekeyValue: basics.Address{}, sender: StateProofSender},
+		/* 7 */ {expectedError: nil, StateProofInterval: 256, fee: basics.MicroNovas{Raw: 0}, note: nil, group: crypto.Digest{}, lease: [32]byte{}, rekeyValue: basics.Address{}, sender: StateProofSender},
 	}
 	for i, testCase := range cases {
 		cpyTestCase := testCase
@@ -1313,7 +1313,7 @@ func TestStateProofTxnShouldBeZero(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: Header{
 			Sender:      addr1,
-			Fee:         basics.MicroAlgos{Raw: 100},
+			Fee:         basics.MicroNovas{Raw: 100},
 			FirstValid:  0,
 			LastValid:   0,
 			Note:        []byte{0, 1},

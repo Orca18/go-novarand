@@ -33,14 +33,14 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/Orca18/go-novarand/crypto"
+	apiclient "github.com/Orca18/go-novarand/daemon/algod/api/client"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
 	"github.com/algorand/avm-abi/abi"
-	"github.com/algorand/go-algorand/crypto"
-	apiclient "github.com/algorand/go-algorand/daemon/algod/api/client"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
 )
 
 var (
@@ -478,7 +478,7 @@ var createAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {
@@ -553,7 +553,7 @@ var updateAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Broadcast or write transaction to file
@@ -623,7 +623,7 @@ var optInAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Broadcast or write transaction to file
@@ -693,7 +693,7 @@ var closeOutAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Broadcast or write transaction to file
@@ -763,7 +763,7 @@ var clearAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Broadcast or write transaction to file
@@ -833,7 +833,7 @@ var callAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Broadcast or write transaction to file
@@ -903,7 +903,7 @@ var deleteAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Broadcast or write transaction to file
@@ -1394,7 +1394,7 @@ var methodAppCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			appCallTxn.Fee = basics.MicroAlgos{Raw: fee}
+			appCallTxn.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		// Compile group

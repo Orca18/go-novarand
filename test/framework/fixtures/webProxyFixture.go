@@ -21,7 +21,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 // WebProxyInterceptFunc expose the web proxy intercept function

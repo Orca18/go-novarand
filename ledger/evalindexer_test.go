@@ -25,17 +25,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/txntest"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/txntest"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type indexerLedgerForEvalImpl struct {
@@ -332,7 +332,7 @@ func TestResourceCaching(t *testing.T) {
 		Accounts: map[basics.Address]*ledgercore.AccountData{
 			address: {
 				AccountBaseData: ledgercore.AccountBaseData{
-					MicroAlgos: basics.MicroAlgos{Raw: 5},
+					MicroNovas: basics.MicroNovas{Raw: 5},
 				},
 			},
 		},
@@ -360,7 +360,7 @@ func TestResourceCaching(t *testing.T) {
 	{
 		accountData, rnd, err := ilc.LookupWithoutRewards(basics.Round(0), address)
 		require.NoError(t, err)
-		assert.Equal(t, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 5}}}, accountData)
+		assert.Equal(t, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 5}}}, accountData)
 		assert.Equal(t, basics.Round(0), rnd)
 	}
 	{

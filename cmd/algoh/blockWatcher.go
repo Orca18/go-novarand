@@ -20,8 +20,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 var log = logging.Base()

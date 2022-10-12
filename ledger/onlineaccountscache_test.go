@@ -21,12 +21,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func TestOnlineAccountsCacheBasic(t *testing.T) {
@@ -44,7 +44,7 @@ func TestOnlineAccountsCacheBasic(t *testing.T) {
 	for i := 0; i < roundsNum; i++ {
 		acct := cachedOnlineAccount{
 			updRound:              basics.Round(i),
-			baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
+			baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
 		}
 		written := oac.writeFront(addr, acct)
 		require.True(t, written)
@@ -55,13 +55,13 @@ func TestOnlineAccountsCacheBasic(t *testing.T) {
 		acct, has := oac.read(addr, basics.Round(i))
 		require.True(t, has)
 		require.Equal(t, basics.Round(i), acct.updRound)
-		require.Equal(t, uint64(i), acct.MicroAlgos.Raw)
+		require.Equal(t, uint64(i), acct.MicroNovas.Raw)
 	}
 
 	for i := proto.MaxBalLookback; i < uint64(roundsNum)+proto.MaxBalLookback; i++ {
 		acct := cachedOnlineAccount{
 			updRound:              basics.Round(i),
-			baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: i}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
+			baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: i}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
 		}
 		written := oac.writeFront(addr, acct)
 		require.True(t, written)
@@ -73,13 +73,13 @@ func TestOnlineAccountsCacheBasic(t *testing.T) {
 	acct, has := oac.read(addr, basics.Round(proto.MaxBalLookback-1))
 	require.True(t, has)
 	require.Equal(t, basics.Round(roundsNum-1), acct.updRound)
-	require.Equal(t, uint64(roundsNum-1), acct.MicroAlgos.Raw)
+	require.Equal(t, uint64(roundsNum-1), acct.MicroNovas.Raw)
 
 	for i := proto.MaxBalLookback; i < uint64(roundsNum)+proto.MaxBalLookback; i++ {
 		acct, has := oac.read(addr, basics.Round(i))
 		require.True(t, has)
 		require.Equal(t, basics.Round(i), acct.updRound)
-		require.Equal(t, uint64(i), acct.MicroAlgos.Raw)
+		require.Equal(t, uint64(i), acct.MicroNovas.Raw)
 	}
 
 	_, has = oac.read(addr, basics.Round(0))
@@ -88,7 +88,7 @@ func TestOnlineAccountsCacheBasic(t *testing.T) {
 	// attempt to insert a value with the updRound less than latest, expect it to have ignored
 	acct = cachedOnlineAccount{
 		updRound:              basics.Round(uint64(roundsNum) + proto.MaxBalLookback - 1),
-		baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: 100}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
+		baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: 100}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
 	}
 	written := oac.writeFront(addr, acct)
 	require.False(t, written)
@@ -109,13 +109,13 @@ func TestOnlineAccountsCachePruneOffline(t *testing.T) {
 	for i := 0; i < roundsNum; i++ {
 		acct := cachedOnlineAccount{
 			updRound:              basics.Round(i),
-			baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
+			baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
 		}
 		oac.writeFront(addr, acct)
 	}
 	acct := cachedOnlineAccount{
 		updRound:              basics.Round(roundsNum),
-		baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(roundsNum)}},
+		baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(roundsNum)}},
 	}
 	oac.writeFront(addr, acct)
 
@@ -139,7 +139,7 @@ func TestOnlineAccountsCacheMaxEntries(t *testing.T) {
 		lastAddr = ledgertesting.RandomAddress()
 		acct := cachedOnlineAccount{
 			updRound:              basics.Round(i),
-			baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
+			baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
 		}
 		written := oac.writeFront(lastAddr, acct)
 		require.True(t, written)
@@ -147,7 +147,7 @@ func TestOnlineAccountsCacheMaxEntries(t *testing.T) {
 
 	acct := cachedOnlineAccount{
 		updRound:              basics.Round(100),
-		baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(100)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
+		baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(100)}, baseVotingData: baseVotingData{VoteLastValid: 1000}},
 	}
 	written := oac.writeFront(ledgertesting.RandomAddress(), acct)
 	require.False(t, written)
@@ -158,7 +158,7 @@ func TestOnlineAccountsCacheMaxEntries(t *testing.T) {
 	// set one to be expired
 	acct = cachedOnlineAccount{
 		updRound:              basics.Round(maxCacheSize),
-		baseOnlineAccountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(100)}, baseVotingData: baseVotingData{}},
+		baseOnlineAccountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(100)}, baseVotingData: baseVotingData{}},
 	}
 	written = oac.writeFront(lastAddr, acct)
 	require.True(t, written)

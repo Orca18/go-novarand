@@ -20,13 +20,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 type (
@@ -63,10 +63,10 @@ type (
 		// When a block is applied, some amount of rewards are accrued to
 		// every account with AccountData.Status=/=NotParticipating.  The
 		// amount is (thisBlock.RewardsLevel-prevBlock.RewardsLevel) of
-		// MicroAlgos for every whole config.Protocol.RewardUnit of MicroAlgos in
-		// that account's AccountData.MicroAlgos.
+		// MicroNovas for every whole config.Protocol.RewardUnit of MicroNovas in
+		// that account's AccountData.MicroNovas.
 		//
-		// Rewards are not compounded (i.e., not added to AccountData.MicroAlgos)
+		// Rewards are not compounded (i.e., not added to AccountData.MicroNovas)
 		// until some other transaction is executed on that account.
 		//
 		// Not compounding rewards allows us to precisely know how many algos
@@ -166,16 +166,16 @@ type (
 		// rewards.
 		RewardsPool basics.Address `codec:"rwd"`
 
-		// RewardsLevel specifies how many rewards, in MicroAlgos,
+		// RewardsLevel specifies how many rewards, in MicroNovas,
 		// have been distributed to each config.Protocol.RewardUnit
-		// of MicroAlgos since genesis.
+		// of MicroNovas since genesis.
 		RewardsLevel uint64 `codec:"earn"`
 
-		// The number of new MicroAlgos added to the participation stake from rewards at the next round.
+		// The number of new MicroNovas added to the participation stake from rewards at the next round.
 		RewardsRate uint64 `codec:"rate"`
 
-		// The number of leftover MicroAlgos after the distribution of RewardsRate/rewardUnits
-		// MicroAlgos for every reward unit in the next round.
+		// The number of leftover MicroNovas after the distribution of RewardsRate/rewardUnits
+		// MicroNovas for every reward unit in the next round.
 		RewardsResidue uint64 `codec:"frac"`
 
 		// The round at which the RewardsRate will be recalculated.
@@ -226,10 +226,10 @@ type (
 		// this value is zero.
 		StateProofVotersCommitment crypto.GenericDigest `codec:"v"`
 
-		// StateProofOnlineTotalWeight is the total number of microalgos held by the online accounts
+		// StateProofOnlineTotalWeight is the total number of MicroNovas held by the online accounts
 		// during the StateProof round (or zero, if the merkle root is zero - no commitment for StateProof voters).
 		// This is intended for computing the threshold of votes to expect from StateProofVotersCommitment.
-		StateProofOnlineTotalWeight basics.MicroAlgos `codec:"t"`
+		StateProofOnlineTotalWeight basics.MicroNovas `codec:"t"`
 
 		// StateProofNextRound is the next round for which we will accept
 		// a StateProof transaction.
@@ -294,7 +294,7 @@ func (block *Block) Seed() committee.Seed {
 // NextRewardsState computes the RewardsState of the subsequent round
 // given the subsequent consensus parameters, along with the incentive pool
 // balance and the total reward units in the system as of the current round.
-func (s RewardsState) NextRewardsState(nextRound basics.Round, nextProto config.ConsensusParams, incentivePoolBalance basics.MicroAlgos, totalRewardUnits uint64, log logging.Logger) (res RewardsState) {
+func (s RewardsState) NextRewardsState(nextRound basics.Round, nextProto config.ConsensusParams, incentivePoolBalance basics.MicroNovas, totalRewardUnits uint64, log logging.Logger) (res RewardsState) {
 	res = s
 
 	if nextRound == res.RewardsRecalculationRound {
@@ -339,7 +339,7 @@ func (s RewardsState) NextRewardsState(nextRound basics.Round, nextProto config.
 	nextResidue := rewardsWithResidue % totalRewardUnits
 
 	if ot.Overflowed {
-		log.Errorf("could not compute next reward level (current level %v, adding %v MicroAlgos in total, number of reward units %v) using old level",
+		log.Errorf("could not compute next reward level (current level %v, adding %v MicroNovas in total, number of reward units %v) using old level",
 			res.RewardsLevel, rewardsRate, totalRewardUnits)
 		return
 	}

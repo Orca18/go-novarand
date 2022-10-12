@@ -24,8 +24,8 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/network"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/network"
 )
 
 const (

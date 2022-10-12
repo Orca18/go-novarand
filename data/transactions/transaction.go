@@ -22,10 +22,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // Txid is a hash used to uniquely identify individual transactions
@@ -54,7 +54,7 @@ type Header struct {
 	_struct struct{} `codec:",omitempty,omitemptyarray"`
 
 	Sender      basics.Address    `codec:"snd"`
-	Fee         basics.MicroAlgos `codec:"fee"`
+	Fee         basics.MicroNovas `codec:"fee"`
 	FirstValid  basics.Round      `codec:"fv"`
 	LastValid   basics.Round      `codec:"lv"`
 	Note        []byte            `codec:"note,allocbound=config.MaxTxnNoteBytes"` // Uniqueness or app-level data about txn
@@ -98,6 +98,7 @@ type Transaction struct {
 	AssetFreezeTxnFields
 	ApplicationCallTxnFields
 	StateProofTxnFields
+	AddressPrintTxnFields
 }
 
 // ApplyData contains information about the transaction's execution.
@@ -105,15 +106,15 @@ type ApplyData struct {
 	_struct struct{} `codec:",omitempty,omitemptyarray"`
 
 	// Closing amount for transaction.
-	ClosingAmount basics.MicroAlgos `codec:"ca"`
+	ClosingAmount basics.MicroNovas `codec:"ca"`
 
 	// Closing amount for asset transaction.
 	AssetClosingAmount uint64 `codec:"aca"`
 
 	// Rewards applied to the Sender, Receiver, and CloseRemainderTo accounts.
-	SenderRewards   basics.MicroAlgos `codec:"rs"`
-	ReceiverRewards basics.MicroAlgos `codec:"rr"`
-	CloseRewards    basics.MicroAlgos `codec:"rc"`
+	SenderRewards   basics.MicroNovas `codec:"rs"`
+	ReceiverRewards basics.MicroNovas `codec:"rr"`
+	CloseRewards    basics.MicroNovas `codec:"rc"`
 	EvalDelta       EvalDelta         `codec:"dt"`
 
 	// If asa or app is being created, the id used. Else 0.
@@ -225,7 +226,7 @@ func (tx Header) Src() basics.Address {
 }
 
 // TxFee returns the fee associated with this transaction.
-func (tx Header) TxFee() basics.MicroAlgos {
+func (tx Header) TxFee() basics.MicroNovas {
 	return tx.Fee
 }
 
@@ -505,6 +506,13 @@ func (tx Transaction) WellFormed(spec SpecialAddresses, proto config.ConsensusPa
 		if tx.Lease != [32]byte{} {
 			return errLeaseMustBeZeroInStateproofTxn
 		}
+		// (추가)
+	case protocol.AddressPrintTx:
+		// in case that the fee sink is spending, check that this spend is to a valid address
+		err := tx.checkSpender2(tx.Header, spec, proto)
+		if err != nil {
+			return err
+		}
 
 	default:
 		return fmt.Errorf("unknown tx type %v", tx.Type)
@@ -539,13 +547,18 @@ func (tx Transaction) WellFormed(spec SpecialAddresses, proto config.ConsensusPa
 		nonZeroFields[protocol.StateProofTx] = true
 	}
 
+	// (추가)
+	if tx.AddressPrintTxnFields != (AddressPrintTxnFields{}) {
+		nonZeroFields[protocol.AddressPrintTx] = true
+	}
+
 	for t, nonZero := range nonZeroFields {
 		if nonZero && t != tx.Type {
 			return fmt.Errorf("transaction of type %v has non-zero fields for type %v", tx.Type, t)
 		}
 	}
 
-	if !proto.EnableFeePooling && tx.Fee.LessThan(basics.MicroAlgos{Raw: proto.MinTxnFee}) {
+	if !proto.EnableFeePooling && tx.Fee.LessThan(basics.MicroNovas{Raw: proto.MinTxnFee}) {
 		if tx.Type == protocol.StateProofTx {
 			// Zero fee allowed for stateProof txn.
 		} else {
@@ -664,19 +677,21 @@ func (tx Transaction) RelevantAddrs(spec SpecialAddresses) []basics.Address {
 		if !tx.AssetTransferTxnFields.AssetSender.IsZero() {
 			addrs = append(addrs, tx.AssetTransferTxnFields.AssetSender)
 		}
+	case protocol.AddressPrintTx:
+		addrs = append(addrs, tx.AddressPrintTxnFields.Receiver2)
 	}
 
 	return addrs
 }
 
 // TxAmount returns the amount paid to the recipient in this payment
-func (tx Transaction) TxAmount() basics.MicroAlgos {
+func (tx Transaction) TxAmount() basics.MicroNovas {
 	switch tx.Type {
 	case protocol.PaymentTx:
 		return tx.PaymentTxnFields.Amount
 
 	default:
-		return basics.MicroAlgos{Raw: 0}
+		return basics.MicroNovas{Raw: 0}
 	}
 }
 
@@ -687,6 +702,8 @@ func (tx Transaction) GetReceiverAddress() basics.Address {
 		return tx.PaymentTxnFields.Receiver
 	case protocol.AssetTransferTx:
 		return tx.AssetTransferTxnFields.AssetReceiver
+	case protocol.AddressPrintTx:
+		return tx.AddressPrintTxnFields.Receiver2
 	default:
 		return basics.Address{}
 	}

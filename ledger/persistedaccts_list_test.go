@@ -19,8 +19,8 @@ package ledger
 import (
 	"testing"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type dataListNode interface {

@@ -22,10 +22,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func TestLRUOnlineAccountsBasic(t *testing.T) {
@@ -41,7 +41,7 @@ func TestLRUOnlineAccountsBasic(t *testing.T) {
 			addr:        basics.Address(crypto.Hash([]byte{byte(i)})),
 			round:       basics.Round(i),
 			rowid:       int64(i),
-			accountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}},
+			accountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}},
 		}
 		baseOnlineAcct.write(acct)
 	}
@@ -53,7 +53,7 @@ func TestLRUOnlineAccountsBasic(t *testing.T) {
 		require.True(t, has)
 		require.Equal(t, basics.Round(i), acct.round)
 		require.Equal(t, addr, acct.addr)
-		require.Equal(t, uint64(i), acct.accountData.MicroAlgos.Raw)
+		require.Equal(t, uint64(i), acct.accountData.MicroNovas.Raw)
 		require.Equal(t, int64(i), acct.rowid)
 	}
 
@@ -77,7 +77,7 @@ func TestLRUOnlineAccountsBasic(t *testing.T) {
 			require.True(t, has)
 			require.Equal(t, basics.Round(i), acct.round)
 			require.Equal(t, addr, acct.addr)
-			require.Equal(t, uint64(i), acct.accountData.MicroAlgos.Raw)
+			require.Equal(t, uint64(i), acct.accountData.MicroNovas.Raw)
 			require.Equal(t, int64(i), acct.rowid)
 		} else {
 			require.False(t, has)
@@ -100,7 +100,7 @@ func TestLRUOnlineAccountsPendingWrites(t *testing.T) {
 				addr:        basics.Address(crypto.Hash([]byte{byte(i)})),
 				round:       basics.Round(i),
 				rowid:       int64(i),
-				accountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}},
+				accountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}},
 			}
 			baseOnlineAcct.writePending(acct)
 		}(i)
@@ -142,7 +142,7 @@ func TestLRUOnlineAccountsPendingWritesWarning(t *testing.T) {
 				addr:        basics.Address(crypto.Hash([]byte{byte(i)})),
 				round:       basics.Round(i),
 				rowid:       int64(i),
-				accountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}},
+				accountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}},
 			}
 			baseOnlineAcct.writePending(acct)
 		}
@@ -168,7 +168,7 @@ func TestLRUOnlineAccountsOmittedPendingWrites(t *testing.T) {
 			addr:        basics.Address(crypto.Hash([]byte{byte(i)})),
 			round:       basics.Round(i),
 			rowid:       int64(i),
-			accountData: baseOnlineAccountData{MicroAlgos: basics.MicroAlgos{Raw: uint64(i)}},
+			accountData: baseOnlineAccountData{MicroNovas: basics.MicroNovas{Raw: uint64(i)}},
 		}
 		baseOnlineAcct.writePending(acct)
 	}
@@ -182,7 +182,7 @@ func TestLRUOnlineAccountsOmittedPendingWrites(t *testing.T) {
 		require.True(t, has)
 		require.Equal(t, basics.Round(i), acct.round)
 		require.Equal(t, addr, acct.addr)
-		require.Equal(t, uint64(i), acct.accountData.MicroAlgos.Raw)
+		require.Equal(t, uint64(i), acct.accountData.MicroNovas.Raw)
 		require.Equal(t, int64(i), acct.rowid)
 	}
 

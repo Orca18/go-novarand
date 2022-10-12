@@ -17,10 +17,10 @@
 package bookkeeping
 
 import (
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // LightBlockHeader represents a minimal block header. It contains all the necessary fields

@@ -28,8 +28,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/tools/network"
-	"github.com/algorand/go-algorand/tools/network/cloudflare"
+	"github.com/Orca18/go-novarand/tools/network"
+	"github.com/Orca18/go-novarand/tools/network/cloudflare"
 )
 
 var (

@@ -19,9 +19,9 @@ package mocks
 import (
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 // MockParticipationRegistry is a dummy ParticipationRegistry that doesn't do anything

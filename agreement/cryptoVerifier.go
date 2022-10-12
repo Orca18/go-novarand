@@ -20,9 +20,9 @@ import (
 	"context"
 	"sync"
 
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/metrics"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/metrics"
 )
 
 var voteVerifierOutFullCounter = metrics.MakeCounter(

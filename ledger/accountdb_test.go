@@ -35,18 +35,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/crypto/merkletrie"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/crypto/merkletrie"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 func accountsInitTest(tb testing.TB, tx *sql.Tx, initAccounts map[basics.Address]basics.AccountData, proto protocol.ConsensusVersion) (newDatabase bool) {
@@ -106,11 +106,11 @@ func checkAccounts(t *testing.T, tx *sql.Tx, rnd basics.Round, accts map[basics.
 
 		switch d.Status {
 		case basics.Online:
-			totalOnline += d.MicroAlgos.Raw
+			totalOnline += d.MicroNovas.Raw
 		case basics.Offline:
-			totalOffline += d.MicroAlgos.Raw
+			totalOffline += d.MicroNovas.Raw
 		case basics.NotParticipating:
-			totalNotPart += d.MicroAlgos.Raw
+			totalNotPart += d.MicroNovas.Raw
 		default:
 			t.Errorf("unknown status %v", d.Status)
 		}
@@ -371,7 +371,7 @@ func TestAccountDBInMemoryAcct(t *testing.T) {
 		func(addr basics.Address) ([]ledgercore.AccountDeltas, int, int) {
 			const numRounds = 4
 			accountDeltas := make([]ledgercore.AccountDeltas, numRounds)
-			accountDeltas[0].Upsert(addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}}})
+			accountDeltas[0].Upsert(addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}}})
 			accountDeltas[0].UpsertAssetResource(addr, 100, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 0}})
 			// transfer some asset
 			accountDeltas[1].UpsertAssetResource(addr, 100, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 100}})
@@ -384,7 +384,7 @@ func TestAccountDBInMemoryAcct(t *testing.T) {
 		func(addr basics.Address) ([]ledgercore.AccountDeltas, int, int) {
 			const numRounds = 4
 			accountDeltas := make([]ledgercore.AccountDeltas, numRounds)
-			accountDeltas[0].Upsert(addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}}})
+			accountDeltas[0].Upsert(addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}}})
 			accountDeltas[1].UpsertAssetResource(addr, 100, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 0}})
 			// close out the asset
 			accountDeltas[2].UpsertAssetResource(addr, 100, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Deleted: true})
@@ -622,10 +622,10 @@ func generateRandomTestingAccountBalances(numAccounts int) (updates map[basics.A
 	for i := 0; i < numAccounts; i++ {
 		addr := ledgertesting.RandomAddress()
 		updates[addr] = basics.AccountData{
-			MicroAlgos:         basics.MicroAlgos{Raw: 0x000ffffffffffffff / uint64(numAccounts)},
+			MicroNovas:         basics.MicroNovas{Raw: 0x000ffffffffffffff / uint64(numAccounts)},
 			Status:             basics.NotParticipating,
 			RewardsBase:        uint64(i),
-			RewardedMicroAlgos: basics.MicroAlgos{Raw: 0x000ffffffffffffff / uint64(numAccounts)},
+			RewardedMicroNovas: basics.MicroNovas{Raw: 0x000ffffffffffffff / uint64(numAccounts)},
 			VoteID:             secrets.OneTimeSignatureVerifier,
 			SelectionID:        pubVrfKey,
 			StateProofID:       stateProofID.Commitment,
@@ -896,10 +896,10 @@ func TestAccountsReencoding(t *testing.T) {
 		for i := 0; i < 100; i++ {
 			addr := ledgertesting.RandomAddress()
 			accData := basics.AccountData{
-				MicroAlgos:         basics.MicroAlgos{Raw: 0x000ffffffffffffff},
+				MicroNovas:         basics.MicroNovas{Raw: 0x000ffffffffffffff},
 				Status:             basics.NotParticipating,
 				RewardsBase:        uint64(i),
-				RewardedMicroAlgos: basics.MicroAlgos{Raw: 0x000ffffffffffffff},
+				RewardedMicroNovas: basics.MicroNovas{Raw: 0x000ffffffffffffff},
 				VoteID:             secrets.OneTimeSignatureVerifier,
 				SelectionID:        pubVrfKey,
 				StateProofID:       stateProofID.Commitment,
@@ -1020,7 +1020,7 @@ func benchmarkWriteCatchpointStagingBalancesSub(b *testing.B, ascendingOrder boo
 		for i := uint64(0); i < chunkSize; i++ {
 			var randomAccount encodedBalanceRecordV6
 			accountData := baseAccountData{RewardsBase: accountsLoaded + i}
-			accountData.MicroAlgos.Raw = crypto.RandUint63()
+			accountData.MicroNovas.Raw = crypto.RandUint63()
 			randomAccount.AccountData = protocol.Encode(&accountData)
 			crypto.RandBytes(randomAccount.Address[:])
 			if ascendingOrder {
@@ -1114,7 +1114,7 @@ func TestCompactAccountDeltas(t *testing.T) {
 	a.Zero(ad.len())
 	a.Panics(func() { ad.getByIdx(0) })
 
-	sample1 := accountDelta{newAcct: baseAccountData{MicroAlgos: basics.MicroAlgos{Raw: 123}}, address: addr}
+	sample1 := accountDelta{newAcct: baseAccountData{MicroNovas: basics.MicroNovas{Raw: 123}}, address: addr}
 	ad.upsert(addr, sample1)
 	data, idx = ad.get(addr)
 	a.NotEqual(-1, idx)
@@ -1125,7 +1125,7 @@ func TestCompactAccountDeltas(t *testing.T) {
 	a.Equal(addr, data.address)
 	a.Equal(sample1, data)
 
-	sample2 := accountDelta{newAcct: baseAccountData{MicroAlgos: basics.MicroAlgos{Raw: 456}}, address: addr}
+	sample2 := accountDelta{newAcct: baseAccountData{MicroNovas: basics.MicroNovas{Raw: 456}}, address: addr}
 	ad.upsert(addr, sample2)
 	data, idx = ad.get(addr)
 	a.NotEqual(-1, idx)
@@ -1146,7 +1146,7 @@ func TestCompactAccountDeltas(t *testing.T) {
 	a.Equal(addr, data.address)
 	a.Equal(sample2, data)
 
-	old1 := persistedAccountData{addr: addr, accountData: baseAccountData{MicroAlgos: basics.MicroAlgos{Raw: 789}}}
+	old1 := persistedAccountData{addr: addr, accountData: baseAccountData{MicroNovas: basics.MicroNovas{Raw: 789}}}
 	ad.upsertOld(old1)
 	a.Equal(1, ad.len())
 	data = ad.getByIdx(0)
@@ -1154,7 +1154,7 @@ func TestCompactAccountDeltas(t *testing.T) {
 	a.Equal(accountDelta{newAcct: sample2.newAcct, oldAcct: old1, address: addr}, data)
 
 	addr1 := ledgertesting.RandomAddress()
-	old2 := persistedAccountData{addr: addr1, accountData: baseAccountData{MicroAlgos: basics.MicroAlgos{Raw: 789}}}
+	old2 := persistedAccountData{addr: addr1, accountData: baseAccountData{MicroNovas: basics.MicroNovas{Raw: 789}}}
 	ad.upsertOld(old2)
 	a.Equal(2, ad.len())
 	data = ad.getByIdx(0)
@@ -2157,7 +2157,7 @@ func TestBaseAccountDataIsEmpty(t *testing.T) {
 	structureTesting := func(t *testing.T) {
 		encoding, err := json.Marshal(&empty)
 		zeros32 := "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
-		expectedEncoding := `{"Status":0,"MicroAlgos":{"Raw":0},"RewardsBase":0,"RewardedMicroAlgos":{"Raw":0},"AuthAddr":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ","TotalAppSchemaNumUint":0,"TotalAppSchemaNumByteSlice":0,"TotalExtraAppPages":0,"TotalAssetParams":0,"TotalAssets":0,"TotalAppParams":0,"TotalAppLocalStates":0,"VoteID":[` + zeros32 + `],"SelectionID":[` + zeros32 + `],"VoteFirstValid":0,"VoteLastValid":0,"VoteKeyDilution":0,"StateProofID":[` + zeros32 + `,` + zeros32 + `],"UpdateRound":0}`
+		expectedEncoding := `{"Status":0,"MicroNovas":{"Raw":0},"RewardsBase":0,"RewardedMicroNovas":{"Raw":0},"AuthAddr":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ","TotalAppSchemaNumUint":0,"TotalAppSchemaNumByteSlice":0,"TotalExtraAppPages":0,"TotalAssetParams":0,"TotalAssets":0,"TotalAppParams":0,"TotalAppLocalStates":0,"VoteID":[` + zeros32 + `],"SelectionID":[` + zeros32 + `],"VoteFirstValid":0,"VoteLastValid":0,"VoteKeyDilution":0,"StateProofID":[` + zeros32 + `,` + zeros32 + `],"UpdateRound":0}`
 		require.NoError(t, err)
 		require.Equal(t, expectedEncoding, string(encoding))
 	}
@@ -2174,7 +2174,7 @@ func TestBaseOnlineAccountDataIsEmpty(t *testing.T) {
 		var ba baseOnlineAccountData
 		require.True(t, ba.IsEmpty())
 		require.True(t, ba.IsVotingEmpty())
-		ba.MicroAlgos.Raw = 100
+		ba.MicroNovas.Raw = 100
 		require.True(t, ba.IsVotingEmpty())
 		ba.RewardsBase = 200
 		require.True(t, ba.IsVotingEmpty())
@@ -2192,7 +2192,7 @@ func TestBaseOnlineAccountDataIsEmpty(t *testing.T) {
 		}
 		{
 			var ba baseOnlineAccountData
-			ba.MicroAlgos.Raw = 100
+			ba.MicroNovas.Raw = 100
 			require.False(t, ba.IsEmpty())
 		}
 		{
@@ -2204,7 +2204,7 @@ func TestBaseOnlineAccountDataIsEmpty(t *testing.T) {
 	structureTesting := func(t *testing.T) {
 		encoding, err := json.Marshal(&empty)
 		zeros32 := "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
-		expectedEncoding := `{"VoteID":[` + zeros32 + `],"SelectionID":[` + zeros32 + `],"VoteFirstValid":0,"VoteLastValid":0,"VoteKeyDilution":0,"StateProofID":[` + zeros32 + `,` + zeros32 + `],"MicroAlgos":{"Raw":0},"RewardsBase":0}`
+		expectedEncoding := `{"VoteID":[` + zeros32 + `],"SelectionID":[` + zeros32 + `],"VoteFirstValid":0,"VoteLastValid":0,"VoteKeyDilution":0,"StateProofID":[` + zeros32 + `,` + zeros32 + `],"MicroNovas":{"Raw":0},"RewardsBase":0}`
 		require.NoError(t, err)
 		require.Equal(t, expectedEncoding, string(encoding))
 	}
@@ -2232,7 +2232,7 @@ func TestBaseOnlineAccountDataGettersSetters(t *testing.T) {
 	ad := ledgercore.ToAccountData(data)
 	ba.SetCoreAccountData(&ad)
 
-	require.Equal(t, data.MicroAlgos, ba.MicroAlgos)
+	require.Equal(t, data.MicroNovas, ba.MicroNovas)
 	require.Equal(t, data.RewardsBase, ba.RewardsBase)
 	require.Equal(t, data.VoteID, ba.VoteID)
 	require.Equal(t, data.SelectionID, ba.SelectionID)
@@ -2241,12 +2241,12 @@ func TestBaseOnlineAccountDataGettersSetters(t *testing.T) {
 	require.Equal(t, data.VoteKeyDilution, ba.VoteKeyDilution)
 	require.Equal(t, data.StateProofID, ba.StateProofID)
 
-	normBalance := basics.NormalizedOnlineAccountBalance(basics.Online, data.RewardsBase, data.MicroAlgos, proto)
+	normBalance := basics.NormalizedOnlineAccountBalance(basics.Online, data.RewardsBase, data.MicroNovas, proto)
 	require.Equal(t, normBalance, ba.NormalizedOnlineBalance(proto))
 	oa := ba.GetOnlineAccount(addr, normBalance)
 
 	require.Equal(t, addr, oa.Address)
-	require.Equal(t, ba.MicroAlgos, oa.MicroAlgos)
+	require.Equal(t, ba.MicroNovas, oa.MicroNovas)
 	require.Equal(t, ba.RewardsBase, oa.RewardsBase)
 	require.Equal(t, normBalance, oa.NormalizedOnlineBalance)
 	require.Equal(t, ba.VoteFirstValid, oa.VoteFirstValid)
@@ -2254,12 +2254,12 @@ func TestBaseOnlineAccountDataGettersSetters(t *testing.T) {
 	require.Equal(t, ba.StateProofID, oa.StateProofID)
 
 	rewardsLevel := uint64(1)
-	microAlgos, _, _ := basics.WithUpdatedRewards(
-		proto, basics.Online, oa.MicroAlgos, basics.MicroAlgos{}, ba.RewardsBase, rewardsLevel,
+	MicroNovas, _, _ := basics.WithUpdatedRewards(
+		proto, basics.Online, oa.MicroNovas, basics.MicroNovas{}, ba.RewardsBase, rewardsLevel,
 	)
 	oad := ba.GetOnlineAccountData(proto, rewardsLevel)
 
-	require.Equal(t, microAlgos, oad.MicroAlgosWithRewards)
+	require.Equal(t, MicroNovas, oad.MicroNovasWithRewards)
 	require.Equal(t, ba.VoteID, oad.VoteID)
 	require.Equal(t, ba.SelectionID, oad.SelectionID)
 	require.Equal(t, ba.StateProofID, oad.StateProofID)
@@ -2735,26 +2735,26 @@ func TestAccountUnorderedUpdates(t *testing.T) {
 	aidx := basics.AppIndex(22045503)
 
 	// set a base state: fund couple accounts, create an app and opt-in
-	mock.setAccount(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 10000000}, TotalAppParams: 1}})
+	mock.setAccount(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 10000000}, TotalAppParams: 1}})
 	err := mock.setResource(observer, basics.CreatableIndex(aidx), ledgercore.AccountResource{AppParams: &basics.AppParams{ApprovalProgram: []byte{1, 2, 3}}})
 	a.NoError(err)
-	mock.setAccount(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 10000000}, TotalAppLocalStates: 1}})
+	mock.setAccount(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 10000000}, TotalAppLocalStates: 1}})
 	err = mock.setResource(addr1, basics.CreatableIndex(aidx), ledgercore.AccountResource{AppLocalState: &basics.AppLocalState{Schema: basics.StateSchema{NumUint: 10}}})
 	a.NoError(err)
 
 	updates := make([]ledgercore.AccountDeltas, 4)
 	// payment addr1 -> observer
-	updates[0].Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 9000000}, TotalAppLocalStates: 1}})
-	updates[0].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 11000000}, TotalAppParams: 1}})
+	updates[0].Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 9000000}, TotalAppLocalStates: 1}})
+	updates[0].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 11000000}, TotalAppParams: 1}})
 
 	// fund addr2, opt-in
-	updates[1].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 10000000}, TotalAppParams: 1}})
-	updates[1].Upsert(addr2, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAppLocalStates: 1}})
+	updates[1].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 10000000}, TotalAppParams: 1}})
+	updates[1].Upsert(addr2, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAppLocalStates: 1}})
 	updates[1].UpsertAppResource(addr2, aidx, ledgercore.AppParamsDelta{}, ledgercore.AppLocalStateDelta{LocalState: &basics.AppLocalState{Schema: basics.StateSchema{NumUint: 10}}})
 
 	// close addr1: delete app, move funds
 	updates[2].UpsertAppResource(addr1, aidx, ledgercore.AppParamsDelta{}, ledgercore.AppLocalStateDelta{Deleted: true})
-	updates[2].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 19000000}, TotalAppParams: 1}})
+	updates[2].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 19000000}, TotalAppParams: 1}})
 	updates[2].Upsert(addr1, ledgercore.AccountData{})
 
 	// this is not required but adds one more resource entry and helps in combinations testing
@@ -2831,26 +2831,26 @@ func TestAccountsNewRoundDeletedResourceEntries(t *testing.T) {
 	aidx := basics.AppIndex(22045503)
 
 	// set a base state: fund couple accounts, create an app and opt-in
-	mock.setAccount(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 10000000}, TotalAppParams: 1}})
+	mock.setAccount(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 10000000}, TotalAppParams: 1}})
 	err := mock.setResource(observer, basics.CreatableIndex(aidx), ledgercore.AccountResource{AppParams: &basics.AppParams{ApprovalProgram: []byte{1, 2, 3}}})
 	a.NoError(err)
-	mock.setAccount(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 10000000}, TotalAppLocalStates: 1}})
+	mock.setAccount(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 10000000}, TotalAppLocalStates: 1}})
 	err = mock.setResource(addr1, basics.CreatableIndex(aidx), ledgercore.AccountResource{AppLocalState: &basics.AppLocalState{Schema: basics.StateSchema{NumUint: 10}}})
 	a.NoError(err)
 
 	updates := make([]ledgercore.AccountDeltas, 3)
 	// fund addr2, opt-in, delete app, move funds
-	updates[0].Upsert(addr2, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAppLocalStates: 1}})
+	updates[0].Upsert(addr2, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAppLocalStates: 1}})
 	updates[0].UpsertAppResource(addr2, aidx, ledgercore.AppParamsDelta{}, ledgercore.AppLocalStateDelta{LocalState: &basics.AppLocalState{Schema: basics.StateSchema{NumUint: 10}}})
 
 	// close addr1: delete app, move funds
 	updates[1].UpsertAppResource(addr1, aidx, ledgercore.AppParamsDelta{}, ledgercore.AppLocalStateDelta{Deleted: true})
-	updates[1].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 20000000}, TotalAppParams: 1}})
+	updates[1].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 20000000}, TotalAppParams: 1}})
 	updates[1].Upsert(addr1, ledgercore.AccountData{})
 
 	// close addr2: delete app, move funds
 	updates[2].UpsertAppResource(addr2, aidx, ledgercore.AppParamsDelta{}, ledgercore.AppLocalStateDelta{Deleted: true})
-	updates[2].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 11000000}, TotalAppParams: 1}})
+	updates[2].Upsert(observer, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 11000000}, TotalAppParams: 1}})
 	updates[2].Upsert(addr2, ledgercore.AccountData{})
 
 	dbRound := basics.Round(1)
@@ -2975,7 +2975,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 
 	dataA1 := ledgercore.AccountData{
 		AccountBaseData: ledgercore.AccountBaseData{
-			MicroAlgos: basics.MicroAlgos{Raw: 100_000_000},
+			MicroNovas: basics.MicroNovas{Raw: 100_000_000},
 			Status:     basics.Online,
 		},
 		VotingData: ledgercore.VotingData{
@@ -2985,7 +2985,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 
 	dataB1 := ledgercore.AccountData{
 		AccountBaseData: ledgercore.AccountBaseData{
-			MicroAlgos: basics.MicroAlgos{Raw: 200_000_000},
+			MicroNovas: basics.MicroNovas{Raw: 200_000_000},
 			Status:     basics.Online,
 		},
 		VotingData: ledgercore.VotingData{
@@ -2995,7 +2995,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 
 	dataC3 := ledgercore.AccountData{
 		AccountBaseData: ledgercore.AccountBaseData{
-			MicroAlgos: basics.MicroAlgos{Raw: 300_000_000},
+			MicroNovas: basics.MicroNovas{Raw: 300_000_000},
 			Status:     basics.Online,
 		},
 		VotingData: ledgercore.VotingData{
@@ -3068,26 +3068,26 @@ func TestAccountOnlineQueries(t *testing.T) {
 	require.True(t, ok)
 	require.NotNil(t, onlineAcctA)
 	require.Equal(t, addrA, onlineAcctA.Address)
-	require.Equal(t, dataA1.AccountBaseData.MicroAlgos, onlineAcctA.MicroAlgos)
+	require.Equal(t, dataA1.AccountBaseData.MicroNovas, onlineAcctA.MicroNovas)
 
 	onlineAcctB, ok := online[addrB]
 	require.True(t, ok)
 	require.NotNil(t, onlineAcctB)
 	require.Equal(t, addrB, onlineAcctB.Address)
-	require.Equal(t, dataB1.AccountBaseData.MicroAlgos, onlineAcctB.MicroAlgos)
+	require.Equal(t, dataB1.AccountBaseData.MicroNovas, onlineAcctB.MicroNovas)
 
 	paod, err := queries.lookupOnline(addrA, rnd)
 	require.NoError(t, err)
 	require.Equal(t, basics.Round(3), paod.round)
 	require.Equal(t, addrA, paod.addr)
-	require.Equal(t, dataA1.AccountBaseData.MicroAlgos, paod.accountData.MicroAlgos)
+	require.Equal(t, dataA1.AccountBaseData.MicroNovas, paod.accountData.MicroNovas)
 	require.Equal(t, voteIDA, paod.accountData.VoteID)
 
 	paod, err = queries.lookupOnline(addrB, rnd)
 	require.NoError(t, err)
 	require.Equal(t, basics.Round(3), paod.round)
 	require.Equal(t, addrB, paod.addr)
-	require.Equal(t, dataB1.AccountBaseData.MicroAlgos, paod.accountData.MicroAlgos)
+	require.Equal(t, dataB1.AccountBaseData.MicroNovas, paod.accountData.MicroNovas)
 	require.Equal(t, voteIDB, paod.accountData.VoteID)
 
 	paod, err = queries.lookupOnline(addrC, rnd)
@@ -3108,7 +3108,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 	require.True(t, ok)
 	require.NotNil(t, onlineAcctB)
 	require.Equal(t, addrB, onlineAcctB.Address)
-	require.Equal(t, dataB1.AccountBaseData.MicroAlgos, onlineAcctB.MicroAlgos)
+	require.Equal(t, dataB1.AccountBaseData.MicroNovas, onlineAcctB.MicroNovas)
 
 	paod, err = queries.lookupOnline(addrA, rnd)
 	require.NoError(t, err)
@@ -3120,7 +3120,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, basics.Round(3), paod.round)
 	require.Equal(t, addrB, paod.addr)
-	require.Equal(t, dataB1.AccountBaseData.MicroAlgos, paod.accountData.MicroAlgos)
+	require.Equal(t, dataB1.AccountBaseData.MicroNovas, paod.accountData.MicroNovas)
 	require.Equal(t, voteIDB, paod.accountData.VoteID)
 
 	paod, err = queries.lookupOnline(addrC, rnd)
@@ -3141,7 +3141,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 	require.True(t, ok)
 	require.NotNil(t, onlineAcctC)
 	require.Equal(t, addrC, onlineAcctC.Address)
-	require.Equal(t, dataC3.AccountBaseData.MicroAlgos, onlineAcctC.MicroAlgos)
+	require.Equal(t, dataC3.AccountBaseData.MicroNovas, onlineAcctC.MicroNovas)
 
 	paod, err = queries.lookupOnline(addrA, rnd)
 	require.NoError(t, err)
@@ -3159,7 +3159,7 @@ func TestAccountOnlineQueries(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, basics.Round(3), paod.round)
 	require.Equal(t, addrC, paod.addr)
-	require.Equal(t, dataC3.AccountBaseData.MicroAlgos, paod.accountData.MicroAlgos)
+	require.Equal(t, dataC3.AccountBaseData.MicroNovas, paod.accountData.MicroNovas)
 	require.Equal(t, voteIDC, paod.accountData.VoteID)
 
 	paods, err := onlineAccountsAll(tx, 0)
@@ -3280,7 +3280,7 @@ func TestAccountOnlineAccountsNewRound(t *testing.T) {
 	deltaB := onlineAccountDelta{
 		address: addrB,
 		newAcct: []baseOnlineAccountData{{
-			MicroAlgos: basics.MicroAlgos{Raw: 200_000_000},
+			MicroNovas: basics.MicroNovas{Raw: 200_000_000},
 		}},
 		updRound:  []uint64{1},
 		newStatus: []basics.Status{basics.Offline},
@@ -3289,7 +3289,7 @@ func TestAccountOnlineAccountsNewRound(t *testing.T) {
 	deltaC := onlineAccountDelta{
 		address: addrC,
 		newAcct: []baseOnlineAccountData{{
-			MicroAlgos:     basics.MicroAlgos{Raw: 300_000_000},
+			MicroNovas:     basics.MicroNovas{Raw: 300_000_000},
 			baseVotingData: baseVotingData{VoteFirstValid: 500},
 		}},
 		newStatus: []basics.Status{basics.Online},
@@ -3301,13 +3301,13 @@ func TestAccountOnlineAccountsNewRound(t *testing.T) {
 		oldAcct: persistedOnlineAccountData{
 			addr: addrD,
 			accountData: baseOnlineAccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: 400_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 400_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 500},
 			},
 			rowid: 1,
 		},
 		newAcct: []baseOnlineAccountData{{
-			MicroAlgos: basics.MicroAlgos{Raw: 400_000_000},
+			MicroNovas: basics.MicroNovas{Raw: 400_000_000},
 		}},
 		newStatus: []basics.Status{basics.Offline},
 		updRound:  []uint64{3},
@@ -3319,13 +3319,13 @@ func TestAccountOnlineAccountsNewRound(t *testing.T) {
 		oldAcct: persistedOnlineAccountData{
 			addr: addrE,
 			accountData: baseOnlineAccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: 500_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 500_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 500},
 			},
 			rowid: 2,
 		},
 		newAcct: []baseOnlineAccountData{{
-			MicroAlgos:     basics.MicroAlgos{Raw: 500_000_000},
+			MicroNovas:     basics.MicroNovas{Raw: 500_000_000},
 			baseVotingData: baseVotingData{VoteFirstValid: 600},
 		}},
 		newStatus: []basics.Status{basics.Online},
@@ -3379,10 +3379,10 @@ func TestAccountOnlineAccountsNewRoundFlip(t *testing.T) {
 		address: addrA,
 		newAcct: []baseOnlineAccountData{
 			{
-				MicroAlgos: basics.MicroAlgos{Raw: 100_000_000},
+				MicroNovas: basics.MicroNovas{Raw: 100_000_000},
 			},
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 100_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 100_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 100},
 			},
 		},
@@ -3394,11 +3394,11 @@ func TestAccountOnlineAccountsNewRoundFlip(t *testing.T) {
 		address: addrB,
 		newAcct: []baseOnlineAccountData{
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 200_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 200_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 200},
 			},
 			{
-				MicroAlgos: basics.MicroAlgos{Raw: 200_000_000},
+				MicroNovas: basics.MicroNovas{Raw: 200_000_000},
 			},
 		},
 		updRound:  []uint64{3, 4},
@@ -3410,18 +3410,18 @@ func TestAccountOnlineAccountsNewRoundFlip(t *testing.T) {
 		oldAcct: persistedOnlineAccountData{
 			addr: addrC,
 			accountData: baseOnlineAccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: 300_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 300_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 300},
 			},
 			rowid: 1,
 		},
 		newAcct: []baseOnlineAccountData{
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 300_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 300_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 301},
 			},
 			{
-				MicroAlgos: basics.MicroAlgos{Raw: 300_000_000},
+				MicroNovas: basics.MicroNovas{Raw: 300_000_000},
 			},
 		},
 		newStatus: []basics.Status{basics.Online, basics.Offline},
@@ -3617,14 +3617,14 @@ func TestOnlineAccountsDeletion(t *testing.T) {
 		address: addrA,
 		newAcct: []baseOnlineAccountData{
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 100_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 100_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 100},
 			},
 			{
-				MicroAlgos: basics.MicroAlgos{Raw: 100_000_000},
+				MicroNovas: basics.MicroNovas{Raw: 100_000_000},
 			},
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 100_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 100_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 600},
 			},
 		},
@@ -3636,11 +3636,11 @@ func TestOnlineAccountsDeletion(t *testing.T) {
 		address: addrB,
 		newAcct: []baseOnlineAccountData{
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 200_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 200_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 300},
 			},
 			{
-				MicroAlgos:     basics.MicroAlgos{Raw: 200_000_000},
+				MicroNovas:     basics.MicroNovas{Raw: 200_000_000},
 				baseVotingData: baseVotingData{VoteFirstValid: 700},
 			},
 		},

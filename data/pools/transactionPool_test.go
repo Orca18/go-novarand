@@ -30,24 +30,24 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	cryptostateproof "github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/stateproof"
-	"github.com/algorand/go-algorand/stateproof/verify"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	cryptostateproof "github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/stateproof"
+	"github.com/Orca18/go-novarand/stateproof/verify"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 var proto = config.Consensus[protocol.ConsensusCurrentVersion]
@@ -74,7 +74,7 @@ func mockLedger(t TestingT, initAccounts map[basics.Address]basics.AccountData, 
 	var pool basics.Address
 	crypto.RandBytes(pool[:])
 	var poolData basics.AccountData
-	poolData.MicroAlgos.Raw = 1 << 32
+	poolData.MicroNovas.Raw = 1 << 32
 	initAccounts[pool] = poolData
 
 	initBlock := bookkeeping.Block{
@@ -129,7 +129,7 @@ func initAcc(initBalances map[basics.Address]uint64) map[basics.Address]basics.A
 	res := make(map[basics.Address]basics.AccountData)
 	for addr, bal := range initBalances {
 		var data basics.AccountData
-		data.MicroAlgos.Raw = bal
+		data.MicroNovas.Raw = bal
 		res[addr] = data
 	}
 	return res
@@ -139,7 +139,7 @@ func initAccFixed(initAddrs []basics.Address, bal uint64) map[basics.Address]bas
 	res := make(map[basics.Address]basics.AccountData)
 	for _, addr := range initAddrs {
 		var data basics.AccountData
-		data.MicroAlgos.Raw = bal
+		data.MicroNovas.Raw = bal
 		res[addr] = data
 	}
 	return res
@@ -175,7 +175,7 @@ func TestMinBalanceOK(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -183,7 +183,7 @@ func TestMinBalanceOK(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance},
+			Amount:   basics.MicroNovas{Raw: minBalance},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -218,7 +218,7 @@ func TestSenderGoesBelowMinBalance(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + 1},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + 1},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -226,7 +226,7 @@ func TestSenderGoesBelowMinBalance(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance},
+			Amount:   basics.MicroNovas{Raw: minBalance},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -261,7 +261,7 @@ func TestSenderGoesBelowMinBalanceDueToAssets(t *testing.T) {
 		Type: protocol.AssetConfigTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -283,7 +283,7 @@ func TestSenderGoesBelowMinBalanceDueToAssets(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + 1},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + 1},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -291,7 +291,7 @@ func TestSenderGoesBelowMinBalanceDueToAssets(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance},
+			Amount:   basics.MicroNovas{Raw: minBalance},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -333,7 +333,7 @@ func TestCloseAccount(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -341,7 +341,7 @@ func TestCloseAccount(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver:         addresses[1],
-			Amount:           basics.MicroAlgos{Raw: minBalance},
+			Amount:           basics.MicroNovas{Raw: minBalance},
 			CloseRemainderTo: addresses[2],
 		},
 	}
@@ -353,7 +353,7 @@ func TestCloseAccount(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -361,7 +361,7 @@ func TestCloseAccount(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance},
+			Amount:   basics.MicroNovas{Raw: minBalance},
 		},
 	}
 	signedTx2 := tx.Sign(secrets[0])
@@ -396,7 +396,7 @@ func TestCloseAccountWhileTxIsPending(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -404,7 +404,7 @@ func TestCloseAccountWhileTxIsPending(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance},
+			Amount:   basics.MicroNovas{Raw: minBalance},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -415,7 +415,7 @@ func TestCloseAccountWhileTxIsPending(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -423,7 +423,7 @@ func TestCloseAccountWhileTxIsPending(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver:         addresses[1],
-			Amount:           basics.MicroAlgos{Raw: minBalance},
+			Amount:           basics.MicroNovas{Raw: minBalance},
 			CloseRemainderTo: addresses[2],
 		},
 	}
@@ -460,7 +460,7 @@ func TestClosingAccountBelowMinBalance(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -468,7 +468,7 @@ func TestClosingAccountBelowMinBalance(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver:         addresses[1],
-			Amount:           basics.MicroAlgos{Raw: minBalance},
+			Amount:           basics.MicroNovas{Raw: minBalance},
 			CloseRemainderTo: addresses[2],
 		},
 	}
@@ -504,7 +504,7 @@ func TestRecipientGoesBelowMinBalance(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -512,7 +512,7 @@ func TestRecipientGoesBelowMinBalance(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance - 1},
+			Amount:   basics.MicroNovas{Raw: minBalance - 1},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -549,7 +549,7 @@ func TestRememberForget(t *testing.T) {
 					Type: protocol.PaymentTx,
 					Header: transactions.Header{
 						Sender:      sender,
-						Fee:         basics.MicroAlgos{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
+						Fee:         basics.MicroNovas{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
 						FirstValid:  0,
 						LastValid:   basics.Round(proto.MaxTxnLife),
 						Note:        make([]byte, 2),
@@ -557,7 +557,7 @@ func TestRememberForget(t *testing.T) {
 					},
 					PaymentTxnFields: transactions.PaymentTxnFields{
 						Receiver: receiver,
-						Amount:   basics.MicroAlgos{Raw: 1},
+						Amount:   basics.MicroNovas{Raw: 1},
 					},
 				}
 				tx.Note[0] = byte(i)
@@ -615,7 +615,7 @@ func TestCleanUp(t *testing.T) {
 					Type: protocol.PaymentTx,
 					Header: transactions.Header{
 						Sender:      sender,
-						Fee:         basics.MicroAlgos{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
+						Fee:         basics.MicroNovas{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
 						FirstValid:  0,
 						LastValid:   5,
 						Note:        make([]byte, 2),
@@ -623,7 +623,7 @@ func TestCleanUp(t *testing.T) {
 					},
 					PaymentTxnFields: transactions.PaymentTxnFields{
 						Receiver: receiver,
-						Amount:   basics.MicroAlgos{Raw: 1},
+						Amount:   basics.MicroNovas{Raw: 1},
 					},
 				}
 				tx.Note[0] = byte(i)
@@ -697,7 +697,7 @@ func TestFixOverflowOnNewBlock(t *testing.T) {
 					Type: protocol.PaymentTx,
 					Header: transactions.Header{
 						Sender:      sender,
-						Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + amount},
+						Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + amount},
 						FirstValid:  0,
 						LastValid:   10,
 						Note:        make([]byte, 0),
@@ -705,7 +705,7 @@ func TestFixOverflowOnNewBlock(t *testing.T) {
 					},
 					PaymentTxnFields: transactions.PaymentTxnFields{
 						Receiver: receiver,
-						Amount:   basics.MicroAlgos{Raw: 0},
+						Amount:   basics.MicroNovas{Raw: 0},
 					},
 				}
 				amount++
@@ -730,7 +730,7 @@ func TestFixOverflowOnNewBlock(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      overSpender,
-			Fee:         basics.MicroAlgos{Raw: 1<<32 - proto.MinBalance - overSpenderAmount + proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: 1<<32 - proto.MinBalance - overSpenderAmount + proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   10,
 			Note:        []byte{1},
@@ -738,7 +738,7 @@ func TestFixOverflowOnNewBlock(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: recv,
-			Amount:   basics.MicroAlgos{Raw: 0},
+			Amount:   basics.MicroNovas{Raw: 0},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -788,7 +788,7 @@ func TestOverspender(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      overSpender,
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + 1},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + 1},
 			FirstValid:  0,
 			LastValid:   10,
 			Note:        make([]byte, 0),
@@ -796,7 +796,7 @@ func TestOverspender(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: receiver,
-			Amount:   basics.MicroAlgos{Raw: 0},
+			Amount:   basics.MicroNovas{Raw: 0},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -809,7 +809,7 @@ func TestOverspender(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      overSpender,
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  0,
 			LastValid:   10,
 			Note:        make([]byte, 0),
@@ -817,7 +817,7 @@ func TestOverspender(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: receiver,
-			Amount:   basics.MicroAlgos{Raw: 0},
+			Amount:   basics.MicroNovas{Raw: 0},
 		},
 	}
 	signedMinTx := minTx.Sign(secrets[0])
@@ -851,7 +851,7 @@ func TestRemove(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + 1},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + 1},
 			FirstValid:  0,
 			LastValid:   10,
 			Note:        []byte{0},
@@ -859,7 +859,7 @@ func TestRemove(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: receiver,
-			Amount:   basics.MicroAlgos{Raw: 0},
+			Amount:   basics.MicroNovas{Raw: 0},
 		},
 	}
 	signedTx := tx.Sign(secrets[0])
@@ -907,7 +907,7 @@ func TestLogicSigOK(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  1,
 			LastValid:   basics.Round(proto.MaxTxnLife),
 			Note:        make([]byte, 2),
@@ -915,7 +915,7 @@ func TestLogicSigOK(t *testing.T) {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: addresses[1],
-			Amount:   basics.MicroAlgos{Raw: minBalance},
+			Amount:   basics.MicroNovas{Raw: minBalance},
 		},
 	}
 	signedTx := transactions.SignedTxn{
@@ -956,7 +956,7 @@ func TestTransactionPool_CurrentFeePerByte(t *testing.T) {
 				Type: protocol.PaymentTx,
 				Header: transactions.Header{
 					Sender:      sender,
-					Fee:         basics.MicroAlgos{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
+					Fee:         basics.MicroNovas{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
 					FirstValid:  0,
 					LastValid:   basics.Round(proto.MaxTxnLife),
 					Note:        make([]byte, 2),
@@ -964,7 +964,7 @@ func TestTransactionPool_CurrentFeePerByte(t *testing.T) {
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
 					Receiver: receiver,
-					Amount:   basics.MicroAlgos{Raw: proto.MinBalance},
+					Amount:   basics.MicroNovas{Raw: proto.MinBalance},
 				},
 			}
 			tx.Note = make([]byte, 8, 8)
@@ -1007,7 +1007,7 @@ func BenchmarkTransactionPoolRememberOne(b *testing.B) {
 				Type: protocol.PaymentTx,
 				Header: transactions.Header{
 					Sender:      sender,
-					Fee:         basics.MicroAlgos{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
+					Fee:         basics.MicroNovas{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
 					FirstValid:  0,
 					LastValid:   basics.Round(proto.MaxTxnLife),
 					Note:        make([]byte, 2),
@@ -1015,7 +1015,7 @@ func BenchmarkTransactionPoolRememberOne(b *testing.B) {
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
 					Receiver: receiver,
-					Amount:   basics.MicroAlgos{Raw: proto.MinBalance},
+					Amount:   basics.MicroNovas{Raw: proto.MinBalance},
 				},
 			}
 			tx.Note = make([]byte, 8, 8)
@@ -1070,7 +1070,7 @@ func BenchmarkTransactionPoolPending(b *testing.B) {
 					Type: protocol.PaymentTx,
 					Header: transactions.Header{
 						Sender:      sender,
-						Fee:         basics.MicroAlgos{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
+						Fee:         basics.MicroNovas{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
 						FirstValid:  0,
 						LastValid:   basics.Round(proto.MaxTxnLife),
 						Note:        make([]byte, 2),
@@ -1078,7 +1078,7 @@ func BenchmarkTransactionPoolPending(b *testing.B) {
 					},
 					PaymentTxnFields: transactions.PaymentTxnFields{
 						Receiver: receiver,
-						Amount:   basics.MicroAlgos{Raw: proto.MinBalance},
+						Amount:   basics.MicroNovas{Raw: proto.MinBalance},
 					},
 				}
 				tx.Note = make([]byte, 8, 8)
@@ -1145,14 +1145,14 @@ func BenchmarkTransactionPoolRecompute(b *testing.B) {
 				Type: protocol.PaymentTx,
 				Header: transactions.Header{
 					Sender:      addresses[i%numOfAccounts],
-					Fee:         basics.MicroAlgos{Raw: 20000 + proto.MinTxnFee},
+					Fee:         basics.MicroNovas{Raw: 20000 + proto.MinTxnFee},
 					FirstValid:  0,
 					LastValid:   basics.Round(proto.MaxTxnLife),
 					GenesisHash: l.GenesisHash(),
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
 					Receiver: addresses[rand.Intn(numOfAccounts)],
-					Amount:   basics.MicroAlgos{Raw: proto.MinBalance + uint64(rand.Intn(1<<32))},
+					Amount:   basics.MicroNovas{Raw: proto.MinBalance + uint64(rand.Intn(1<<32))},
 				},
 			}
 
@@ -1237,14 +1237,14 @@ func BenchmarkTransactionPoolSteadyState(b *testing.B) {
 			Type: protocol.PaymentTx,
 			Header: transactions.Header{
 				Sender:      addresses[i%numOfAccounts],
-				Fee:         basics.MicroAlgos{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
+				Fee:         basics.MicroNovas{Raw: uint64(rand.Int()%10000) + proto.MinTxnFee},
 				FirstValid:  0,
 				LastValid:   basics.Round(proto.MaxTxnLife),
 				GenesisHash: l.GenesisHash(),
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
 				Receiver: receiver,
-				Amount:   basics.MicroAlgos{Raw: proto.MinBalance},
+				Amount:   basics.MicroNovas{Raw: proto.MinBalance},
 			},
 		}
 		tx.Note = make([]byte, 8, 8)
@@ -1335,7 +1335,7 @@ func TestTxPoolSizeLimits(t *testing.T) {
 			Type: protocol.PaymentTx,
 			Header: transactions.Header{
 				Sender:      firstAddress,
-				Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + 1},
+				Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + 1},
 				FirstValid:  0,
 				LastValid:   10,
 				Note:        []byte{byte(uniqueTxID), byte(uniqueTxID >> 8), byte(uniqueTxID >> 16)},
@@ -1343,7 +1343,7 @@ func TestTxPoolSizeLimits(t *testing.T) {
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
 				Receiver: receiver,
-				Amount:   basics.MicroAlgos{Raw: 0},
+				Amount:   basics.MicroNovas{Raw: 0},
 			},
 		}
 		signedTx := tx.Sign(secrets[0])
@@ -1361,7 +1361,7 @@ func TestTxPoolSizeLimits(t *testing.T) {
 				Type: protocol.PaymentTx,
 				Header: transactions.Header{
 					Sender:      firstAddress,
-					Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee + 1},
+					Fee:         basics.MicroNovas{Raw: proto.MinTxnFee + 1},
 					FirstValid:  0,
 					LastValid:   10,
 					Note:        []byte{byte(uniqueTxID), byte(uniqueTxID >> 8), byte(uniqueTxID >> 16)},
@@ -1369,7 +1369,7 @@ func TestTxPoolSizeLimits(t *testing.T) {
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
 					Receiver: receiver,
-					Amount:   basics.MicroAlgos{Raw: 0},
+					Amount:   basics.MicroNovas{Raw: 0},
 				},
 			}
 			signedTx := tx.Sign(secrets[0])

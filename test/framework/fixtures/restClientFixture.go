@@ -18,19 +18,19 @@ package fixtures
 
 import (
 	"fmt"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/data/basics"
 	"sort"
 	"time"
 	"unicode"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/daemon/algod/api/client"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/nodecontrol"
-	"github.com/algorand/go-algorand/test/e2e-go/globals"
-	"github.com/algorand/go-algorand/util/tokens"
+	"github.com/Orca18/go-novarand/daemon/algod/api/client"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/nodecontrol"
+	"github.com/Orca18/go-novarand/test/e2e-go/globals"
+	"github.com/Orca18/go-novarand/util/tokens"
 )
 
 // RestClientFixture is a test fixture for tests requiring a running node with a REST client

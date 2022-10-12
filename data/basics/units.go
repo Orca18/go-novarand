@@ -20,91 +20,91 @@ import (
 	"github.com/algorand/go-codec/codec"
 	"github.com/algorand/msgp/msgp"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
 )
 
 // RoundInterval is a number of rounds
 type RoundInterval uint64
 
-// MicroAlgos is our unit of currency.  It is wrapped in a struct to nudge
+// MicroNovas is our unit of currency.  It is wrapped in a struct to nudge
 // developers to use an overflow-checking library for any arithmetic.
-type MicroAlgos struct {
+type MicroNovas struct {
 	Raw uint64
 }
 
-// LessThan implements arithmetic comparison for MicroAlgos
-func (a MicroAlgos) LessThan(b MicroAlgos) bool {
+// LessThan implements arithmetic comparison for MicroNovas
+func (a MicroNovas) LessThan(b MicroNovas) bool {
 	return a.Raw < b.Raw
 }
 
-// GreaterThan implements arithmetic comparison for MicroAlgos
-func (a MicroAlgos) GreaterThan(b MicroAlgos) bool {
+// GreaterThan implements arithmetic comparison for MicroNovas
+func (a MicroNovas) GreaterThan(b MicroNovas) bool {
 	return a.Raw > b.Raw
 }
 
-// IsZero implements arithmetic comparison for MicroAlgos
-func (a MicroAlgos) IsZero() bool {
+// IsZero implements arithmetic comparison for MicroNovas
+func (a MicroNovas) IsZero() bool {
 	return a.Raw == 0
 }
 
 // ToUint64 converts the amount of algos to uint64
-func (a MicroAlgos) ToUint64() uint64 {
+func (a MicroNovas) ToUint64() uint64 {
 	return a.Raw
 }
 
 // RewardUnits returns the number of reward units in some number of algos
-func (a MicroAlgos) RewardUnits(proto config.ConsensusParams) uint64 {
+func (a MicroNovas) RewardUnits(proto config.ConsensusParams) uint64 {
 	return a.Raw / proto.RewardUnit
 }
 
-// We generate our own encoders and decoders for MicroAlgos
+// We generate our own encoders and decoders for MicroNovas
 // because we want it to appear as an integer, even though
 // we represent it as a single-element struct.
-//msgp:ignore MicroAlgos
+//msgp:ignore MicroNovas
 
-// CodecEncodeSelf implements codec.Selfer to encode MicroAlgos as a simple int
-func (a MicroAlgos) CodecEncodeSelf(enc *codec.Encoder) {
+// CodecEncodeSelf implements codec.Selfer to encode MicroNovas as a simple int
+func (a MicroNovas) CodecEncodeSelf(enc *codec.Encoder) {
 	enc.MustEncode(a.Raw)
 }
 
-// CodecDecodeSelf implements codec.Selfer to decode MicroAlgos as a simple int
-func (a *MicroAlgos) CodecDecodeSelf(dec *codec.Decoder) {
+// CodecDecodeSelf implements codec.Selfer to decode MicroNovas as a simple int
+func (a *MicroNovas) CodecDecodeSelf(dec *codec.Decoder) {
 	dec.MustDecode(&a.Raw)
 }
 
 // CanMarshalMsg implements msgp.Marshaler
-func (MicroAlgos) CanMarshalMsg(z interface{}) bool {
-	_, ok := (z).(MicroAlgos)
+func (MicroNovas) CanMarshalMsg(z interface{}) bool {
+	_, ok := (z).(MicroNovas)
 	return ok
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (a MicroAlgos) MarshalMsg(b []byte) (o []byte) {
+func (a MicroNovas) MarshalMsg(b []byte) (o []byte) {
 	o = msgp.Require(b, msgp.Uint64Size)
 	o = msgp.AppendUint64(o, a.Raw)
 	return
 }
 
 // CanUnmarshalMsg implements msgp.Unmarshaler
-func (*MicroAlgos) CanUnmarshalMsg(z interface{}) bool {
-	_, ok := (z).(*MicroAlgos)
+func (*MicroNovas) CanUnmarshalMsg(z interface{}) bool {
+	_, ok := (z).(*MicroNovas)
 	return ok
 }
 
 // UnmarshalMsg implements msgp.Unmarshaler
-func (a *MicroAlgos) UnmarshalMsg(bts []byte) (o []byte, err error) {
+func (a *MicroNovas) UnmarshalMsg(bts []byte) (o []byte, err error) {
 	a.Raw, o, err = msgp.ReadUint64Bytes(bts)
 	return
 }
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (a MicroAlgos) Msgsize() (s int) {
+func (a MicroNovas) Msgsize() (s int) {
 	return msgp.Uint64Size
 }
 
 // MsgIsZero returns whether this is a zero value
-func (a MicroAlgos) MsgIsZero() bool {
+func (a MicroNovas) MsgIsZero() bool {
 	return a.Raw == 0
 }
 

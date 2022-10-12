@@ -20,8 +20,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func BenchmarkSortition(b *testing.B) {

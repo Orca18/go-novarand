@@ -24,9 +24,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/libgoal"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/libgoal"
 )
 
 // AccountsList holds a mapping between the account's address, its friendly name and whether it's a default one.
@@ -206,7 +206,7 @@ func (accountList *AccountsList) loadList() {
 
 func (accountList *AccountsList) outputAccount(addr string, acctInfo generatedV2.Account, multisigInfo *libgoal.MultisigInfo) {
 	if acctInfo.Address == "" {
-		fmt.Printf("[n/a]\t%s\t%s\t[n/a] microAlgos", accountList.getNameByAddress(addr), addr)
+		fmt.Printf("[n/a]\t%s\t%s\t[n/a] microNovas", accountList.getNameByAddress(addr), addr)
 	} else {
 		var status string
 		switch acctInfo.Status {
@@ -219,7 +219,7 @@ func (accountList *AccountsList) outputAccount(addr string, acctInfo generatedV2
 		default:
 			panic(fmt.Sprintf("unexpected account status: %v", acctInfo.Status))
 		}
-		fmt.Printf("[%s]\t%s\t%s\t%d microAlgos", status, accountList.getNameByAddress(addr), addr, acctInfo.Amount)
+		fmt.Printf("[%s]\t%s\t%s\t%d microNovas", status, accountList.getNameByAddress(addr), addr, acctInfo.Amount)
 	}
 	if multisigInfo != nil {
 		fmt.Printf("\t[%d/%d multisig]", multisigInfo.Threshold, len(multisigInfo.PKs))

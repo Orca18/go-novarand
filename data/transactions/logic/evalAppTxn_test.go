@@ -22,13 +22,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	. "github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/data/txntest"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	. "github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/data/txntest"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 
 	"github.com/stretchr/testify/require"
 )
@@ -146,7 +146,7 @@ func TestAppPay(t *testing.T) {
 	ledger.NewAccount(appAddr(888), 1000000)
 
 	// You might NewExpect this to fail because of min balance issue
-	// (receiving account only gets 100 microalgos).  It does not fail at
+	// (receiving account only gets 100 MicroNovas).  It does not fail at
 	// this level, instead, we must be certain that the existing min
 	// balance check in eval.transaction() properly notices and fails
 	// the transaction later.  This fits with the model that we check

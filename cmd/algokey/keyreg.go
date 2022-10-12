@@ -25,13 +25,13 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var keyregCmd *cobra.Command
@@ -209,7 +209,7 @@ func run(params keyregCmdParams) error {
 	if !params.offline {
 		// Generate go-online transaction
 		txn = part.GenerateRegistrationTransaction(
-			basics.MicroAlgos{Raw: params.fee},
+			basics.MicroNovas{Raw: params.fee},
 			basics.Round(params.firstValid),
 			basics.Round(params.lastValid),
 			[32]byte{},
@@ -220,7 +220,7 @@ func run(params keyregCmdParams) error {
 			Type: protocol.KeyRegistrationTx,
 			Header: transactions.Header{
 				Sender:     accountAddress,
-				Fee:        basics.MicroAlgos{Raw: params.fee},
+				Fee:        basics.MicroNovas{Raw: params.fee},
 				FirstValid: basics.Round(params.firstValid),
 				LastValid:  basics.Round(params.lastValid),
 			},

@@ -21,11 +21,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/rpcs"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/rpcs"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/stretchr/testify/require"
 )
 

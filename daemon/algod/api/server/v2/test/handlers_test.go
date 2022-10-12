@@ -32,26 +32,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	v2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/node"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/stateproof"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	v2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/node"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/stateproof"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/execpool"
 	"github.com/algorand/go-codec/codec"
 )
 
@@ -146,7 +146,7 @@ func addBlockHelper(t *testing.T) (v2.Handlers, echo.Context, *httptest.Response
 			Type: protocol.ApplicationCallTx,
 			Header: transactions.Header{
 				Sender:      sender,
-				Fee:         basics.MicroAlgos{Raw: 1000},
+				Fee:         basics.MicroNovas{Raw: 1000},
 				GenesisID:   genBlk.GenesisID(),
 				GenesisHash: genBlk.GenesisHash(),
 				FirstValid:  1,
@@ -185,7 +185,7 @@ func addBlockHelper(t *testing.T) (v2.Handlers, echo.Context, *httptest.Response
 		Round:        l.Latest() + 1,
 		Branch:       genBlk.Hash(),
 		TimeStamp:    0,
-		RewardsState: genBlk.NextRewardsState(l.Latest()+1, proto, poolBal.MicroAlgos, totalRewardUnits, logging.Base()),
+		RewardsState: genBlk.NextRewardsState(l.Latest()+1, proto, poolBal.MicroNovas, totalRewardUnits, logging.Base()),
 		UpgradeState: genBlk.UpgradeState,
 	}
 
@@ -1047,7 +1047,7 @@ func newEmptyBlock(a *require.Assertions, lastBlock bookkeeping.Block, genBlk bo
 		GenesisHash:  genBlk.GenesisHash(),
 		Round:        l.Latest() + 1,
 		Branch:       latestBlock.Hash(),
-		RewardsState: latestBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroAlgos, totalRewardUnits, logging.Base()),
+		RewardsState: latestBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroNovas, totalRewardUnits, logging.Base()),
 		UpgradeState: latestBlock.UpgradeState,
 	}
 

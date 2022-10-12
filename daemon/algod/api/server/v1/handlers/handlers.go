@@ -30,19 +30,19 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/lib"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/node"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/rpcs"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/lib"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/node"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/rpcs"
 )
 
 func getNodeStatus(node *node.AlgorandFullNode) (res v1.NodeStatus, err error) {
@@ -95,6 +95,8 @@ func txEncode(tx transactions.Transaction, ad transactions.ApplyData) (v1.Transa
 		res = applicationCallTxEncode(tx, ad)
 	case protocol.StateProofTx:
 		res = stateProofTxEncode(tx)
+	case protocol.AddressPrintTx:
+		res = addressPrintTxEncode(tx, ad)
 	default:
 		return res, errors.New(errUnknownTransactionType)
 	}
@@ -119,6 +121,18 @@ func txEncode(tx transactions.Transaction, ad transactions.ApplyData) (v1.Transa
 	}
 
 	return res, nil
+}
+
+//(추가)
+func addressPrintTxEncode(tx transactions.Transaction, ad transactions.ApplyData) v1.Transaction {
+	addressprint := v1.AddressPrintTransactionType{
+		To2:        tx.Receiver2.String(),
+		ToRewards2: ad.ReceiverRewards.Raw,
+	}
+
+	return v1.Transaction{
+		AddressPrint: &addressprint,
+	}
 }
 
 func paymentTxEncode(tx transactions.Transaction, ad transactions.ApplyData) v1.Transaction {
@@ -788,7 +802,7 @@ func AccountInformation(ctx lib.ReqContext, context echo.Context) {
 		return
 	}
 
-	amount := record.MicroAlgos
+	amount := record.MicroNovas
 	pendingRewards, overflowed := basics.OSubA(amount, amountWithoutPendingRewards)
 	if overflowed {
 		err = fmt.Errorf("overflowed pending rewards: %v - %v", amount, amountWithoutPendingRewards)
@@ -852,7 +866,7 @@ func AccountInformation(ctx lib.ReqContext, context echo.Context) {
 		Amount:                      amount.Raw,
 		PendingRewards:              pendingRewards.Raw,
 		AmountWithoutPendingRewards: amountWithoutPendingRewards.Raw,
-		Rewards:                     record.RewardedMicroAlgos.Raw,
+		Rewards:                     record.RewardedMicroNovas.Raw,
 		Status:                      record.Status.String(),
 		Participation:               apiParticipation,
 		AssetParams:                 assetParams,

@@ -2,9 +2,9 @@
 
 ## Functionality
 
-The purpose of this contract is to allow two addresses, `TMPL_RCV1` and `TMPL_RCV2`, to withdraw funds in a particular ratio specified by `TMPL_RAT1` and `TMPL_RAT2`. Additionally, for each withdrawal pair, `TMPL_RCV1` must receive at least `TMPL_MINPAY` microAlgos for the group to be approved.
+The purpose of this contract is to allow two addresses, `TMPL_RCV1` and `TMPL_RCV2`, to withdraw funds in a particular ratio specified by `TMPL_RAT1` and `TMPL_RAT2`. Additionally, for each withdrawal pair, `TMPL_RCV1` must receive at least `TMPL_MINPAY` MicroNovas for the group to be approved.
 
-For example, if `TMPL_RAT1` is set to 1, `TMPL_RAT2` is set to 5, and `TMPL_MINPAY` is set to 1,000,000 microAlgos, then this contract will approve a group transaction that sends 1,000,000 microAlgo to `TMPL_RCV1` and 5,000,000 microAlgos to `TMPL_RCV2`.
+For example, if `TMPL_RAT1` is set to 1, `TMPL_RAT2` is set to 5, and `TMPL_MINPAY` is set to 1,000,000 MicroNovas, then this contract will approve a group transaction that sends 1,000,000 microAlgo to `TMPL_RCV1` and 5,000,000 MicroNovas to `TMPL_RCV2`.
 
 This contract additionally takes a timeout round `TMPL_TIMEOUT`, after which all remaining funds may be recovered to the address `TMPL_OWN` and the contract will be closed. Note that the regular split withdrawal functionality will still work until after the contract is explicitly closed.
 
@@ -14,9 +14,9 @@ This contract is intended to be used as a contract-only account, and *not* as a 
 
   - `TMPL_RCV1`: the first recipient of the funds
   - `TMPL_RCV2`: the second recipient of the funds
-  - `TMPL_RAT1`: for each `TMPL_RAT2` microAlgos received by `TMPL_RCV2`, `TMPL_RAT1` specifies how many are received by `TMPL_RCV1`
-  - `TMPL_RAT2`: for each `TMPL_RAT1` microAlgos received by `TMPL_RCV1`, `TMPL_RAT2` specifies how many are received by `TMPL_RCV2`
-  - `TMPL_MINPAY`: the minimum number of microAlgos that must be received by `TMPL_RCV1` for a split withdrawal to succeed
+  - `TMPL_RAT1`: for each `TMPL_RAT2` MicroNovas received by `TMPL_RCV2`, `TMPL_RAT1` specifies how many are received by `TMPL_RCV1`
+  - `TMPL_RAT2`: for each `TMPL_RAT1` MicroNovas received by `TMPL_RCV1`, `TMPL_RAT2` specifies how many are received by `TMPL_RCV2`
+  - `TMPL_MINPAY`: the minimum number of MicroNovas that must be received by `TMPL_RCV1` for a split withdrawal to succeed
   - `TMPL_TIMEOUT`: the round after which funds may be closed back to `TMPL_OWN`
   - `TMPL_OWN`: the address that funds may be closed to after `TMPL_TIMEOUT`
   - `TMPL_FEE`: the maximum fee that may be used by any individual transaction approved by this contract
@@ -25,7 +25,7 @@ This contract is intended to be used as a contract-only account, and *not* as a 
 
 ### Initial checks
 
-First, check that this is a payment transaction. This should be the case for any transaction approved by this contract. The possible valid values of this enum may be found [here](https://github.com/algorand/go-algorand/blob/9978b3aed0643751246af82f5538ba1e7de47310/data/transactions/logic/assembler.go#L569).
+First, check that this is a payment transaction. This should be the case for any transaction approved by this contract. The possible valid values of this enum may be found [here](https://github.com/Orca18/go-novarand/blob/9978b3aed0643751246af82f5538ba1e7de47310/data/transactions/logic/assembler.go#L569).
 
 ```
 txn TypeEnum
@@ -143,7 +143,7 @@ int TMPL_RAT1
 &&
 ```
 
-Check that we are paying at least `TMPL_MINPAY` microAlgos to `TMPL_RCV1`.
+Check that we are paying at least `TMPL_MINPAY` MicroNovas to `TMPL_RCV1`.
 
 ```
 gtxn 0 Amount

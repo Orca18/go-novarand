@@ -30,23 +30,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
+	"github.com/Orca18/go-novarand/util/execpool"
 	"github.com/algorand/go-deadlock"
 )
 
@@ -110,7 +110,7 @@ func makeNewEmptyBlock(t *testing.T, l *Ledger, GenesisID string, initAccounts m
 		require.NotNil(t, initAccounts)
 		for _, acctdata := range initAccounts {
 			if acctdata.Status != basics.NotParticipating {
-				totalRewardUnits += acctdata.MicroAlgos.RewardUnits(proto)
+				totalRewardUnits += acctdata.MicroNovas.RewardUnits(proto)
 			}
 		}
 	} else {
@@ -127,7 +127,7 @@ func makeNewEmptyBlock(t *testing.T, l *Ledger, GenesisID string, initAccounts m
 		Round:        l.Latest() + 1,
 		Branch:       lastBlock.Hash(),
 		TimeStamp:    0,
-		RewardsState: lastBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroAlgos, totalRewardUnits, logging.Base()),
+		RewardsState: lastBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroNovas, totalRewardUnits, logging.Base()),
 		UpgradeState: lastBlock.UpgradeState,
 		// Seed:       does not matter,
 		// UpgradeVote: empty,
@@ -228,7 +228,7 @@ func TestLedgerBlockHeaders(t *testing.T) {
 	poolAddr := testPoolAddr
 	var totalRewardUnits uint64
 	for _, acctdata := range genesisInitState.Accounts {
-		totalRewardUnits += acctdata.MicroAlgos.RewardUnits(proto)
+		totalRewardUnits += acctdata.MicroNovas.RewardUnits(proto)
 	}
 	poolBal, _, _, err := l.LookupLatest(poolAddr)
 	a.NoError(err, "could not get incentive pool balance")
@@ -238,7 +238,7 @@ func TestLedgerBlockHeaders(t *testing.T) {
 		Round:        l.Latest() + 1,
 		Branch:       lastBlock.Hash(),
 		TimeStamp:    0,
-		RewardsState: lastBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroAlgos, totalRewardUnits, logging.Base()),
+		RewardsState: lastBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroNovas, totalRewardUnits, logging.Base()),
 		UpgradeState: lastBlock.UpgradeState,
 		// Seed:       does not matter,
 		// UpgradeVote: empty,
@@ -382,7 +382,7 @@ func TestLedgerSingleTx(t *testing.T) {
 
 	correctTxHeader := transactions.Header{
 		Sender:      addrList[0],
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   t.Name(),
@@ -391,7 +391,7 @@ func TestLedgerSingleTx(t *testing.T) {
 
 	correctPayFields := transactions.PaymentTxnFields{
 		Receiver: addrList[1],
-		Amount:   basics.MicroAlgos{Raw: initAccounts[addrList[0]].MicroAlgos.Raw / 10},
+		Amount:   basics.MicroNovas{Raw: initAccounts[addrList[0]].MicroNovas.Raw / 10},
 	}
 
 	correctPay := transactions.Transaction{
@@ -483,15 +483,15 @@ func TestLedgerSingleTx(t *testing.T) {
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added tx send from zero address")
 
 	badTx = correctPay
-	badTx.Fee = basics.MicroAlgos{}
+	badTx.Fee = basics.MicroNovas{}
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added tx with zero fee")
 
 	badTx = correctPay
-	badTx.Fee = basics.MicroAlgos{Raw: proto.MinTxnFee - 1}
+	badTx.Fee = basics.MicroNovas{Raw: proto.MinTxnFee - 1}
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added tx with fee below minimum")
 
 	badTx = correctKeyreg
-	fee, overflow := basics.OAddA(initAccounts[badTx.Sender].MicroAlgos, basics.MicroAlgos{Raw: 1})
+	fee, overflow := basics.OAddA(initAccounts[badTx.Sender].MicroNovas, basics.MicroNovas{Raw: 1})
 	a.False(overflow)
 	badTx.Fee = fee
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added keyreg tx with fee above user balance")
@@ -531,15 +531,15 @@ func TestLedgerSingleTx(t *testing.T) {
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "sink closed to pool address")
 
 	badTx = correctPay
-	remainder, overflow := basics.OSubA(initAccounts[badTx.Sender].MicroAlgos, badTx.Amount)
+	remainder, overflow := basics.OSubA(initAccounts[badTx.Sender].MicroNovas, badTx.Amount)
 	a.False(overflow)
-	fee, overflow = basics.OAddA(remainder, basics.MicroAlgos{Raw: 1})
+	fee, overflow = basics.OAddA(remainder, basics.MicroNovas{Raw: 1})
 	a.False(overflow)
 	badTx.Fee = fee
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "overspent with (amount + fee)")
 
 	adClose := ad
-	adClose.ClosingAmount = initAccounts[correctClose.Sender].MicroAlgos
+	adClose.ClosingAmount = initAccounts[correctClose.Sender].MicroNovas
 	adClose.ClosingAmount, _ = basics.OSubA(adClose.ClosingAmount, correctPay.Amount)
 	adClose.ClosingAmount, _ = basics.OSubA(adClose.ClosingAmount, correctPay.Fee)
 	adClose.ClosingAmount, _ = basics.OSubA(adClose.ClosingAmount, correctClose.Amount)
@@ -585,7 +585,7 @@ func TestLedgerSingleTxV24(t *testing.T) {
 
 	correctTxHeader := transactions.Header{
 		Sender:      addrList[0],
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   t.Name(),
@@ -762,7 +762,7 @@ func TestLedgerAppCrossRoundWrites(t *testing.T) {
 	user := addrList[1]
 	correctTxHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   t.Name(),
@@ -897,7 +897,7 @@ func TestLedgerAppMultiTxnWrites(t *testing.T) {
 	genesisID := t.Name()
 	correctTxHeader := transactions.Header{
 		Sender:      creator,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   genesisID,
@@ -1055,7 +1055,7 @@ func testLedgerSingleTxApplyData(t *testing.T, version protocol.ConsensusVersion
 
 	correctTxHeader := transactions.Header{
 		Sender:      addrList[0],
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   t.Name(),
@@ -1064,7 +1064,7 @@ func testLedgerSingleTxApplyData(t *testing.T, version protocol.ConsensusVersion
 
 	correctPayFields := transactions.PaymentTxnFields{
 		Receiver: addrList[1],
-		Amount:   basics.MicroAlgos{Raw: initAccounts[addrList[0]].MicroAlgos.Raw / 10},
+		Amount:   basics.MicroNovas{Raw: initAccounts[addrList[0]].MicroNovas.Raw / 10},
 	}
 
 	correctPay := transactions.Transaction{
@@ -1165,15 +1165,15 @@ func testLedgerSingleTxApplyData(t *testing.T, version protocol.ConsensusVersion
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added tx send from zero address")
 
 	badTx = correctPay
-	badTx.Fee = basics.MicroAlgos{}
+	badTx.Fee = basics.MicroNovas{}
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added tx with zero fee")
 
 	badTx = correctPay
-	badTx.Fee = basics.MicroAlgos{Raw: proto.MinTxnFee - 1}
+	badTx.Fee = basics.MicroNovas{Raw: proto.MinTxnFee - 1}
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added tx with fee below minimum")
 
 	badTx = correctKeyreg
-	fee, overflow := basics.OAddA(initAccounts[badTx.Sender].MicroAlgos, basics.MicroAlgos{Raw: 1})
+	fee, overflow := basics.OAddA(initAccounts[badTx.Sender].MicroNovas, basics.MicroNovas{Raw: 1})
 	a.False(overflow)
 	badTx.Fee = fee
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "added keyreg tx with fee above user balance")
@@ -1186,15 +1186,15 @@ func testLedgerSingleTxApplyData(t *testing.T, version protocol.ConsensusVersion
 	a.Error(l.appendUnvalidatedSignedTx(t, initAccounts, sbadTx, ad), "added tx with no signature")
 
 	badTx = correctPay
-	remainder, overflow := basics.OSubA(initAccounts[badTx.Sender].MicroAlgos, badTx.Amount)
+	remainder, overflow := basics.OSubA(initAccounts[badTx.Sender].MicroNovas, badTx.Amount)
 	a.False(overflow)
-	fee, overflow = basics.OAddA(remainder, basics.MicroAlgos{Raw: 1})
+	fee, overflow = basics.OAddA(remainder, basics.MicroNovas{Raw: 1})
 	a.False(overflow)
 	badTx.Fee = fee
 	a.Error(l.appendUnvalidatedTx(t, initAccounts, initSecrets, badTx, ad), "overspent with (amount + fee)")
 
 	adClose := ad
-	adClose.ClosingAmount = initAccounts[correctClose.Sender].MicroAlgos
+	adClose.ClosingAmount = initAccounts[correctClose.Sender].MicroNovas
 	adClose.ClosingAmount, _ = basics.OSubA(adClose.ClosingAmount, correctPay.Amount)
 	adClose.ClosingAmount, _ = basics.OSubA(adClose.ClosingAmount, correctPay.Fee)
 	adClose.ClosingAmount, _ = basics.OSubA(adClose.ClosingAmount, correctClose.Amount)
@@ -1234,7 +1234,7 @@ func testLedgerSingleTxApplyData(t *testing.T, version protocol.ConsensusVersion
 
 			var totalRewardUnits uint64
 			for _, acctdata := range initAccounts {
-				totalRewardUnits += acctdata.MicroAlgos.RewardUnits(proto)
+				totalRewardUnits += acctdata.MicroNovas.RewardUnits(proto)
 			}
 			poolBal, _, _, err := l.LookupLatest(testPoolAddr)
 			a.NoError(err, "could not get incentive pool balance")
@@ -1246,7 +1246,7 @@ func testLedgerSingleTxApplyData(t *testing.T, version protocol.ConsensusVersion
 				Round:        l.Latest() + 1,
 				Branch:       lastBlock.Hash(),
 				TimeStamp:    0,
-				RewardsState: lastBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroAlgos, totalRewardUnits, logging.Base()),
+				RewardsState: lastBlock.NextRewardsState(l.Latest()+1, proto, poolBal.MicroNovas, totalRewardUnits, logging.Base()),
 				UpgradeState: lastBlock.UpgradeState,
 				// Seed:       does not matter,
 				// UpgradeVote: empty,
@@ -1342,7 +1342,7 @@ func testLedgerRegressionFaultyLeaseFirstValidCheck2f3880f7(t *testing.T, versio
 
 	correctTxHeader := transactions.Header{
 		Sender:      addrList[0],
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  l.Latest() + 1,
 		LastValid:   l.Latest() + 10,
 		GenesisID:   t.Name(),
@@ -1351,7 +1351,7 @@ func testLedgerRegressionFaultyLeaseFirstValidCheck2f3880f7(t *testing.T, versio
 
 	correctPayFields := transactions.PaymentTxnFields{
 		Receiver: addrList[1],
-		Amount:   basics.MicroAlgos{Raw: initAccounts[addrList[0]].MicroAlgos.Raw / 10},
+		Amount:   basics.MicroNovas{Raw: initAccounts[addrList[0]].MicroNovas.Raw / 10},
 	}
 
 	correctPay := transactions.Transaction{
@@ -1769,7 +1769,7 @@ func addDummyBlock(t *testing.T, addresses []basics.Address, proto config.Consen
 	for j := 0; j < 2; j++ {
 		txHeader := transactions.Header{
 			Sender:      addresses[0],
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 			FirstValid:  l.Latest() + 1,
 			LastValid:   l.Latest() + 10,
 			GenesisID:   t.Name(),
@@ -1779,7 +1779,7 @@ func addDummyBlock(t *testing.T, addresses []basics.Address, proto config.Consen
 
 		payment := transactions.PaymentTxnFields{
 			Receiver: addresses[0],
-			Amount:   basics.MicroAlgos{Raw: 1000},
+			Amount:   basics.MicroNovas{Raw: 1000},
 		}
 
 		tx := transactions.Transaction{
@@ -1840,7 +1840,7 @@ func TestLedgerMemoryLeak(t *testing.T) {
 		for j := 0; j < 1000; j++ {
 			txHeader := transactions.Header{
 				Sender:      addresses[curAddressIdx],
-				Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+				Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 				FirstValid:  l.Latest() + 1,
 				LastValid:   l.Latest() + 10,
 				GenesisID:   t.Name(),
@@ -1877,7 +1877,7 @@ func TestLedgerMemoryLeak(t *testing.T) {
 					sender := addresses[rand.Intn(len(genesisInitState.Accounts)-2)] // one of init accounts
 					correctTxHeader := transactions.Header{
 						Sender:      sender,
-						Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+						Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 						FirstValid:  l.Latest() + 1,
 						LastValid:   l.Latest() + 10,
 						GenesisID:   t.Name(),
@@ -1886,7 +1886,7 @@ func TestLedgerMemoryLeak(t *testing.T) {
 
 					correctPayFields := transactions.PaymentTxnFields{
 						Receiver: addr,
-						Amount:   basics.MicroAlgos{Raw: 1000 * 1000000},
+						Amount:   basics.MicroNovas{Raw: 1000 * 1000000},
 					}
 
 					correctPay := transactions.Transaction{
@@ -2054,7 +2054,7 @@ func TestLedgerReloadShrinkDeltas(t *testing.T) {
 	}
 	sort.SliceStable(addresses, func(i, j int) bool { return bytes.Compare(addresses[i][:], addresses[j][:]) == -1 })
 
-	onlineTotals := make([]basics.MicroAlgos, maxBlocks+1)
+	onlineTotals := make([]basics.MicroNovas, maxBlocks+1)
 	curAddressIdx := 0
 	maxValidity := basics.Round(20) // some number different from number of txns in blocks
 	txnIDs := make(map[basics.Round]map[transactions.Txid]struct{})
@@ -2070,7 +2070,7 @@ func TestLedgerReloadShrinkDeltas(t *testing.T) {
 			receiver := ledgertesting.RandomAddress()
 			txHeader := transactions.Header{
 				Sender:      addresses[curAddressIdx],
-				Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * uint64(feeMult)},
+				Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * uint64(feeMult)},
 				FirstValid:  latest + 1,
 				LastValid:   latest + maxValidity,
 				GenesisID:   t.Name(),
@@ -2079,7 +2079,7 @@ func TestLedgerReloadShrinkDeltas(t *testing.T) {
 
 			correctPayFields := transactions.PaymentTxnFields{
 				Receiver: receiver,
-				Amount:   basics.MicroAlgos{Raw: uint64(100 * amountMult)},
+				Amount:   basics.MicroNovas{Raw: uint64(100 * amountMult)},
 			}
 
 			tx := transactions.Transaction{
@@ -2105,24 +2105,24 @@ func TestLedgerReloadShrinkDeltas(t *testing.T) {
 	nextRound := latest + 1
 	balancesRound := nextRound.SubSaturate(basics.Round(proto.MaxBalLookback))
 
-	origBalances := make([]basics.MicroAlgos, len(addresses))
-	origRewardsBalances := make([]basics.MicroAlgos, len(addresses))
-	origAgreementBalances := make([]basics.MicroAlgos, len(addresses))
+	origBalances := make([]basics.MicroNovas, len(addresses))
+	origRewardsBalances := make([]basics.MicroNovas, len(addresses))
+	origAgreementBalances := make([]basics.MicroNovas, len(addresses))
 	for i, addr := range addresses {
 		ad, rnd, err := l.LookupWithoutRewards(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
-		origBalances[i] = ad.MicroAlgos
+		origBalances[i] = ad.MicroNovas
 
 		acct, rnd, wo, err := l.LookupAccount(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
 		require.Equal(t, origBalances[i], wo)
-		origRewardsBalances[i] = acct.MicroAlgos
+		origRewardsBalances[i] = acct.MicroNovas
 
 		oad, err := l.LookupAgreement(balancesRound, addr)
 		require.NoError(t, err)
-		origAgreementBalances[i] = oad.MicroAlgosWithRewards
+		origAgreementBalances[i] = oad.MicroNovasWithRewards
 	}
 
 	var nonZeros int
@@ -2163,17 +2163,17 @@ func TestLedgerReloadShrinkDeltas(t *testing.T) {
 		ad, rnd, err := l.LookupWithoutRewards(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
-		require.Equal(t, origBalances[i], ad.MicroAlgos)
+		require.Equal(t, origBalances[i], ad.MicroNovas)
 
 		acct, rnd, wo, err := l.LookupAccount(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
-		require.Equal(t, origRewardsBalances[i], acct.MicroAlgos)
+		require.Equal(t, origRewardsBalances[i], acct.MicroNovas)
 		require.Equal(t, origBalances[i], wo)
 
 		oad, err := l.LookupAgreement(balancesRound, addr)
 		require.NoError(t, err)
-		require.Equal(t, origAgreementBalances[i], oad.MicroAlgosWithRewards)
+		require.Equal(t, origAgreementBalances[i], oad.MicroNovasWithRewards)
 
 		// TODO:
 		// add a test checking all committed pre-reload entries are gone
@@ -2326,7 +2326,7 @@ int %d // 10001000
 
 	correctTxHeader := transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+		Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 		FirstValid:  basics.Round(proto.MaxTxnLife + 1),
 		LastValid:   basics.Round(2*proto.MaxTxnLife + 1),
 		GenesisID:   genesisInitState.Block.GenesisID(),
@@ -2462,7 +2462,7 @@ func TestLedgerMigrateV6ShrinkDeltas(t *testing.T) {
 	}
 	sort.SliceStable(addresses, func(i, j int) bool { return bytes.Compare(addresses[i][:], addresses[j][:]) == -1 })
 
-	onlineTotals := make([]basics.MicroAlgos, maxBlocks+1)
+	onlineTotals := make([]basics.MicroNovas, maxBlocks+1)
 	curAddressIdx := 0
 	maxValidity := basics.Round(20) // some number different from number of txns in blocks
 	txnIDs := make(map[basics.Round]map[transactions.Txid]struct{})
@@ -2479,7 +2479,7 @@ func TestLedgerMigrateV6ShrinkDeltas(t *testing.T) {
 			receiver := ledgertesting.RandomAddress()
 			txHeader := transactions.Header{
 				Sender:      addresses[curAddressIdx],
-				Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * uint64(feeMult)},
+				Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * uint64(feeMult)},
 				FirstValid:  latest + 1,
 				LastValid:   latest + maxValidity,
 				GenesisID:   t.Name(),
@@ -2518,7 +2518,7 @@ func TestLedgerMigrateV6ShrinkDeltas(t *testing.T) {
 			} else {
 				correctPayFields := transactions.PaymentTxnFields{
 					Receiver: receiver,
-					Amount:   basics.MicroAlgos{Raw: uint64(100 * amountMult)},
+					Amount:   basics.MicroNovas{Raw: uint64(100 * amountMult)},
 				}
 				tx.Type = protocol.PaymentTx
 				tx.PaymentTxnFields = correctPayFields
@@ -2541,28 +2541,28 @@ func TestLedgerMigrateV6ShrinkDeltas(t *testing.T) {
 	nextRound := latest + 1
 	balancesRound := nextRound.SubSaturate(basics.Round(proto.MaxBalLookback))
 
-	origBalances := make([]basics.MicroAlgos, len(addresses))
-	origRewardsBalances := make([]basics.MicroAlgos, len(addresses))
-	origAgreementBalances := make([]basics.MicroAlgos, len(addresses))
+	origBalances := make([]basics.MicroNovas, len(addresses))
+	origRewardsBalances := make([]basics.MicroNovas, len(addresses))
+	origAgreementBalances := make([]basics.MicroNovas, len(addresses))
 	for i, addr := range addresses {
 		ad, rnd, err := l.LookupWithoutRewards(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
-		origBalances[i] = ad.MicroAlgos
+		origBalances[i] = ad.MicroNovas
 
 		acct, rnd, wo, err := l.LookupAccount(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
 		require.Equal(t, origBalances[i], wo)
-		origRewardsBalances[i] = acct.MicroAlgos
+		origRewardsBalances[i] = acct.MicroNovas
 
 		acct, rnd, _, err = l.LookupAccount(balancesRound, addr)
 		require.NoError(t, err)
 		require.Equal(t, balancesRound, rnd)
 		if acct.Status == basics.Online {
-			origAgreementBalances[i] = acct.MicroAlgos
+			origAgreementBalances[i] = acct.MicroNovas
 		} else {
-			origAgreementBalances[i] = basics.MicroAlgos{}
+			origAgreementBalances[i] = basics.MicroNovas{}
 		}
 	}
 
@@ -2625,17 +2625,17 @@ func TestLedgerMigrateV6ShrinkDeltas(t *testing.T) {
 		ad, rnd, err := l2.LookupWithoutRewards(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
-		require.Equal(t, origBalances[i], ad.MicroAlgos)
+		require.Equal(t, origBalances[i], ad.MicroNovas)
 
 		acct, rnd, wo, err := l2.LookupAccount(latest, addr)
 		require.NoError(t, err)
 		require.Equal(t, latest, rnd)
-		require.Equal(t, origRewardsBalances[i], acct.MicroAlgos)
+		require.Equal(t, origRewardsBalances[i], acct.MicroNovas)
 		require.Equal(t, origBalances[i], wo)
 
 		oad, err := l2.LookupAgreement(balancesRound, addr)
 		require.NoError(t, err)
-		require.Equal(t, origAgreementBalances[i], oad.MicroAlgosWithRewards)
+		require.Equal(t, origAgreementBalances[i], oad.MicroNovasWithRewards)
 	}
 
 	// at round maxBlocks the ledger must have maxValidity blocks of transactions, check
@@ -2755,7 +2755,7 @@ func TestLedgerKeyregFlip(t *testing.T) {
 		for j := 0; j < numAccounts; j++ {
 			txHeader := transactions.Header{
 				Sender:      addresses[j],
-				Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+				Fee:         basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 				FirstValid:  latest + 1,
 				LastValid:   latest + 10,
 				GenesisID:   t.Name(),
@@ -2821,7 +2821,7 @@ func TestLedgerKeyregFlip(t *testing.T) {
 			od, err := l.LookupAgreement(balancesRound, addresses[k])
 			require.NoError(t, err)
 			data := accounts[acctRoundIdx][k]
-			require.Equal(t, data.MicroAlgos, od.MicroAlgosWithRewards)
+			require.Equal(t, data.MicroNovas, od.MicroNovasWithRewards)
 			require.Equal(t, data.VoteFirstValid, od.VoteFirstValid)
 			require.Equal(t, data.VoteLastValid, od.VoteLastValid)
 			require.Equal(t, data.VoteID, od.VoteID)

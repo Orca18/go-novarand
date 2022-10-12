@@ -37,14 +37,14 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // Txn exists to simplify writing tests where transaction.Transaction might be unwieldy.
@@ -55,7 +55,7 @@ type Txn struct {
 	Type protocol.TxType
 
 	Sender      basics.Address
-	Fee         interface{} // basics.MicroAlgos, uint64, int, or nil
+	Fee         interface{} // basics.MicroNovas, uint64, int, or nil
 	FirstValid  basics.Round
 	LastValid   basics.Round
 	Note        []byte
@@ -174,22 +174,22 @@ func assemble(source interface{}) []byte {
 // Txn produces a transactions.Transaction from the fields in this Txn
 func (tx Txn) Txn() transactions.Transaction {
 	switch fee := tx.Fee.(type) {
-	case basics.MicroAlgos:
-		// nothing, already have MicroAlgos
+	case basics.MicroNovas:
+		// nothing, already have MicroNovas
 	case uint64:
-		tx.Fee = basics.MicroAlgos{Raw: fee}
+		tx.Fee = basics.MicroNovas{Raw: fee}
 	case int:
 		if fee >= 0 {
-			tx.Fee = basics.MicroAlgos{Raw: uint64(fee)}
+			tx.Fee = basics.MicroNovas{Raw: uint64(fee)}
 		}
 	case nil:
-		tx.Fee = basics.MicroAlgos{}
+		tx.Fee = basics.MicroNovas{}
 	}
 	return transactions.Transaction{
 		Type: tx.Type,
 		Header: transactions.Header{
 			Sender:      tx.Sender,
-			Fee:         tx.Fee.(basics.MicroAlgos),
+			Fee:         tx.Fee.(basics.MicroNovas),
 			FirstValid:  tx.FirstValid,
 			LastValid:   tx.LastValid,
 			Note:        tx.Note,
@@ -209,7 +209,7 @@ func (tx Txn) Txn() transactions.Transaction {
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver:         tx.Receiver,
-			Amount:           basics.MicroAlgos{Raw: tx.Amount},
+			Amount:           basics.MicroNovas{Raw: tx.Amount},
 			CloseRemainderTo: tx.CloseRemainderTo,
 		},
 		AssetConfigTxnFields: transactions.AssetConfigTxnFields{

@@ -17,7 +17,7 @@
 package main
 
 import (
-	"github.com/algorand/go-algorand/cmd/tealdbg/cdt"
+	"github.com/Orca18/go-novarand/cmd/tealdbg/cdt"
 )
 
 // Object IDs

@@ -25,20 +25,20 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	"github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/stateproofmsg"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	"github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/stateproofmsg"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 type workerForStateProofMessageTests struct {
@@ -99,7 +99,7 @@ func (s *workerForStateProofMessageTests) VotersForStateProof(round basics.Round
 	}
 
 	voters.Tree = tree
-	voters.TotalWeight = basics.MicroAlgos{Raw: wt}
+	voters.TotalWeight = basics.MicroNovas{Raw: wt}
 	return voters, nil
 }
 
@@ -125,7 +125,7 @@ func (s *workerForStateProofMessageTests) addBlockWithStateProofHeaders(ccNextRo
 
 	var ccBasic = bookkeeping.StateProofTrackingData{
 		StateProofVotersCommitment:  make([]byte, stateproof.HashSize),
-		StateProofOnlineTotalWeight: basics.MicroAlgos{},
+		StateProofOnlineTotalWeight: basics.MicroNovas{},
 		StateProofNextRound:         0,
 	}
 
@@ -291,7 +291,7 @@ func TestMessageLnApproxError(t *testing.T) {
 
 	s.advanceLatest(2*proto.StateProofInterval + proto.StateProofInterval/2)
 	tracking := s.w.blocks[512].StateProofTracking[protocol.StateProofBasic]
-	tracking.StateProofOnlineTotalWeight = basics.MicroAlgos{}
+	tracking.StateProofOnlineTotalWeight = basics.MicroNovas{}
 	newtracking := tracking
 	s.w.blocks[512].StateProofTracking[protocol.StateProofBasic] = newtracking
 

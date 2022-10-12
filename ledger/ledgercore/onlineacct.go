@@ -17,8 +17,8 @@
 package ledgercore
 
 import (
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 // An OnlineAccount corresponds to an account whose AccountData.Status
@@ -28,7 +28,7 @@ import (
 type OnlineAccount struct {
 	// These are a subset of the fields from the corresponding AccountData.
 	Address                 basics.Address
-	MicroAlgos              basics.MicroAlgos
+	MicroNovas              basics.MicroNovas
 	RewardsBase             uint64
 	NormalizedOnlineBalance uint64
 	VoteFirstValid          basics.Round

@@ -55,11 +55,11 @@ const (
 	errorKMDFailedToStop  = "Failed to stop kmd: %s"
 
 	// Node
-	infoNodeStart                      = "Algorand node successfully started!"
-	infoNodeAlreadyStarted             = "Algorand node was already started!"
-	infoNodeDidNotRestart              = "Algorand node did not restart. The node is still running!"
+	infoNodeStart                      = "Novarand node successfully started!"
+	infoNodeAlreadyStarted             = "Novarand node was already started!"
+	infoNodeDidNotRestart              = "Novarand node did not restart. The node is still running!"
 	infoTryingToStopNode               = "Trying to stop the node..."
-	infoNodeShuttingDown               = "Algorand node is shutting down..."
+	infoNodeShuttingDown               = "Novarand node is shutting down..."
 	infoNodeSuccessfullyStopped        = "The node was successfully stopped."
 	infoNodeStatus                     = "Last committed block: %d\nTime since last block: %s\nSync Time: %s\nLast consensus protocol: %s\nNext consensus protocol: %s\nRound for next consensus protocol: %d\nNext consensus protocol supported: %v"
 	catchupStoppedOnUnsupported        = "Last supported block (%d) is committed. The next block consensus protocol is not supported. Catchup service is stopped."
@@ -68,9 +68,9 @@ const (
 	infoNodeCatchpointCatchupBlocks    = "Catchpoint total blocks: %d\nCatchpoint downloaded blocks: %d"
 	nodeLastCatchpoint                 = "Last Catchpoint: %s"
 	errorNodeCreationIPFailure         = "Parsing passed IP %v failed: need a valid IPv4 or IPv6 address with a specified port number"
-	errorNodeNotDetected               = "Algorand node does not appear to be running: %s"
-	errorNodeStatus                    = "Cannot contact Algorand node: %s"
-	errorNodeFailedToStart             = "Algorand node failed to start: %s"
+	errorNodeNotDetected               = "Novarand node does not appear to be running: %s"
+	errorNodeStatus                    = "Cannot contact Novarand node: %s"
+	errorNodeFailedToStart             = "Novarand node failed to start: %s"
 	errorNodeRunning                   = "Node must be stopped before writing APIToken"
 	errorNodeFailGenToken              = "Cannot generate API token: %s"
 	errorNodeCreation                  = "Error during node creation: %v"
@@ -102,7 +102,7 @@ const (
 	errorClearProgArgsRequired     = "Exactly one of --clear-prog or --clear-prog-raw is required"
 
 	// Clerk
-	infoTxIssued               = "Sent %d MicroAlgos from account %s to address %s, transaction ID: %s. Fee set to %d"
+	infoTxIssued               = "Sent %d MicroNovas from account %s to address %s, transaction ID: %s. Fee set to %d"
 	infoTxCommitted            = "Transaction %s committed in round %d"
 	infoTxPending              = "Transaction %s still pending as of round %d"
 	malformedNote              = "Cannot base64-decode note %s: %s"
@@ -124,8 +124,9 @@ const (
 	failDecodeAddressError     = "Cannot decode address: %v"
 	rekeySenderTargetSameError = "The sender and the resulted multisig address are the same"
 	noOutputFileError          = "--msig-params must be specified with an output file name (-o)"
-	infoAutoFeeSet             = "Automatically set fee to %d MicroAlgos"
+	infoAutoFeeSet             = "Automatically set fee to %d MicroNovas"
 	errorTransactionExpired    = "Transaction %s expired before it could be included in a block"
+	infoAddrTxIssued           = "[Transaction ID] %s [Sender] %s [Receiver] %s, Fee set to %d"
 
 	loggingNotConfigured = "Remote logging is not currently configured and won't be enabled"
 	loggingNotEnabled    = "Remote logging is current disabled"

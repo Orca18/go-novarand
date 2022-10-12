@@ -20,9 +20,9 @@ import (
 	"crypto/sha256"
 	"errors"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // SignedTxn wraps a transaction and a signature.

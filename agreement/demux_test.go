@@ -25,15 +25,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/timers"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/timers"
 )
 
 const fastTimeoutChTime = 2
@@ -495,9 +495,9 @@ func (t *demuxTester) LookupAgreement(basics.Round, basics.Address) (basics.Onli
 }
 
 // implement Ledger
-func (t *demuxTester) Circulation(basics.Round) (basics.MicroAlgos, error) {
+func (t *demuxTester) Circulation(basics.Round) (basics.MicroNovas, error) {
 	// we don't care about this function in this test.
-	return basics.MicroAlgos{}, nil
+	return basics.MicroNovas{}, nil
 }
 
 // implement Ledger

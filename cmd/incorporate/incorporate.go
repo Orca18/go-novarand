@@ -32,12 +32,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/codecs"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/codecs"
 )
 
 var idName = flag.String("s", "", "The schema ID for this ledger.")
@@ -109,8 +109,8 @@ func validateGenesis(genesis bookkeeping.Genesis) {
 			}
 		}
 
-		if alloc.State.MicroAlgos.Raw < config.Consensus[genesis.Proto].MinBalance {
-			log.Fatalf("account %s has less than MinBalance: %d < %d", alloc.Address, alloc.State.MicroAlgos.Raw, config.Consensus[genesis.Proto].MinBalance)
+		if alloc.State.MicroNovas.Raw < config.Consensus[genesis.Proto].MinBalance {
+			log.Fatalf("account %s has less than MinBalance: %d < %d", alloc.Address, alloc.State.MicroNovas.Raw, config.Consensus[genesis.Proto].MinBalance)
 		}
 	}
 
@@ -177,7 +177,7 @@ func parseInput() (genesis bookkeeping.Genesis) {
 			Comment: record.Comment,
 			State: basics.AccountData{
 				Status:          record.Status,
-				MicroAlgos:      basics.MicroAlgos{Raw: record.Algos * 1e6},
+				MicroNovas:      basics.MicroNovas{Raw: record.Algos * 1e6},
 				VoteID:          record.VoteID,
 				SelectionID:     record.SelectionID,
 				VoteFirstValid:  basics.Round(record.VoteFirstValid),

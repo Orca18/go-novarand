@@ -21,12 +21,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 var poolSecret, sinkSecret *crypto.SignatureSecrets
@@ -65,17 +65,17 @@ func GenerateInitState(tb testing.TB, proto protocol.ConsensusVersion, baseAlgoP
 	for i := range genaddrs {
 		initKeys[genaddrs[i]] = gensecrets[i]
 		// Give each account quite a bit more balance than MinFee or MinBalance
-		ad := basics.MakeAccountData(basics.Online, basics.MicroAlgos{Raw: uint64((i + baseAlgoPerAccount) * 100000)})
+		ad := basics.MakeAccountData(basics.Online, basics.MicroNovas{Raw: uint64((i + baseAlgoPerAccount) * 100000)})
 		ad.VoteFirstValid = 1
 		ad.VoteLastValid = 100_000
 		initAccounts[genaddrs[i]] = ad
 	}
 	initKeys[poolAddr] = poolSecret
-	initAccounts[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 1234567})
+	initAccounts[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 1234567})
 	initKeys[sinkAddr] = sinkSecret
-	initAccounts[sinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 7654321})
+	initAccounts[sinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 7654321})
 
-	incentivePoolBalanceAtGenesis := initAccounts[poolAddr].MicroAlgos
+	incentivePoolBalanceAtGenesis := initAccounts[poolAddr].MicroNovas
 	var initialRewardsPerRound uint64
 	if params.InitialRewardsRateCalculation {
 		initialRewardsPerRound = basics.SubSaturate(incentivePoolBalanceAtGenesis.Raw, params.MinBalance) / uint64(params.RewardsRateRefreshInterval)

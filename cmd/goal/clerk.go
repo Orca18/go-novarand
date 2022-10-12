@@ -27,17 +27,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
 
 	"github.com/spf13/cobra"
 )
@@ -76,6 +76,8 @@ func init() {
 	clerkCmd.AddCommand(compileCmd)
 	clerkCmd.AddCommand(dryrunCmd)
 	clerkCmd.AddCommand(dryrunRemoteCmd)
+	// addrPrintCmd 추가
+	clerkCmd.AddCommand(addrPrintCmd)
 
 	// Wallet to be used for the clerk operation
 	clerkCmd.PersistentFlags().StringVarP(&walletName, "wallet", "w", "", "Set the wallet to be used for the selected operation")
@@ -83,7 +85,7 @@ func init() {
 	// send flags
 	sendCmd.Flags().StringVarP(&account, "from", "f", "", "Account address to send the money from (If not specified, uses default account)")
 	sendCmd.Flags().StringVarP(&toAddress, "to", "t", "", "Address to send to money to (required)")
-	sendCmd.Flags().Uint64VarP(&amount, "amount", "a", 0, "The amount to be transferred (required), in microAlgos")
+	sendCmd.Flags().Uint64VarP(&amount, "amount", "a", 0, "The amount to be transferred (required), in microNovas")
 	sendCmd.Flags().StringVarP(&closeToAddress, "close-to", "c", "", "Close account and send remainder to this address")
 	sendCmd.Flags().StringVar(&rekeyToAddress, "rekey-to", "", "Rekey account to the given spending key/address. (Future transactions from this account will need to be signed with the new key.)")
 	sendCmd.Flags().StringVarP(&programSource, "from-program", "F", "", "Program source to use as account logic")
@@ -142,6 +144,15 @@ func init() {
 	dryrunRemoteCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "print more info")
 	dryrunRemoteCmd.Flags().BoolVarP(&rawOutput, "raw", "r", false, "output raw response from algod")
 	dryrunRemoteCmd.MarkFlagRequired("dryrun-state")
+
+	// addrprint flags
+	addrPrintCmd.Flags().StringVarP(&account, "from", "f", "", "Account address to send the money from (If not specified, uses default account)")
+	addrPrintCmd.Flags().StringVarP(&toAddress, "to", "t", "", "Address to send to money to (required)")
+	addrPrintCmd.MarkFlagRequired("to")
+	addrPrintCmd.MarkFlagRequired("wallet")
+
+	// Add common transaction flags
+	addTxnFlags(addrPrintCmd)
 
 }
 
@@ -404,7 +415,7 @@ var sendCmd = &cobra.Command{
 		// combination with other txns that cover the groups's fee.
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			payment.Fee = basics.MicroAlgos{Raw: fee}
+			payment.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		var stx transactions.SignedTxn
@@ -945,6 +956,97 @@ var splitCmd = &cobra.Command{
 				reportErrorf(fileWriteError, outFilename, err)
 			}
 			fmt.Printf("Wrote transaction %d to %s\n", idx, fn)
+		}
+	},
+}
+
+/*
+	센더와 리시버의 주소를 출력하기위한 커맨드
+	firstValid와 lastValid를 입력해야 함
+	braodcasting이 완료되면 txID를 반환한다.
+*/
+var addrPrintCmd = &cobra.Command{
+	Use:   "addrprint",
+	Short: "print sender and receiver's address to addrprint.log",
+	Long:  `print sender and receiver's address to addrprint.log.Note: the transaction will only be valid from round firstValid to round lastValid. If broadcast of the transaction is successful, the transaction ID will be returned.`,
+	Args:  validateNoPosArgsFn,
+	Run: func(cmd *cobra.Command, args []string) {
+		// "ALGORAND_DATA"에 저장되어있는 경로의 데이터 폴더를 가져온다.
+		dataDir := ensureSingleDataDir()
+		// accountlist.json에 있는 계정정보를 가져온다(흠.. 이러면 내 계정정보 밖에 안가져오는거 아닌가?)
+		accountList := makeAccountsList(dataDir)
+
+		var fromAddressResolved string
+		var err error
+
+		// Check if from was specified, else use default
+		// accountlist.json에 있는 default계좌를 가져오는 것 같다.
+		if account == "" {
+			account = accountList.getDefaultAccount()
+		}
+
+		// Resolving friendly names
+		fromAddressResolved = accountList.getAddressByName(account)
+		toAddressResolved := accountList.getAddressByName(toAddress)
+
+		// fullClient생성
+		client := ensureFullClient(dataDir)
+		firstValid, lastValid, _, err = client.ComputeValidityRounds(firstValid, lastValid, numValidRounds)
+		if err != nil {
+			reportErrorf(err.Error())
+		}
+
+		// 새로운 트랜잭션 생성
+		addressPrint, err := client.ConstructAddressPrint(
+			fromAddressResolved, toAddressResolved, fee, basics.Round(firstValid), basics.Round(lastValid),
+		)
+		if err != nil {
+			reportErrorf(errorConstructingTX, err)
+		}
+
+		fmt.Println("트랜잭션-Sender: ", addressPrint.Sender, " Receiver: ", addressPrint.Receiver2)
+
+		// 서명된 트랜잭션 생성
+		var stx transactions.SignedTxn
+		signTx := sign || (outFilename == "")
+
+		fmt.Println("walletName: ", walletName)
+
+		// 서명된 트랜잭션 생성
+		stx, err = createSignedTransaction(client, signTx, dataDir, walletName, addressPrint, basics.Address{})
+		if err != nil {
+			reportErrorf(errorSigningTX, err)
+		}
+
+		if outFilename == "" {
+			// Broadcast the tx
+			txid, err := client.BroadcastTransaction(stx)
+
+			if err != nil {
+				reportErrorf(errorBroadcastingTX, err)
+			}
+
+			// update information from Transaction
+			fee = stx.Txn.Fee.Raw
+
+			// Report tx details to user
+			reportInfof(infoAddrTxIssued, txid, fromAddressResolved, toAddressResolved, fee)
+
+			if !noWaitAfterSend {
+				_, err = waitForCommit(client, txid, lastValid)
+				if err != nil {
+					reportErrorf(err.Error())
+				}
+			}
+		} else {
+			if dumpForDryrun {
+				err = writeDryrunReqToFile(client, stx, outFilename)
+			} else {
+				err = writeFile(outFilename, protocol.Encode(&stx), 0600)
+			}
+			if err != nil {
+				reportErrorf(err.Error())
+			}
 		}
 	},
 }

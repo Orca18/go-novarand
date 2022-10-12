@@ -22,17 +22,17 @@ import (
 	"math"
 	"sort"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 // AccountDataToAccount converts basics.AccountData to v2.generated.Account
 func AccountDataToAccount(
 	address string, record *basics.AccountData,
 	lastRound basics.Round, consensus *config.ConsensusParams,
-	amountWithoutPendingRewards basics.MicroAlgos,
+	amountWithoutPendingRewards basics.MicroNovas,
 ) (generated.Account, error) {
 
 	assets := make([]generated.AssetHolding, 0, len(record.Assets))
@@ -106,7 +106,7 @@ func AccountDataToAccount(
 	}
 	totalExtraPages := uint64(record.TotalExtraAppPages)
 
-	amount := record.MicroAlgos
+	amount := record.MicroNovas
 	pendingRewards, overflowed := basics.OSubA(amount, amountWithoutPendingRewards)
 	if overflowed {
 		return generated.Account{}, errors.New("overflow on pending reward calculation")
@@ -121,7 +121,7 @@ func AccountDataToAccount(
 		Amount:                      amount.Raw,
 		PendingRewards:              pendingRewards.Raw,
 		AmountWithoutPendingRewards: amountWithoutPendingRewards.Raw,
-		Rewards:                     record.RewardedMicroAlgos.Raw,
+		Rewards:                     record.RewardedMicroNovas.Raw,
 		Status:                      record.Status.String(),
 		RewardBase:                  &record.RewardsBase,
 		Participation:               apiParticipation,
@@ -337,9 +337,9 @@ func AccountToAccountData(a *generated.Account) (basics.AccountData, error) {
 
 	ad := basics.AccountData{
 		Status:             status,
-		MicroAlgos:         basics.MicroAlgos{Raw: a.Amount},
+		MicroNovas:         basics.MicroNovas{Raw: a.Amount},
 		RewardsBase:        rewardsBase,
-		RewardedMicroAlgos: basics.MicroAlgos{Raw: a.Rewards},
+		RewardedMicroNovas: basics.MicroNovas{Raw: a.Rewards},
 		VoteID:             voteID,
 		SelectionID:        selID,
 		VoteFirstValid:     voteFirstValid,

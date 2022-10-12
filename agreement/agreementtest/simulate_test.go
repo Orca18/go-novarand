@@ -28,17 +28,17 @@ import (
 	"github.com/algorand/go-deadlock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var poolAddr = basics.Address{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
@@ -214,7 +214,7 @@ func (l *testLedger) LookupAgreement(r basics.Round, a basics.Address) (basics.O
 	return l.state[a].OnlineAccountData(), nil
 }
 
-func (l *testLedger) Circulation(r basics.Round) (basics.MicroAlgos, error) {
+func (l *testLedger) Circulation(r basics.Round) (basics.MicroNovas, error) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
@@ -223,7 +223,7 @@ func (l *testLedger) Circulation(r basics.Round) (basics.MicroAlgos, error) {
 		panic(err)
 	}
 
-	var sum basics.MicroAlgos
+	var sum basics.MicroNovas
 	var overflowed bool
 	for _, rec := range l.state {
 		sum, overflowed = basics.OAddA(sum, rec.OnlineAccountData().VotingStake())
@@ -310,17 +310,17 @@ func TestSimulate(t *testing.T) {
 	// generate accounts
 	genesis := make(map[basics.Address]basics.AccountData)
 	incentivePoolAtStart := uint64(1000 * 1000)
-	accData := basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: incentivePoolAtStart})
+	accData := basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: incentivePoolAtStart})
 	genesis[poolAddr] = accData
 	gen := rand.New(rand.NewSource(2))
 
 	_, accs, release := generateNAccounts(t, numAccounts, 0, E, minMoneyAtStart)
 	defer release()
 	for _, account := range accs {
-		amount := basics.MicroAlgos{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))}
+		amount := basics.MicroNovas{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))}
 		genesis[account.Address()] = basics.AccountData{
 			Status:      basics.Online,
-			MicroAlgos:  amount,
+			MicroNovas:  amount,
 			SelectionID: account.VRFSecrets().PK,
 			VoteID:      account.VotingSecrets().OneTimeSignatureVerifier,
 		}

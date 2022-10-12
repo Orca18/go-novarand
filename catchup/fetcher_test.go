@@ -27,17 +27,17 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/components/mocks"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/components/mocks"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 func buildTestLedger(t *testing.T, blk bookkeeping.Block) (ledger *data.Ledger, next basics.Round, b bookkeeping.Block, err error) {
@@ -48,15 +48,15 @@ func buildTestLedger(t *testing.T, blk bookkeeping.Block) (ledger *data.Ledger, 
 	genesis := make(map[basics.Address]basics.AccountData)
 	genesis[user] = basics.AccountData{
 		Status:     basics.Online,
-		MicroAlgos: basics.MicroAlgos{Raw: proto.MinBalance * 2000000},
+		MicroNovas: basics.MicroNovas{Raw: proto.MinBalance * 2000000},
 	}
 	genesis[sinkAddr] = basics.AccountData{
 		Status:     basics.Online,
-		MicroAlgos: basics.MicroAlgos{Raw: proto.MinBalance * 2000000},
+		MicroNovas: basics.MicroNovas{Raw: proto.MinBalance * 2000000},
 	}
 	genesis[poolAddr] = basics.AccountData{
 		Status:     basics.Online,
-		MicroAlgos: basics.MicroAlgos{Raw: proto.MinBalance * 2000000},
+		MicroNovas: basics.MicroNovas{Raw: proto.MinBalance * 2000000},
 	}
 
 	log := logging.TestingLog(t)
@@ -67,7 +67,7 @@ func buildTestLedger(t *testing.T, blk bookkeeping.Block) (ledger *data.Ledger, 
 	cfg.Archival = true
 	ledger, err = data.LoadLedger(
 		log, t.Name(), inMem, protocol.ConsensusCurrentVersion, genBal, "", genHash,
-		nil, cfg,
+		nil, nil, cfg,
 	)
 	if err != nil {
 		t.Fatal("couldn't build ledger", err)
@@ -78,14 +78,14 @@ func buildTestLedger(t *testing.T, blk bookkeeping.Block) (ledger *data.Ledger, 
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      user,
-			Fee:         basics.MicroAlgos{Raw: proto.MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: proto.MinTxnFee},
 			FirstValid:  next,
 			LastValid:   next,
 			GenesisHash: genHash,
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: user,
-			Amount:   basics.MicroAlgos{Raw: 2},
+			Amount:   basics.MicroNovas{Raw: 2},
 		},
 	}
 	signedtx := transactions.SignedTxn{

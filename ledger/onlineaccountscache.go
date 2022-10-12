@@ -19,7 +19,7 @@ package ledger
 import (
 	"container/list"
 
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 // Worst case memory usage = 2500 * 320 * 150B = 120MB

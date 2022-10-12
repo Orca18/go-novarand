@@ -25,19 +25,19 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/components/mocks"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/pools"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/network"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/components/mocks"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/pools"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/network"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 func BenchmarkTxHandlerProcessing(b *testing.B) {
@@ -55,13 +55,13 @@ func BenchmarkTxHandlerProcessing(b *testing.B) {
 		addresses[i] = addr
 		genesis[addr] = basics.AccountData{
 			Status:     basics.Online,
-			MicroAlgos: basics.MicroAlgos{Raw: 10000000000000},
+			MicroNovas: basics.MicroNovas{Raw: 10000000000000},
 		}
 	}
 
 	genesis[poolAddr] = basics.AccountData{
 		Status:     basics.NotParticipating,
-		MicroAlgos: basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinBalance},
+		MicroNovas: basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinBalance},
 	}
 
 	require.Equal(b, len(genesis), numUsers+1)
@@ -70,7 +70,7 @@ func BenchmarkTxHandlerProcessing(b *testing.B) {
 	const inMem = true
 	cfg := config.GetDefaultLocal()
 	cfg.Archival = true
-	ledger, err := LoadLedger(log, ledgerName, inMem, protocol.ConsensusCurrentVersion, genBal, genesisID, genesisHash, nil, cfg)
+	ledger, err := LoadLedger(log, ledgerName, inMem, protocol.ConsensusCurrentVersion, genBal, genesisID, genesisHash, nil, nil, cfg)
 	require.NoError(b, err)
 
 	l := ledger
@@ -89,14 +89,14 @@ func BenchmarkTxHandlerProcessing(b *testing.B) {
 				Type: protocol.PaymentTx,
 				Header: transactions.Header{
 					Sender:     addresses[u%numUsers],
-					Fee:        basics.MicroAlgos{Raw: proto.MinTxnFee * 2},
+					Fee:        basics.MicroNovas{Raw: proto.MinTxnFee * 2},
 					FirstValid: 0,
 					LastValid:  basics.Round(proto.MaxTxnLife),
 					Note:       make([]byte, 2),
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
 					Receiver: addresses[(u+1)%numUsers],
-					Amount:   basics.MicroAlgos{Raw: mockBalancesMinBalance + (rand.Uint64() % 10000)},
+					Amount:   basics.MicroNovas{Raw: mockBalancesMinBalance + (rand.Uint64() % 10000)},
 				},
 			}
 			signedTx := tx.Sign(secrets[u%numUsers])
@@ -174,12 +174,12 @@ func makeRandomTransactions(num int) ([]transactions.SignedTxn, []byte) {
 			Txn: transactions.Transaction{
 				Header: transactions.Header{
 					Sender: addr,
-					Fee:    basics.MicroAlgos{Raw: crypto.RandUint64()},
+					Fee:    basics.MicroNovas{Raw: crypto.RandUint64()},
 					Note:   sig[:],
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
 					Receiver: addr,
-					Amount:   basics.MicroAlgos{Raw: crypto.RandUint64()},
+					Amount:   basics.MicroNovas{Raw: crypto.RandUint64()},
 				},
 			},
 		}

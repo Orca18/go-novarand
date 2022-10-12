@@ -18,8 +18,8 @@
 package v2
 
 import (
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
 )
 
 // AccountAssetModel is returned by AccountAssetInformation when msgpack format is specified

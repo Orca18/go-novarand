@@ -17,8 +17,8 @@
 package ledger
 
 import (
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 //msgp:ignore cachedResourceData

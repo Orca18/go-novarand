@@ -19,9 +19,9 @@ package apply
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
 )
 
 func checkSpender(payment transactions.PaymentTxnFields, header transactions.Header, spec transactions.SpecialAddresses, proto config.ConsensusParams) error {
@@ -63,7 +63,7 @@ func Payment(payment transactions.PaymentTxnFields, header transactions.Header, 
 			return err
 		}
 
-		closeAmount := rec.MicroAlgos
+		closeAmount := rec.MicroNovas
 		ad.ClosingAmount = closeAmount
 		err = balances.Move(header.Sender, payment.CloseRemainderTo, closeAmount, &ad.SenderRewards, &ad.CloseRewards)
 		if err != nil {
@@ -75,8 +75,8 @@ func Payment(payment transactions.PaymentTxnFields, header transactions.Header, 
 		if err != nil {
 			return err
 		}
-		if !rec.MicroAlgos.IsZero() {
-			return fmt.Errorf("balance %d still not zero after CloseRemainderTo", rec.MicroAlgos.Raw)
+		if !rec.MicroNovas.IsZero() {
+			return fmt.Errorf("balance %d still not zero after CloseRemainderTo", rec.MicroNovas.Raw)
 		}
 
 		// Confirm that there is no asset-related state in the account

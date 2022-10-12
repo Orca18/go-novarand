@@ -22,13 +22,13 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
 )
 
 // OnlineAccountsFetcher captures the functionality of querying online accounts status
@@ -36,7 +36,7 @@ type OnlineAccountsFetcher interface {
 	// TopOnlineAccounts returns the top n online accounts, sorted by their normalized
 	// balance and address, whose voting keys are valid in voteRnd.  See the
 	// normalization description in AccountData.NormalizedOnlineBalance().
-	TopOnlineAccounts(rnd basics.Round, voteRnd basics.Round, n uint64, params *config.ConsensusParams, rewardsLevel uint64) (topOnlineAccounts []*OnlineAccount, totalOnlineStake basics.MicroAlgos, err error)
+	TopOnlineAccounts(rnd basics.Round, voteRnd basics.Round, n uint64, params *config.ConsensusParams, rewardsLevel uint64) (topOnlineAccounts []*OnlineAccount, totalOnlineStake basics.MicroNovas, err error)
 }
 
 // VotersForRound tracks the top online voting accounts as of a particular
@@ -74,7 +74,7 @@ type VotersForRound struct {
 	Tree *merklearray.Tree
 
 	// TotalWeight is the sum of the weights from the Participants array.
-	TotalWeight basics.MicroAlgos
+	TotalWeight basics.MicroNovas
 }
 
 // MakeVotersForRound create a new VotersForRound object and initialize it's cond.
@@ -84,7 +84,7 @@ func MakeVotersForRound() *VotersForRound {
 	return vr
 }
 
-func createStateProofParticipant(stateProofID *merklesignature.Commitment, money basics.MicroAlgos) basics.Participant {
+func createStateProofParticipant(stateProofID *merklesignature.Commitment, money basics.MicroNovas) basics.Participant {
 	var retPart basics.Participant
 	retPart.Weight = money.ToUint64()
 	// Some accounts might not have StateProof keys commitment. As a result,
@@ -123,10 +123,10 @@ func (tr *VotersForRound) LoadTree(onlineAccountsFetcher OnlineAccountsFetcher, 
 
 	for i, acct := range top {
 		var ot basics.OverflowTracker
-		rewards := basics.PendingRewards(&ot, tr.Proto, acct.MicroAlgos, acct.RewardsBase, hdr.RewardsLevel)
-		money := ot.AddA(acct.MicroAlgos, rewards)
+		rewards := basics.PendingRewards(&ot, tr.Proto, acct.MicroNovas, acct.RewardsBase, hdr.RewardsLevel)
+		money := ot.AddA(acct.MicroNovas, rewards)
 		if ot.Overflowed {
-			return fmt.Errorf("votersTracker.LoadTree: overflow adding rewards %d + %d", acct.MicroAlgos, rewards)
+			return fmt.Errorf("votersTracker.LoadTree: overflow adding rewards %d + %d", acct.MicroNovas, rewards)
 		}
 
 		participants[i] = createStateProofParticipant(&acct.StateProofID, money)

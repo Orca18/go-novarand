@@ -19,15 +19,15 @@ package ledger
 import (
 	"testing"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,7 +57,7 @@ func makeRandomOnlineAccounts(numberOfAccounts uint64) map[basics.Address]basics
 		var data basics.AccountData
 
 		// Avoid overflowing totals
-		data.MicroAlgos.Raw = crypto.RandUint64() % (1 << 32)
+		data.MicroNovas.Raw = crypto.RandUint64() % (1 << 32)
 
 		data.Status = basics.Online
 		data.VoteLastValid = 10000000
@@ -82,12 +82,12 @@ func TestVoterTrackerDeleteVotersAfterStateproofConfirmed(t *testing.T) {
 	accts := []map[basics.Address]basics.AccountData{makeRandomOnlineAccounts(20)}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -153,12 +153,12 @@ func TestLimitVoterTracker(t *testing.T) {
 	accts := []map[basics.Address]basics.AccountData{makeRandomOnlineAccounts(20)}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -240,12 +240,12 @@ func TestTopNAccountsThatHaveNoMssKeys(t *testing.T) {
 	accts := []map[basics.Address]basics.AccountData{makeRandomOnlineAccounts(20)}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 

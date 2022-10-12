@@ -21,13 +21,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklearray"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklearray"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func TestTxnMerkleElemHash(t *testing.T) {
@@ -55,7 +55,7 @@ func TestTxnMerkle(t *testing.T) {
 					GenesisHash: b.BlockHeader.GenesisHash,
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
-					Amount: basics.MicroAlgos{Raw: i},
+					Amount: basics.MicroNovas{Raw: i},
 				},
 			}
 
@@ -106,7 +106,7 @@ func TestBlock_TxnMerkleTreeSHA256(t *testing.T) {
 					GenesisHash: b.BlockHeader.GenesisHash,
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
-					Amount: basics.MicroAlgos{Raw: i},
+					Amount: basics.MicroNovas{Raw: i},
 				},
 			}
 
@@ -154,7 +154,7 @@ func BenchmarkTxnRoots(b *testing.B) {
 				GenesisHash: blk.BlockHeader.GenesisHash,
 			},
 			PaymentTxnFields: transactions.PaymentTxnFields{
-				Amount: basics.MicroAlgos{Raw: crypto.RandUint64()},
+				Amount: basics.MicroNovas{Raw: crypto.RandUint64()},
 			},
 		}
 

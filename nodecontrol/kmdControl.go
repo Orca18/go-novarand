@@ -26,13 +26,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/algorand/go-algorand/cmd/kmd/codes"
-	"github.com/algorand/go-algorand/daemon/kmd/client"
-	"github.com/algorand/go-algorand/daemon/kmd/lib/kmdapi"
-	"github.com/algorand/go-algorand/daemon/kmd/server"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/tokens"
+	"github.com/Orca18/go-novarand/cmd/kmd/codes"
+	"github.com/Orca18/go-novarand/daemon/kmd/client"
+	"github.com/Orca18/go-novarand/daemon/kmd/lib/kmdapi"
+	"github.com/Orca18/go-novarand/daemon/kmd/server"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/tokens"
 )
 
 const (

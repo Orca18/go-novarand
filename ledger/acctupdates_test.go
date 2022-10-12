@@ -31,17 +31,17 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var testPoolAddr = basics.Address{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
@@ -338,13 +338,13 @@ func checkAcctUpdates(t *testing.T, au *accountUpdates, ao *onlineAccounts, base
 				rewardsDelta := rewards[rnd] - d.RewardsBase
 				switch d.Status {
 				case basics.Online:
-					totalOnline += d.MicroAlgos.Raw
-					totalOnline += (d.MicroAlgos.Raw / proto.RewardUnit) * rewardsDelta
+					totalOnline += d.MicroNovas.Raw
+					totalOnline += (d.MicroNovas.Raw / proto.RewardUnit) * rewardsDelta
 				case basics.Offline:
-					totalOffline += d.MicroAlgos.Raw
-					totalOffline += (d.MicroAlgos.Raw / proto.RewardUnit) * rewardsDelta
+					totalOffline += d.MicroNovas.Raw
+					totalOffline += (d.MicroNovas.Raw / proto.RewardUnit) * rewardsDelta
 				case basics.NotParticipating:
-					totalNotPart += d.MicroAlgos.Raw
+					totalNotPart += d.MicroNovas.Raw
 				default:
 					t.Errorf("unknown status %v", d.Status)
 				}
@@ -420,7 +420,7 @@ func checkAcctUpdatesConsistency(t *testing.T, au *accountUpdates, rnd basics.Ro
 		d2, r2, err2 := au.LookupWithoutRewards(r, addr)
 		require.NoError(t, err2)
 		require.Equal(t, r2, r)
-		require.Equal(t, withoutRewards, d2.MicroAlgos)
+		require.Equal(t, withoutRewards, d2.MicroNovas)
 	}
 }
 
@@ -475,12 +475,12 @@ func TestAcctUpdates(t *testing.T) {
 			rewardsLevels := []uint64{0}
 
 			pooldata := basics.AccountData{}
-			pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+			pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 			pooldata.Status = basics.NotParticipating
 			accts[0][testPoolAddr] = pooldata
 
 			sinkdata := basics.AccountData{}
-			sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+			sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 			sinkdata.Status = basics.NotParticipating
 			accts[0][testSinkAddr] = sinkdata
 
@@ -521,7 +521,7 @@ func TestAcctUpdates(t *testing.T) {
 				require.NoError(t, err)
 
 				newPool := totals[testPoolAddr]
-				newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+				newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 				updates.Upsert(testPoolAddr, newPool)
 				totals[testPoolAddr] = newPool
 				newAccts := applyPartialDeltas(base, updates)
@@ -596,12 +596,12 @@ func TestAcctUpdatesFastUpdates(t *testing.T) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -640,7 +640,7 @@ func TestAcctUpdatesFastUpdates(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -685,12 +685,12 @@ func BenchmarkBalancesChanges(b *testing.B) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -724,7 +724,7 @@ func BenchmarkBalancesChanges(b *testing.B) {
 		require.NoError(b, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -824,12 +824,12 @@ func TestLargeAccountCountCatchpointGeneration(t *testing.T) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -862,7 +862,7 @@ func TestLargeAccountCountCatchpointGeneration(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -914,12 +914,12 @@ func TestAcctUpdatesUpdatesCorrectness(t *testing.T) {
 		accts := []map[basics.Address]basics.AccountData{ledgertesting.RandomAccounts(9, true)}
 
 		pooldata := basics.AccountData{}
-		pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+		pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 		pooldata.Status = basics.NotParticipating
 		accts[0][testPoolAddr] = pooldata
 
 		sinkdata := basics.AccountData{}
-		sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+		sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 		sinkdata.Status = basics.NotParticipating
 		accts[0][testSinkAddr] = sinkdata
 
@@ -939,7 +939,7 @@ func TestAcctUpdatesUpdatesCorrectness(t *testing.T) {
 		// set all the accounts with 100 algos.
 		for _, addr := range moneyAccounts {
 			accountData := accts[0][addr]
-			accountData.MicroAlgos.Raw = 100 * 1000000
+			accountData.MicroNovas.Raw = 100 * 1000000
 			accts[0][addr] = accountData
 		}
 
@@ -977,15 +977,15 @@ func TestAcctUpdatesUpdatesCorrectness(t *testing.T) {
 				fromAccountDataOld, validThrough, err := au.LookupWithoutRewards(i-1, fromAccount)
 				require.NoError(t, err)
 				require.Equal(t, i-1, validThrough)
-				require.Equalf(t, moneyAccountsExpectedAmounts[i-1][j], fromAccountDataOld.MicroAlgos.Raw, "Account index : %d\nRound number : %d", j, i)
+				require.Equalf(t, moneyAccountsExpectedAmounts[i-1][j], fromAccountDataOld.MicroNovas.Raw, "Account index : %d\nRound number : %d", j, i)
 
 				fromAccountDataNew := fromAccountDataOld
 
-				fromAccountDataNew.MicroAlgos.Raw -= uint64(i - 10)
-				toAccountDataNew.MicroAlgos.Raw += uint64(i - 10)
+				fromAccountDataNew.MicroNovas.Raw -= uint64(i - 10)
+				toAccountDataNew.MicroNovas.Raw += uint64(i - 10)
 				updates[fromAccount] = fromAccountDataNew
 
-				moneyAccountsExpectedAmounts[i][j] = fromAccountDataNew.MicroAlgos.Raw
+				moneyAccountsExpectedAmounts[i][j] = fromAccountDataNew.MicroNovas.Raw
 			}
 
 			moneyAccountsExpectedAmounts[i][0] = moneyAccountsExpectedAmounts[i-1][0] + uint64(len(moneyAccounts)-1)*uint64(i-10)
@@ -1016,7 +1016,7 @@ func TestAcctUpdatesUpdatesCorrectness(t *testing.T) {
 					require.NoError(t, err)
 					require.GreaterOrEqual(t, int64(validThrough), int64(basics.Round(checkRound-uint64(testback))))
 					// if we received no error, we want to make sure the reported amount is correct.
-					require.Equalf(t, moneyAccountsExpectedAmounts[checkRound-uint64(testback)][j], acct.MicroAlgos.Raw, "Account index : %d\nRound number : %d", j, checkRound)
+					require.Equalf(t, moneyAccountsExpectedAmounts[checkRound-uint64(testback)][j], acct.MicroNovas.Raw, "Account index : %d\nRound number : %d", j, checkRound)
 					testback++
 					j--
 				}
@@ -1047,9 +1047,9 @@ func TestAcctUpdatesUpdatesCorrectness(t *testing.T) {
 			require.NoErrorf(t, err, "unable to retrieve balance for account idx %d %v", idx, addr)
 			require.Equal(t, lastRound, validThrough)
 			if idx != 0 {
-				require.Equalf(t, 100*1000000-roundCount*(roundCount-1)/2, int(balance.MicroAlgos.Raw), "account idx %d %v has the wrong balance", idx, addr)
+				require.Equalf(t, 100*1000000-roundCount*(roundCount-1)/2, int(balance.MicroNovas.Raw), "account idx %d %v has the wrong balance", idx, addr)
 			} else {
-				require.Equalf(t, 100*1000000+(len(moneyAccounts)-1)*roundCount*(roundCount-1)/2, int(balance.MicroAlgos.Raw), "account idx %d %v has the wrong balance", idx, addr)
+				require.Equalf(t, 100*1000000+(len(moneyAccounts)-1)*roundCount*(roundCount-1)/2, int(balance.MicroNovas.Raw), "account idx %d %v has the wrong balance", idx, addr)
 			}
 
 		}
@@ -1289,12 +1289,12 @@ func BenchmarkLargeMerkleTrieRebuild(b *testing.B) {
 	accts := []map[basics.Address]basics.AccountData{ledgertesting.RandomAccounts(5, true)}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -1313,7 +1313,7 @@ func BenchmarkLargeMerkleTrieRebuild(b *testing.B) {
 		for k := 0; i < accountsNumber-5-2 && k < 1024; k++ {
 			addr := ledgertesting.RandomAddress()
 			acctData := baseAccountData{}
-			acctData.MicroAlgos.Raw = 1
+			acctData.MicroNovas.Raw = 1
 			updates.upsert(addr, accountDelta{newAcct: acctData})
 			i++
 		}
@@ -1380,7 +1380,7 @@ func TestCompactDeltas(t *testing.T) {
 	accountDeltas := make([]ledgercore.AccountDeltas, 1)
 	creatableDeltas := make([]map[basics.CreatableIndex]ledgercore.ModifiedCreatable, 1)
 	creatableDeltas[0] = make(map[basics.CreatableIndex]ledgercore.ModifiedCreatable)
-	accountDeltas[0].Upsert(addrs[0], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 2}}})
+	accountDeltas[0].Upsert(addrs[0], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 2}}})
 	creatableDeltas[0][100] = ledgercore.ModifiedCreatable{Creator: addrs[2], Created: true}
 	var baseAccounts lruAccounts
 	baseAccounts.init(nil, 100, 80)
@@ -1403,20 +1403,20 @@ func TestCompactDeltas(t *testing.T) {
 	require.Equal(t, 0, len(outAccountDeltas.misses))
 	delta, _ = outAccountDeltas.get(addrs[0])
 	require.Equal(t, persistedAccountData{addr: addrs[0]}, delta.oldAcct)
-	require.Equal(t, baseAccountData{MicroAlgos: basics.MicroAlgos{Raw: 2}, UpdateRound: 2}, delta.newAcct)
+	require.Equal(t, baseAccountData{MicroNovas: basics.MicroNovas{Raw: 2}, UpdateRound: 2}, delta.newAcct)
 	require.Equal(t, ledgercore.ModifiedCreatable{Creator: addrs[2], Created: true, Ndeltas: 1}, outCreatableDeltas[100])
 	baseAccounts.init(nil, 100, 80)
 
 	// add another round
 	accountDeltas = append(accountDeltas, ledgercore.AccountDeltas{})
 	creatableDeltas = append(creatableDeltas, make(map[basics.CreatableIndex]ledgercore.ModifiedCreatable))
-	accountDeltas[1].Upsert(addrs[0], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 3}}})
-	accountDeltas[1].Upsert(addrs[3], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 8}}})
+	accountDeltas[1].Upsert(addrs[0], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 3}}})
+	accountDeltas[1].Upsert(addrs[3], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 8}}})
 
 	creatableDeltas[1][100] = ledgercore.ModifiedCreatable{Creator: addrs[2], Created: false}
 	creatableDeltas[1][101] = ledgercore.ModifiedCreatable{Creator: addrs[4], Created: true}
 
-	baseAccounts.write(persistedAccountData{addr: addrs[0], accountData: baseAccountData{MicroAlgos: basics.MicroAlgos{Raw: 1}}})
+	baseAccounts.write(persistedAccountData{addr: addrs[0], accountData: baseAccountData{MicroNovas: basics.MicroNovas{Raw: 1}}})
 	baseAccounts.write(persistedAccountData{addr: addrs[3], accountData: baseAccountData{}})
 	outAccountDeltas = makeCompactAccountDeltas(accountDeltas, basics.Round(1), true, baseAccounts)
 	outCreatableDeltas = compactCreatableDeltas(creatableDeltas)
@@ -1425,12 +1425,12 @@ func TestCompactDeltas(t *testing.T) {
 	require.Equal(t, 2, len(outCreatableDeltas))
 
 	delta, _ = outAccountDeltas.get(addrs[0])
-	require.Equal(t, uint64(1), delta.oldAcct.accountData.MicroAlgos.Raw)
-	require.Equal(t, uint64(3), delta.newAcct.MicroAlgos.Raw)
+	require.Equal(t, uint64(1), delta.oldAcct.accountData.MicroNovas.Raw)
+	require.Equal(t, uint64(3), delta.newAcct.MicroNovas.Raw)
 	require.Equal(t, int(2), delta.nAcctDeltas)
 	delta, _ = outAccountDeltas.get(addrs[3])
-	require.Equal(t, uint64(0), delta.oldAcct.accountData.MicroAlgos.Raw)
-	require.Equal(t, uint64(8), delta.newAcct.MicroAlgos.Raw)
+	require.Equal(t, uint64(0), delta.oldAcct.accountData.MicroNovas.Raw)
+	require.Equal(t, uint64(8), delta.newAcct.MicroNovas.Raw)
 	require.Equal(t, int(1), delta.nAcctDeltas)
 
 	require.Equal(t, addrs[2], outCreatableDeltas[100].Creator)
@@ -1585,8 +1585,8 @@ func TestCompactDeltasResources(t *testing.T) {
 
 	// add another round
 	accountDeltas = append(accountDeltas, ledgercore.AccountDeltas{})
-	accountDeltas[1].Upsert(addrs[0], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 3}}})
-	accountDeltas[1].Upsert(addrs[3], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 8}}})
+	accountDeltas[1].Upsert(addrs[0], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 3}}})
+	accountDeltas[1].Upsert(addrs[3], ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 8}}})
 
 	appLocalState100 := basics.AppLocalState{KeyValue: basics.TealKeyValue{"100": basics.TealValue{Type: basics.TealBytesType, Bytes: "100"}}}
 	accountDeltas[1].UpsertAppResource(addrs[0], 100, ledgercore.AppParamsDelta{}, ledgercore.AppLocalStateDelta{LocalState: &appLocalState100})
@@ -1629,12 +1629,12 @@ func TestAcctUpdatesCachesInitialization(t *testing.T) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -1665,7 +1665,7 @@ func TestAcctUpdatesCachesInitialization(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -1727,12 +1727,12 @@ func TestAcctUpdatesSplittingConsensusVersionCommits(t *testing.T) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -1765,7 +1765,7 @@ func TestAcctUpdatesSplittingConsensusVersionCommits(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -1803,7 +1803,7 @@ func TestAcctUpdatesSplittingConsensusVersionCommits(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -1845,12 +1845,12 @@ func TestAcctUpdatesSplittingConsensusVersionCommitsBoundary(t *testing.T) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -1883,7 +1883,7 @@ func TestAcctUpdatesSplittingConsensusVersionCommitsBoundary(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -1920,7 +1920,7 @@ func TestAcctUpdatesSplittingConsensusVersionCommitsBoundary(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -1958,7 +1958,7 @@ func TestAcctUpdatesSplittingConsensusVersionCommitsBoundary(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(accts[i-1], updates)
@@ -1991,12 +1991,12 @@ func TestAcctUpdatesResources(t *testing.T) {
 
 	accts := []map[basics.Address]basics.AccountData{ledgertesting.RandomAccounts(20, true)}
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 100 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 100 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -2044,15 +2044,15 @@ func TestAcctUpdatesResources(t *testing.T) {
 		// test 1: modify state as needed for the tests: create, delete, create
 		// expect no errors on accounts writing
 		if i == 1 {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 1}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 1}})
 			updates.UpsertAssetResource(addr1, aidx, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 100}})
 		}
 		if i == 2 {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 0}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 0}})
 			updates.UpsertAssetResource(addr1, aidx, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Deleted: true})
 		}
 		if i == 3 {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 1}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 1}})
 			updates.UpsertAssetResource(addr1, aidx, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 200}})
 		}
 
@@ -2061,8 +2061,8 @@ func TestAcctUpdatesResources(t *testing.T) {
 		creatorParams := ledgercore.AssetParamsDelta{Params: &basics.AssetParams{Total: 1000}}
 		if i == 4 {
 			// create base account to make lookup work
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 2, TotalAssetParams: 1}})
-			updates.Upsert(addr2, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 1}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 2, TotalAssetParams: 1}})
+			updates.Upsert(addr2, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 1}})
 
 			// create an asset
 			updates.UpsertAssetResource(addr1, aidx2, creatorParams, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 1000}})
@@ -2080,7 +2080,7 @@ func TestAcctUpdatesResources(t *testing.T) {
 		// test 3: own app local state closeout, own empty
 		appParams := ledgercore.AppParamsDelta{Params: &basics.AppParams{ApprovalProgram: []byte{2, 0x20, 1, 1, 0x22} /* int 1 */}}
 		if i == 6 {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 3, TotalAssetParams: 2, TotalAppParams: 1, TotalAppLocalStates: 1}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 3, TotalAssetParams: 2, TotalAppParams: 1, TotalAppLocalStates: 1}})
 
 			// create an app
 			updates.UpsertAppResource(addr1, aidx3, appParams, ledgercore.AppLocalStateDelta{LocalState: &basics.AppLocalState{Schema: basics.StateSchema{NumUint: 10}}})
@@ -2221,7 +2221,7 @@ func TestAcctUpdatesLookupLatest(t *testing.T) {
 		d, r, err := au.LookupWithoutRewards(validThrough, addr)
 		require.NoError(t, err)
 		require.Equal(t, validThrough, r)
-		require.Equal(t, withoutRewards, d.MicroAlgos)
+		require.Equal(t, withoutRewards, d.MicroNovas)
 	}
 }
 
@@ -2242,12 +2242,12 @@ func testAcctUpdatesLookupRetry(t *testing.T, assertFn func(au *accountUpdates, 
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -2286,7 +2286,7 @@ func testAcctUpdatesLookupRetry(t *testing.T, assertFn func(au *accountUpdates, 
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(base, updates)
@@ -2380,7 +2380,7 @@ func TestAcctUpdatesLookupLatestRetry(t *testing.T) {
 			d, validThrough, withoutRewards, err := au.lookupLatest(addr)
 			require.NoError(t, err)
 			require.Equal(t, accts[validThrough][addr].WithUpdatedRewards(proto, rewardsLevels[validThrough]), d)
-			require.Equal(t, accts[validThrough][addr].MicroAlgos, withoutRewards)
+			require.Equal(t, accts[validThrough][addr].MicroNovas, withoutRewards)
 			require.GreaterOrEqualf(t, uint64(validThrough), uint64(rnd), "validThrough: %v rnd :%v", validThrough, rnd)
 		})
 }
@@ -2489,12 +2489,12 @@ func TestAcctUpdatesLookupLatestCacheRetry(t *testing.T) {
 
 	accts := []map[basics.Address]basics.AccountData{ledgertesting.RandomAccounts(20, true)}
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 100 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 100 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -2526,7 +2526,7 @@ func TestAcctUpdatesLookupLatestCacheRetry(t *testing.T) {
 
 		// add data
 		if i == 1 {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssetParams: 1, TotalAssets: 2}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssetParams: 1, TotalAssets: 2}})
 			updates.UpsertAssetResource(addr1, aidx1, ledgercore.AssetParamsDelta{Params: &basics.AssetParams{Total: 100}}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 100}})
 			updates.UpsertAssetResource(addr1, aidx2, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 200}})
 		}
@@ -2607,7 +2607,7 @@ func TestAcctUpdatesLookupLatestCacheRetry(t *testing.T) {
 	wg.Wait()
 
 	require.NoError(t, err)
-	require.Equal(t, uint64(1000000), ad.MicroAlgos.Raw)
+	require.Equal(t, uint64(1000000), ad.MicroNovas.Raw)
 	require.Equal(t, uint64(100), ad.AssetParams[aidx1].Total)
 	require.Equal(t, uint64(100), ad.Assets[aidx1].Amount)
 	require.Equal(t, uint64(200), ad.Assets[aidx2].Amount)
@@ -2620,12 +2620,12 @@ func TestAcctUpdatesLookupResources(t *testing.T) {
 
 	accts := []map[basics.Address]basics.AccountData{ledgertesting.RandomAccounts(1, true)}
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 100 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 100 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -2666,16 +2666,16 @@ func TestAcctUpdatesLookupResources(t *testing.T) {
 
 		// add data
 		if i == 1 {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 1}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 1}})
 			updates.UpsertAssetResource(addr1, aidx1, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 100}})
 		}
 		if i == basics.Round(protoParams.MaxBalLookback+2) {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 3}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 3}})
 			updates.UpsertAssetResource(addr1, aidx2, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 200}})
 			updates.UpsertAssetResource(addr1, aidx3, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Holding: &basics.AssetHolding{Amount: 300}})
 		}
 		if i == basics.Round(protoParams.MaxBalLookback+3) {
-			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 1000000}, TotalAssets: 2}})
+			updates.Upsert(addr1, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 1000000}, TotalAssets: 2}})
 			updates.UpsertAssetResource(addr1, aidx2, ledgercore.AssetParamsDelta{}, ledgercore.AssetHoldingDelta{Deleted: true})
 		}
 

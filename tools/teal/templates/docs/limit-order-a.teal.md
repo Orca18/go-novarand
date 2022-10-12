@@ -2,9 +2,9 @@
 
 ## Functionality
 
-Suppose you want to purchase units of an [asset](https://developer.algorand.org/docs/asa), and are willing to pay up to some number of microAlgos per unit of that asset. This contract allows you place a limit order offering such a trade, and to additionally cancel the order after some timeout. The contract is intended to be used as a "contract only" account, not as a "delegated contract" account. In other words, this contract should not be signed by a spending key.
+Suppose you want to purchase units of an [asset](https://developer.algorand.org/docs/asa), and are willing to pay up to some number of MicroNovas per unit of that asset. This contract allows you place a limit order offering such a trade, and to additionally cancel the order after some timeout. The contract is intended to be used as a "contract only" account, not as a "delegated contract" account. In other words, this contract should not be signed by a spending key.
 
-The contract is configured with several parameters describing the order. The first two parameters, `TMPL_SWAPN` and `TMPL_SWAPD`, specify the exchange rate. They encode that we are willing to purchase `N` units of the asset per `D` microAlgos.
+The contract is configured with several parameters describing the order. The first two parameters, `TMPL_SWAPN` and `TMPL_SWAPD`, specify the exchange rate. They encode that we are willing to purchase `N` units of the asset per `D` MicroNovas.
 
 After fully specifying the contract with parameters below, the contract should be funded with the maximum number of algos willing to be traded by the owner.
 
@@ -15,7 +15,7 @@ The contract will approve transactions spending algos from itself under two circ
     - The fee of the first transaction is less than or equal to `TMPL_FEE`
     - The second transaction transfers units of `TMPL_ASSET` into `TMPL_OWN`
     - The ratio of `gtxn 1 AssetAmount / gtxn 0 Amount` is at least `TMPL_SWAPN / TMPL_SWAPD`
-    - The number of microAlgos being spent out of this contract is at least `TMPL_MINTRD`
+    - The number of MicroNovas being spent out of this contract is at least `TMPL_MINTRD`
   2. In a group of size one, where:
     - The transaction is a payment
     - The fee of the transaction is less than or equal to `TMPL_FEE`
@@ -27,12 +27,12 @@ Note that the first case (Scenario 1) can be executed until the account has been
 ## Parameters
 
   - `TMPL_ASSET`: Integer ID of the asset
-  - `TMPL_SWAPN`: Numerator of the exchange rate (`TMPL_SWAPN` assets per `TMPL_SWAPD` microAlgos, or better)
-  - `TMPL_SWAPD`: Denominator of the exchange rate (`TMPL_SWAPN` assets per `TMPL_SWAPD` microAlgos, or better)
+  - `TMPL_SWAPN`: Numerator of the exchange rate (`TMPL_SWAPN` assets per `TMPL_SWAPD` MicroNovas, or better)
+  - `TMPL_SWAPD`: Denominator of the exchange rate (`TMPL_SWAPN` assets per `TMPL_SWAPD` MicroNovas, or better)
   - `TMPL_TIMEOUT`: The round after which all of the algos in this contract may be closed back to `TMPL_OWN`
   - `TMPL_OWN`: The recipient of the asset (if the order is filled), or of the contract's algo balance (after `TMPL_TIMEOUT`)
   - `TMPL_FEE`: The maximum fee used in any transaction spending out of this contract
-  - `TMPL_MINTRD`: The minimum number of microAlgos that may be spent out of this contract as part of a trade
+  - `TMPL_MINTRD`: The minimum number of MicroNovas that may be spent out of this contract as part of a trade
 
 ## Code overview
 
@@ -75,7 +75,7 @@ int 2
 ==
 ```
 
-Check that the transaction is worth spending a transaction fee on, by ensuring we are spending enough microAlgos out of this contract.
+Check that the transaction is worth spending a transaction fee on, by ensuring we are spending enough MicroNovas out of this contract.
 
 ```
 txn Amount

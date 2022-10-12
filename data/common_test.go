@@ -22,15 +22,15 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var sinkAddr = basics.Address{0x7, 0xda, 0xcb, 0x4b, 0x6d, 0x9e, 0xd1, 0x41, 0xb1, 0x75, 0x76, 0xbd, 0x45, 0x9a, 0xe6, 0x42, 0x1d, 0x48, 0x6d, 0xa3, 0xd4, 0xef, 0x22, 0x47, 0xc4, 0x9, 0xa3, 0x96, 0xb8, 0x2e, 0xa2, 0x21}
@@ -99,7 +99,7 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*L
 		roots[i] = root
 		parts[i] = part
 
-		startamt := basics.MicroAlgos{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))}
+		startamt := basics.MicroNovas{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))}
 		short := root.Address()
 
 		if offlineAccounts && i > P/2 {
@@ -112,7 +112,7 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*L
 		}
 	}
 
-	genesis[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 100000 * uint64(proto.RewardsRateRefreshInterval)})
+	genesis[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 100000 * uint64(proto.RewardsRateRefreshInterval)})
 
 	bootstrap := bookkeeping.MakeGenesisBalances(genesis, poolAddr, sinkAddr)
 
@@ -120,7 +120,7 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*L
 	const inMem = true
 	cfg := config.GetDefaultLocal()
 	cfg.Archival = true
-	ledger, err := LoadLedger(logging.Base(), t.Name(), inMem, protocol.ConsensusCurrentVersion, bootstrap, genesisID, genesisHash, nil, cfg)
+	ledger, err := LoadLedger(logging.Base(), t.Name(), inMem, protocol.ConsensusCurrentVersion, bootstrap, genesisID, genesisHash, nil, nil, cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -139,21 +139,21 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*L
 		saddr := roots[send].Address()
 		raddr := roots[recv].Address()
 
-		if proto.MinTxnFee+uint64(maxFee) > bal[saddr].MicroAlgos.Raw {
+		if proto.MinTxnFee+uint64(maxFee) > bal[saddr].MicroNovas.Raw {
 			continue
 		}
 
 		xferMax := transferredMoney
-		if uint64(xferMax) > bal[saddr].MicroAlgos.Raw-proto.MinTxnFee-uint64(maxFee) {
-			xferMax = int(bal[saddr].MicroAlgos.Raw - proto.MinTxnFee - uint64(maxFee))
+		if uint64(xferMax) > bal[saddr].MicroNovas.Raw-proto.MinTxnFee-uint64(maxFee) {
+			xferMax = int(bal[saddr].MicroNovas.Raw - proto.MinTxnFee - uint64(maxFee))
 		}
 
 		if xferMax == 0 {
 			continue
 		}
 
-		amt := basics.MicroAlgos{Raw: uint64(gen.Int() % xferMax)}
-		fee := basics.MicroAlgos{Raw: uint64(gen.Int()%maxFee) + proto.MinTxnFee}
+		amt := basics.MicroNovas{Raw: uint64(gen.Int() % xferMax)}
+		fee := basics.MicroNovas{Raw: uint64(gen.Int()%maxFee) + proto.MinTxnFee}
 
 		t := transactions.Transaction{
 			Type: protocol.PaymentTx,
@@ -179,16 +179,16 @@ func testingenv(t testing.TB, numAccounts, numTxs int, offlineAccounts bool) (*L
 		//}
 
 		sbal := bal[saddr]
-		sbal.MicroAlgos.Raw -= fee.Raw
-		sbal.MicroAlgos.Raw -= amt.Raw
+		sbal.MicroNovas.Raw -= fee.Raw
+		sbal.MicroNovas.Raw -= amt.Raw
 		bal[saddr] = sbal
 
 		ibal := bal[poolAddr]
-		ibal.MicroAlgos.Raw += fee.Raw
+		ibal.MicroNovas.Raw += fee.Raw
 		bal[poolAddr] = ibal
 
 		rbal := bal[raddr]
-		rbal.MicroAlgos.Raw += amt.Raw
+		rbal.MicroNovas.Raw += amt.Raw
 		bal[raddr] = rbal
 	}
 

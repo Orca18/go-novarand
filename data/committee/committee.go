@@ -17,10 +17,10 @@
 package committee
 
 import (
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // A Selector deterministically defines a cryptographic sortition committee. It
@@ -49,7 +49,7 @@ type BalanceRecord struct {
 type Membership struct {
 	Record     BalanceRecord
 	Selector   Selector
-	TotalMoney basics.MicroAlgos
+	TotalMoney basics.MicroNovas
 }
 
 // A Seed contains cryptographic entropy which can be used to determine a

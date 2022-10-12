@@ -24,16 +24,16 @@ import (
 	"github.com/algorand/go-deadlock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 func BenchmarkManyAccounts(b *testing.B) {
@@ -65,8 +65,8 @@ func BenchmarkManyAccounts(b *testing.B) {
 			crypto.RandBytes(st.Sig[:])
 			st.Txn.Type = protocol.PaymentTx
 			st.Txn.Sender = addr
-			st.Txn.Fee = basics.MicroAlgos{Raw: 1}
-			st.Txn.Amount = basics.MicroAlgos{Raw: 1}
+			st.Txn.Fee = basics.MicroNovas{Raw: 1}
+			st.Txn.Amount = basics.MicroNovas{Raw: 1}
 			crypto.RandBytes(st.Txn.Receiver[:])
 
 			txib, err := blk.EncodeSignedTxn(st, transactions.ApplyData{})
@@ -118,12 +118,12 @@ func BenchmarkValidate(b *testing.B) {
 				Type: protocol.PaymentTx,
 				Header: transactions.Header{
 					Sender:     addrs[i],
-					Fee:        basics.MicroAlgos{Raw: 1},
+					Fee:        basics.MicroNovas{Raw: 1},
 					FirstValid: newblk.Round(),
 					LastValid:  newblk.Round(),
 				},
 				PaymentTxnFields: transactions.PaymentTxnFields{
-					Amount: basics.MicroAlgos{Raw: 1},
+					Amount: basics.MicroNovas{Raw: 1},
 				},
 			}
 			crypto.RandBytes(t.Receiver[:])

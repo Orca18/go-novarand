@@ -19,8 +19,8 @@ package internal
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
 )
 
 // These functions ensure roundCowState satisfies the methods for

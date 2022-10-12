@@ -20,14 +20,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // This file is a copy of node/impls.go.
@@ -107,7 +107,7 @@ func (i ledgerImpl) LookupAgreement(r basics.Round, addr basics.Address) (basics
 }
 
 // Circulation implements Ledger.Circulation.
-func (i ledgerImpl) Circulation(r basics.Round) (basics.MicroAlgos, error) {
+func (i ledgerImpl) Circulation(r basics.Round) (basics.MicroNovas, error) {
 	return i.l.Circulation(r)
 }
 

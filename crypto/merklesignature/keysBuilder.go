@@ -21,7 +21,7 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/algorand/go-algorand/crypto"
+	"github.com/Orca18/go-novarand/crypto"
 )
 
 // KeysBuilder Responsible for generate slice of falcon keys

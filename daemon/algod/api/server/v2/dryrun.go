@@ -21,17 +21,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/apply"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/apply"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
 
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // DryrunRequest object uploaded to /v2/teal/dryrun
@@ -261,7 +261,7 @@ func (dl *dryrunLedger) lookup(rnd basics.Round, addr basics.Address) (basics.Ac
 		if out, err = AccountToAccountData(&acct); err != nil {
 			return basics.AccountData{}, 0, err
 		}
-		out.MicroAlgos.Raw = acct.AmountWithoutPendingRewards
+		out.MicroNovas.Raw = acct.AmountWithoutPendingRewards
 		// Clear RewardsBase since dryrun has no idea about rewards level so the underlying calculation with reward will fail.
 		// The amount needed is known as acct.Amount but this method must return AmountWithoutPendingRewards
 		out.RewardsBase = 0

@@ -23,9 +23,9 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/metrics"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/metrics"
 	"github.com/stretchr/testify/require"
 )
 

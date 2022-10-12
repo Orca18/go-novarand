@@ -27,18 +27,18 @@ import (
 	"github.com/algorand/go-deadlock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 type testParams struct {
@@ -62,7 +62,7 @@ func makeUnsignedApplicationCallTxPerf(appIdx uint64, params testParams, onCompl
 	tx.OnCompletion = onCompletion
 	tx.Header.FirstValid = basics.Round(round)
 	tx.Header.LastValid = basics.Round(round + 1000)
-	tx.Header.Fee = basics.MicroAlgos{Raw: 1000}
+	tx.Header.Fee = basics.MicroNovas{Raw: 1000}
 
 	// If creating, set programs
 	if appIdx == 0 {
@@ -86,7 +86,7 @@ func makeUnsignedASATx(appIdx uint64, creator basics.Address, round int) transac
 	tx.ApplicationID = basics.AppIndex(appIdx)
 	tx.Header.FirstValid = basics.Round(round)
 	tx.Header.LastValid = basics.Round(round + 1000)
-	tx.Header.Fee = basics.MicroAlgos{Raw: 1000}
+	tx.Header.Fee = basics.MicroNovas{Raw: 1000}
 
 	if appIdx == 0 {
 		tx.ApplicationArgs = [][]byte{
@@ -119,11 +119,11 @@ func makeUnsignedPaymentTx(sender basics.Address, round int) transactions.Transa
 		Header: transactions.Header{
 			FirstValid: basics.Round(round),
 			LastValid:  basics.Round(round + 1000),
-			Fee:        basics.MicroAlgos{Raw: 1000},
+			Fee:        basics.MicroNovas{Raw: 1000},
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: sender,
-			Amount:   basics.MicroAlgos{Raw: 1234},
+			Amount:   basics.MicroNovas{Raw: 1234},
 		},
 	}
 }
@@ -151,7 +151,7 @@ func benchmarkFullBlocks(params testParams, b *testing.B) {
 	creator := basics.Address{}
 	_, err := rand.Read(creator[:])
 	require.NoError(b, err)
-	genesisInitState.Accounts[creator] = basics.MakeAccountData(basics.Offline, basics.MicroAlgos{Raw: 1234567890})
+	genesisInitState.Accounts[creator] = basics.MakeAccountData(basics.Offline, basics.MicroNovas{Raw: 1234567890})
 
 	// Make some accounts to opt into ASA
 	var accts []basics.Address
@@ -160,7 +160,7 @@ func benchmarkFullBlocks(params testParams, b *testing.B) {
 			acct := basics.Address{}
 			_, err = rand.Read(acct[:])
 			require.NoError(b, err)
-			genesisInitState.Accounts[acct] = basics.MakeAccountData(basics.Offline, basics.MicroAlgos{Raw: 1234567890})
+			genesisInitState.Accounts[acct] = basics.MakeAccountData(basics.Offline, basics.MicroNovas{Raw: 1234567890})
 			accts = append(accts, acct)
 		}
 	}

@@ -33,21 +33,21 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	algodclient "github.com/algorand/go-algorand/daemon/algod/api/client"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	kmdclient "github.com/algorand/go-algorand/daemon/kmd/client"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	algodclient "github.com/Orca18/go-novarand/daemon/algod/api/client"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	kmdclient "github.com/Orca18/go-novarand/daemon/kmd/client"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var fixture fixtures.RestClientFixture
@@ -569,7 +569,7 @@ func TestAccountParticipationInfo(t *testing.T) {
 		Type: protocol.KeyRegistrationTx,
 		Header: transactions.Header{
 			Sender:      addr,
-			Fee:         basics.MicroAlgos{Raw: 10000},
+			Fee:         basics.MicroNovas{Raw: 10000},
 			FirstValid:  firstRound,
 			LastValid:   lastRound,
 			GenesisHash: gh,
@@ -1108,7 +1108,7 @@ func TestStateProofInParticipationInfo(t *testing.T) {
 		Type: protocol.KeyRegistrationTx,
 		Header: transactions.Header{
 			Sender:      addr,
-			Fee:         basics.MicroAlgos{Raw: 10000},
+			Fee:         basics.MicroNovas{Raw: 10000},
 			FirstValid:  firstRound,
 			LastValid:   lastRound,
 			GenesisHash: gh,
@@ -1205,7 +1205,7 @@ func TestNilStateProofInParticipationInfo(t *testing.T) {
 		Type: protocol.KeyRegistrationTx,
 		Header: transactions.Header{
 			Sender:      addr,
-			Fee:         basics.MicroAlgos{Raw: 10000},
+			Fee:         basics.MicroNovas{Raw: 10000},
 			FirstValid:  firstRound,
 			LastValid:   lastRound,
 			GenesisHash: gh,

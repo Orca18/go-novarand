@@ -27,16 +27,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/daemon/algod/api/client"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/logging/telemetryspec"
-	"github.com/algorand/go-algorand/nodecontrol"
-	"github.com/algorand/go-algorand/shared/algoh"
-	"github.com/algorand/go-algorand/tools/network"
-	"github.com/algorand/go-algorand/util"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/daemon/algod/api/client"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/logging/telemetryspec"
+	"github.com/Orca18/go-novarand/nodecontrol"
+	"github.com/Orca18/go-novarand/shared/algoh"
+	"github.com/Orca18/go-novarand/tools/network"
+	"github.com/Orca18/go-novarand/util"
 )
 
 var dataDirectory = flag.String("d", "", "Root Algorand daemon data path")

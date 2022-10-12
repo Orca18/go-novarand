@@ -21,7 +21,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 func main() {

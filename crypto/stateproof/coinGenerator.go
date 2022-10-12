@@ -22,8 +22,8 @@ import (
 
 	"golang.org/x/crypto/sha3"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // The coinChoiceSeed defines the randomness seed that will be given to an XOF function. This will be used for choosing

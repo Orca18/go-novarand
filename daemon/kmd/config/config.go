@@ -21,7 +21,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/algorand/go-algorand/util/codecs"
+	"github.com/Orca18/go-novarand/util/codecs"
 )
 
 const (

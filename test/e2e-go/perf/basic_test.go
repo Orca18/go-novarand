@@ -26,15 +26,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	generatedV2 "github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
+	generatedV2 "github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
 )
 
 func queuePayments(b *testing.B, wg *sync.WaitGroup, c libgoal.Client, q <-chan *transactions.SignedTxn) {
@@ -164,14 +164,14 @@ func doBenchTemplate(b *testing.B, template string, moneynode string) {
 						Type: protocol.PaymentTx,
 						Header: transactions.Header{
 							Sender:      sender,
-							Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+							Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 							FirstValid:  basics.Round(round),
 							LastValid:   basics.Round(round) + basics.Round(proto.MaxTxnLife),
 							GenesisHash: genesisHash,
 						},
 						PaymentTxnFields: transactions.PaymentTxnFields{
 							Receiver: dst,
-							Amount:   basics.MicroAlgos{Raw: 100000},
+							Amount:   basics.MicroNovas{Raw: 100000},
 						},
 					}
 

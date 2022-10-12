@@ -23,8 +23,8 @@ import (
 
 	"github.com/algorand/websocket"
 
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/test/commandandcontrol/lib"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/test/commandandcontrol/lib"
 )
 
 // NewAgent factory method for Agent

@@ -21,14 +21,14 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
-// Status is the delegation status of an account's MicroAlgos
+// Status is the delegation status of an account's MicroNovas
 type Status byte
 
 const (
@@ -111,7 +111,7 @@ type VotingData struct {
 // OnlineAccountData contains the voting information for a single account.
 //msgp:ignore OnlineAccountData
 type OnlineAccountData struct {
-	MicroAlgosWithRewards MicroAlgos
+	MicroNovasWithRewards MicroNovas
 	VotingData
 }
 
@@ -123,7 +123,7 @@ type AccountData struct {
 	_struct struct{} `codec:",omitempty,omitemptyarray"`
 
 	Status     Status     `codec:"onl"`
-	MicroAlgos MicroAlgos `codec:"algo"`
+	MicroNovas MicroNovas `codec:"algo"`
 
 	// RewardsBase is used to implement rewards.
 	// This is not meaningful for accounts with Status=NotParticipating.
@@ -135,36 +135,36 @@ type AccountData struct {
 	// account holds.
 	//
 	// For performance reasons, we do not want to walk over every
-	// account to apply these rewards to AccountData.MicroAlgos.  Instead,
+	// account to apply these rewards to AccountData.MicroNovas.  Instead,
 	// we defer applying the rewards until some other transaction
 	// touches that participating account, and at that point, apply all
-	// of the rewards to the account's AccountData.MicroAlgos.
+	// of the rewards to the account's AccountData.MicroNovas.
 	//
 	// For correctness, we need to be able to determine how many
 	// total algos are present in the system, including deferred
 	// rewards (deferred in the sense that they have not been
-	// reflected in the account's AccountData.MicroAlgos, as described
+	// reflected in the account's AccountData.MicroNovas, as described
 	// above).  To compute this total efficiently, we avoid
 	// compounding rewards (i.e., no rewards on rewards) until
-	// they are applied to AccountData.MicroAlgos.
+	// they are applied to AccountData.MicroNovas.
 	//
 	// Mechanically, RewardsBase stores the block.RewardsLevel
-	// whose rewards are already reflected in AccountData.MicroAlgos.
+	// whose rewards are already reflected in AccountData.MicroNovas.
 	// If the account is Status=Offline or Status=Online, its
 	// effective balance (if a transaction were to be issued
 	// against this account) may be higher, as computed by
 	// AccountData.Money().  That function calls
 	// AccountData.WithUpdatedRewards() to apply the deferred
-	// rewards to AccountData.MicroAlgos.
+	// rewards to AccountData.MicroNovas.
 	RewardsBase uint64 `codec:"ebase"`
 
-	// RewardedMicroAlgos is used to track how many algos were given
+	// RewardedMicroNovas is used to track how many algos were given
 	// to this account since the account was first created.
 	//
 	// This field is updated along with RewardBase; note that
 	// it won't answer the question "how many algos did I make in
 	// the past week".
-	RewardedMicroAlgos MicroAlgos `codec:"ern"`
+	RewardedMicroNovas MicroNovas `codec:"ern"`
 
 	VoteID       crypto.OneTimeSignatureVerifier `codec:"vote"`
 	SelectionID  crypto.VRFVerifier              `codec:"sel"`
@@ -284,22 +284,22 @@ func (al *AppLocalState) Clone() (res AppLocalState) {
 // AccountDetail encapsulates meaningful details about a given account, for external consumption
 type AccountDetail struct {
 	Address Address
-	Algos   MicroAlgos
+	Algos   MicroNovas
 	Status  Status
 }
 
 // SupplyDetail encapsulates meaningful details about the ledger's current token supply
 type SupplyDetail struct {
 	Round       Round
-	TotalMoney  MicroAlgos
-	OnlineMoney MicroAlgos
+	TotalMoney  MicroNovas
+	OnlineMoney MicroNovas
 }
 
 // BalanceDetail encapsulates meaningful details about the current balances of the ledger, for external consumption
 type BalanceDetail struct {
 	Round       Round
-	TotalMoney  MicroAlgos
-	OnlineMoney MicroAlgos
+	TotalMoney  MicroNovas
+	OnlineMoney MicroNovas
 	Accounts    []AccountDetail
 }
 
@@ -413,53 +413,53 @@ func (app AppIndex) Address() Address {
 }
 
 // MakeAccountData returns a UserToken
-func MakeAccountData(status Status, algos MicroAlgos) AccountData {
-	return AccountData{Status: status, MicroAlgos: algos}
+func MakeAccountData(status Status, algos MicroNovas) AccountData {
+	return AccountData{Status: status, MicroNovas: algos}
 }
 
-// Money returns the amount of MicroAlgos associated with the user's account
-func (u AccountData) Money(proto config.ConsensusParams, rewardsLevel uint64) (money MicroAlgos, rewards MicroAlgos) {
+// Money returns the amount of MicroNovas associated with the user's account
+func (u AccountData) Money(proto config.ConsensusParams, rewardsLevel uint64) (money MicroNovas, rewards MicroNovas) {
 	e := u.WithUpdatedRewards(proto, rewardsLevel)
-	return e.MicroAlgos, e.RewardedMicroAlgos
+	return e.MicroNovas, e.RewardedMicroNovas
 }
 
-// PendingRewards computes the amount of rewards (in microalgos) that
+// PendingRewards computes the amount of rewards (in MicroNovas) that
 // have yet to be added to the account balance.
-func PendingRewards(ot *OverflowTracker, proto config.ConsensusParams, microAlgos MicroAlgos, rewardsBase uint64, rewardsLevel uint64) MicroAlgos {
-	rewardsUnits := microAlgos.RewardUnits(proto)
+func PendingRewards(ot *OverflowTracker, proto config.ConsensusParams, microNovas MicroNovas, rewardsBase uint64, rewardsLevel uint64) MicroNovas {
+	rewardsUnits := microNovas.RewardUnits(proto)
 	rewardsDelta := ot.Sub(rewardsLevel, rewardsBase)
-	return MicroAlgos{Raw: ot.Mul(rewardsUnits, rewardsDelta)}
+	return MicroNovas{Raw: ot.Mul(rewardsUnits, rewardsDelta)}
 }
 
 // WithUpdatedRewards returns an updated number of algos, total rewards and new rewards base
 // to reflect rewards up to some rewards level.
 func WithUpdatedRewards(
-	proto config.ConsensusParams, status Status, microAlgosIn MicroAlgos, rewardedMicroAlgosIn MicroAlgos, rewardsBaseIn uint64, rewardsLevelIn uint64,
-) (MicroAlgos, MicroAlgos, uint64) {
+	proto config.ConsensusParams, status Status, microNovasIn MicroNovas, rewardedMicroNovasIn MicroNovas, rewardsBaseIn uint64, rewardsLevelIn uint64,
+) (MicroNovas, MicroNovas, uint64) {
 	if status == NotParticipating {
-		return microAlgosIn, rewardedMicroAlgosIn, rewardsBaseIn
+		return microNovasIn, rewardedMicroNovasIn, rewardsBaseIn
 	}
 
 	var ot OverflowTracker
-	rewardsUnits := microAlgosIn.RewardUnits(proto)
+	rewardsUnits := microNovasIn.RewardUnits(proto)
 	rewardsDelta := ot.Sub(rewardsLevelIn, rewardsBaseIn)
-	rewards := MicroAlgos{Raw: ot.Mul(rewardsUnits, rewardsDelta)}
-	microAlgosOut := ot.AddA(microAlgosIn, rewards)
+	rewards := MicroNovas{Raw: ot.Mul(rewardsUnits, rewardsDelta)}
+	microNovasOut := ot.AddA(microNovasIn, rewards)
 	if ot.Overflowed {
-		logging.Base().Panicf("AccountData.WithUpdatedRewards(): overflowed account balance when applying rewards %v + %d*(%d-%d)", microAlgosIn, rewardsUnits, rewardsLevelIn, rewardsBaseIn)
+		logging.Base().Panicf("AccountData.WithUpdatedRewards(): overflowed account balance when applying rewards %v + %d*(%d-%d)", microNovasIn, rewardsUnits, rewardsLevelIn, rewardsBaseIn)
 	}
 	rewardsBaseOut := rewardsLevelIn
 	// The total reward over the lifetime of the account could exceed a 64-bit value. As a result
 	// this rewardAlgos counter could potentially roll over.
-	rewardedMicroAlgosOut := MicroAlgos{Raw: rewardedMicroAlgosIn.Raw + rewards.Raw}
-	return microAlgosOut, rewardedMicroAlgosOut, rewardsBaseOut
+	rewardedMicroNovasOut := MicroNovas{Raw: rewardedMicroNovasIn.Raw + rewards.Raw}
+	return microNovasOut, rewardedMicroNovasOut, rewardsBaseOut
 }
 
 // WithUpdatedRewards returns an updated number of algos in an AccountData
 // to reflect rewards up to some rewards level.
 func (u AccountData) WithUpdatedRewards(proto config.ConsensusParams, rewardsLevel uint64) AccountData {
-	u.MicroAlgos, u.RewardedMicroAlgos, u.RewardsBase = WithUpdatedRewards(
-		proto, u.Status, u.MicroAlgos, u.RewardedMicroAlgos, u.RewardsBase, rewardsLevel,
+	u.MicroNovas, u.RewardedMicroNovas, u.RewardsBase = WithUpdatedRewards(
+		proto, u.Status, u.MicroNovas, u.RewardedMicroNovas, u.RewardsBase, rewardsLevel,
 	)
 
 	return u
@@ -468,7 +468,7 @@ func (u AccountData) WithUpdatedRewards(proto config.ConsensusParams, rewardsLev
 // MinBalance computes the minimum balance requirements for an account based on
 // some consensus parameters. MinBalance should correspond roughly to how much
 // storage the account is allowed to store on disk.
-func (u AccountData) MinBalance(proto *config.ConsensusParams) (res MicroAlgos) {
+func (u AccountData) MinBalance(proto *config.ConsensusParams) (res MicroNovas) {
 	return MinBalance(
 		proto,
 		uint64(len(u.Assets)),
@@ -487,7 +487,7 @@ func MinBalance(
 	totalAppSchema StateSchema,
 	totalAppParams uint64, totalAppLocalStates uint64,
 	totalExtraAppPages uint64,
-) (res MicroAlgos) {
+) (res MicroNovas) {
 	var min uint64
 
 	// First, base MinBalance
@@ -527,7 +527,7 @@ func (u AccountData) OnlineAccountData() OnlineAccountData {
 	}
 
 	return OnlineAccountData{
-		MicroAlgosWithRewards: u.MicroAlgos,
+		MicroNovasWithRewards: u.MicroNovas,
 		VotingData: VotingData{
 			VoteID:          u.VoteID,
 			SelectionID:     u.SelectionID,
@@ -539,11 +539,11 @@ func (u AccountData) OnlineAccountData() OnlineAccountData {
 	}
 }
 
-// VotingStake returns the amount of MicroAlgos associated with the user's account
+// VotingStake returns the amount of MicroNovas associated with the user's account
 // for the purpose of participating in the Algorand protocol.  It assumes the
 // caller has already updated rewards appropriately using WithUpdatedRewards().
-func (u OnlineAccountData) VotingStake() MicroAlgos {
-	return u.MicroAlgosWithRewards
+func (u OnlineAccountData) VotingStake() MicroNovas {
+	return u.MicroNovasWithRewards
 }
 
 // KeyDilution returns the key dilution for this account,
@@ -584,7 +584,7 @@ func (u AccountData) IsZero() bool {
 // compounding).  However, online accounts have to periodically renew
 // participation keys, so the scale of the inconsistency is small.
 func (u AccountData) NormalizedOnlineBalance(proto config.ConsensusParams) uint64 {
-	return NormalizedOnlineAccountBalance(u.Status, u.RewardsBase, u.MicroAlgos, proto)
+	return NormalizedOnlineAccountBalance(u.Status, u.RewardsBase, u.MicroNovas, proto)
 }
 
 // NormalizedOnlineAccountBalance returns a ``normalized'' balance for an account
@@ -606,26 +606,26 @@ func (u AccountData) NormalizedOnlineBalance(proto config.ConsensusParams) uint6
 // on how recently the account has been touched (our rewards do not implement
 // compounding).  However, online accounts have to periodically renew
 // participation keys, so the scale of the inconsistency is small.
-func NormalizedOnlineAccountBalance(status Status, rewardsBase uint64, microAlgos MicroAlgos, genesisProto config.ConsensusParams) uint64 {
+func NormalizedOnlineAccountBalance(status Status, rewardsBase uint64, MicroNovas MicroNovas, genesisProto config.ConsensusParams) uint64 {
 	if status != Online {
 		return 0
 	}
 
-	// If this account had one RewardUnit of microAlgos in round 0, it would
-	// have perRewardUnit microAlgos at the account's current rewards level.
+	// If this account had one RewardUnit of MicroNovas in round 0, it would
+	// have perRewardUnit MicroNovas at the account's current rewards level.
 	perRewardUnit := rewardsBase + genesisProto.RewardUnit
 
 	// To normalize, we compute, mathematically,
-	// u.MicroAlgos / perRewardUnit * proto.RewardUnit, as
-	// (u.MicroAlgos * proto.RewardUnit) / perRewardUnit.
-	norm, overflowed := Muldiv(microAlgos.ToUint64(), genesisProto.RewardUnit, perRewardUnit)
+	// u.MicroNovas / perRewardUnit * proto.RewardUnit, as
+	// (u.MicroNovas * proto.RewardUnit) / perRewardUnit.
+	norm, overflowed := Muldiv(MicroNovas.ToUint64(), genesisProto.RewardUnit, perRewardUnit)
 
 	// Mathematically should be impossible to overflow
 	// because perRewardUnit >= proto.RewardUnit, as long
 	// as u.RewardBase isn't huge enough to cause overflow..
 	if overflowed {
 		logging.Base().Panicf("overflow computing normalized balance %d * %d / (%d + %d)",
-			microAlgos.ToUint64(), genesisProto.RewardUnit, rewardsBase, genesisProto.RewardUnit)
+			MicroNovas.ToUint64(), genesisProto.RewardUnit, rewardsBase, genesisProto.RewardUnit)
 	}
 
 	return norm

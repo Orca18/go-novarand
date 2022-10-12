@@ -1871,7 +1871,7 @@
           "type": "string"
         },
         "amount": {
-          "description": "\\[algo\\] total number of MicroAlgos in the account",
+          "description": "\\[algo\\] total number of MicroNovas in the account",
           "type": "integer"
         },
         "min-balance": {
@@ -1879,7 +1879,7 @@
           "type": "integer"
         },
         "amount-without-pending-rewards": {
-          "description": "specifies the amount of MicroAlgos in the account, without the pending rewards.",
+          "description": "specifies the amount of MicroNovas in the account, without the pending rewards.",
           "type": "integer"
         },
         "apps-local-state": {
@@ -1938,7 +1938,7 @@
           "$ref": "#/definitions/AccountParticipation"
         },
         "pending-rewards": {
-          "description": "amount of MicroAlgos of pending rewards in this account.",
+          "description": "amount of MicroNovas of pending rewards in this account.",
           "type": "integer"
         },
         "reward-base": {
@@ -1946,7 +1946,7 @@
           "type": "integer"
         },
         "rewards": {
-          "description": "\\[ern\\] total rewards of MicroAlgos the account has received, including pending rewards.",
+          "description": "\\[ern\\] total rewards of MicroNovas the account has received, including pending rewards.",
           "type": "integer"
         },
         "round": {
@@ -1954,7 +1954,7 @@
           "type": "integer"
         },
         "status": {
-          "description": "\\[onl\\] delegation status of the account's MicroAlgos\n* Offline - indicates that the associated account is delegated.\n*  Online  - indicates that the associated account used as part of the delegation pool.\n*   NotParticipating - indicates that the associated account is neither a delegator nor a delegate.",
+          "description": "\\[onl\\] delegation status of the account's MicroNovas\n* Offline - indicates that the associated account is delegated.\n*  Online  - indicates that the associated account used as part of the delegation pool.\n*   NotParticipating - indicates that the associated account is neither a delegator nor a delegate.",
           "type": "string"
         },
         "sig-type": {
@@ -2680,7 +2680,7 @@
           "type": "integer"
         },
         "close-rewards": {
-          "description": "Rewards in microalgos applied to the close remainder to account.",
+          "description": "Rewards in MicroNovas applied to the close remainder to account.",
           "type": "integer"
         },
         "closing-amount": {
@@ -2700,11 +2700,11 @@
           "type": "string"
         },
         "receiver-rewards": {
-          "description": "Rewards in microalgos applied to the receiver account.",
+          "description": "Rewards in MicroNovas applied to the receiver account.",
           "type": "integer"
         },
         "sender-rewards": {
-          "description": "Rewards in microalgos applied to the sender account.",
+          "description": "Rewards in MicroNovas applied to the sender account.",
           "type": "integer"
         },
         "local-state-delta": {
@@ -2882,13 +2882,13 @@
     },
     "currency-greater-than": {
       "type": "integer",
-      "description": "Results should have an amount greater than this value. MicroAlgos are the default currency unless an asset-id is provided, in which case the asset will be used.",
+      "description": "Results should have an amount greater than this value. MicroNovas are the default currency unless an asset-id is provided, in which case the asset will be used.",
       "name": "currency-greater-than",
       "in": "query"
     },
     "currency-less-than": {
       "type": "integer",
-      "description": "Results should have an amount less than this value. MicroAlgos are the default currency unless an asset-id is provided, in which case the asset will be used.",
+      "description": "Results should have an amount less than this value. MicroNovas are the default currency unless an asset-id is provided, in which case the asset will be used.",
       "name": "currency-less-than",
       "in": "query"
     },
@@ -3319,9 +3319,9 @@
       }
     },
     "SupplyResponse": {
-      "description": "Supply represents the current supply of MicroAlgos in the system.",
+      "description": "Supply represents the current supply of MicroNovas in the system.",
       "schema": {
-        "description": "Supply represents the current supply of MicroAlgos in the system",
+        "description": "Supply represents the current supply of MicroNovas in the system",
         "type": "object",
         "required": [
           "online-money",
@@ -3384,7 +3384,7 @@
             "type": "integer"
           }
         },
-        "x-go-package": "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
+        "x-go-package": "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
       }
     },
     "ApplicationResponse": {

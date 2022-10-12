@@ -33,7 +33,7 @@ import (
 
 	"github.com/mattn/go-sqlite3"
 
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 /* database utils */
@@ -107,7 +107,7 @@ func makeAccessorImpl(dbfilename string, readOnly bool, inMemory bool, params []
 	// mattn/go-sqlite3 has no special code to handle this case.
 	// Solution is to create a connection using a safe synchronization barrier right here.
 	// The connection goes to a connection pool inside Go's sql package and will be re-used when needed.
-	// See https://github.com/algorand/go-algorand/issues/846 for more details.
+	// See https://github.com/Orca18/go-novarand/issues/846 for more details.
 	var err error
 	db.Handle, err = sql.Open("sqlite3", URI(dbfilename, readOnly, inMemory)+"&"+strings.Join(params, "&"))
 

@@ -21,16 +21,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var feeSink = basics.Address{0x7, 0xda, 0xcb, 0x4b, 0x6d, 0x9e, 0xd1, 0x41, 0xb1, 0x75, 0x76, 0xbd, 0x45, 0x9a, 0xe6, 0x42, 0x1d, 0x48, 0x6d, 0xa3, 0xd4, 0xef, 0x22, 0x47, 0xc4, 0x9, 0xa3, 0x96, 0xb8, 0x2e, 0xa2, 0x21}
@@ -82,7 +82,7 @@ func (balances keyregTestBalances) CloseAccount(addr basics.Address) error {
 	return balances.putAccount(addr, basics.AccountData{})
 }
 
-func (balances keyregTestBalances) Move(src, dst basics.Address, amount basics.MicroAlgos, srcRewards, dstRewards *basics.MicroAlgos) error {
+func (balances keyregTestBalances) Move(src, dst basics.Address, amount basics.MicroNovas, srcRewards, dstRewards *basics.MicroNovas) error {
 	return nil
 }
 
@@ -158,7 +158,7 @@ func TestKeyregApply(t *testing.T) {
 			Type: protocol.KeyRegistrationTx,
 			Header: transactions.Header{
 				Sender:     src,
-				Fee:        basics.MicroAlgos{Raw: 1},
+				Fee:        basics.MicroNovas{Raw: 1},
 				FirstValid: basics.Round(1000),
 				LastValid:  basics.Round(1200),
 			},
@@ -275,7 +275,7 @@ func createTestTxnWithPeriod(t *testing.T, src basics.Address, secretParticipati
 		Type: protocol.KeyRegistrationTx,
 		Header: transactions.Header{
 			Sender:     src,
-			Fee:        basics.MicroAlgos{Raw: 1},
+			Fee:        basics.MicroNovas{Raw: 1},
 			FirstValid: basics.Round(defaultParticipationFirstRound),
 			LastValid:  basics.Round(defaultParticipationLastRound),
 		},

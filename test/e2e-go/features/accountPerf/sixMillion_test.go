@@ -32,18 +32,18 @@ import (
 	"github.com/algorand/go-deadlock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	clientApi "github.com/algorand/go-algorand/daemon/algod/api/client"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/libgoal"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	clientApi "github.com/Orca18/go-novarand/daemon/algod/api/client"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/libgoal"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 // uses numberOfGoRoutines to perform different operations (signing and preparing transactions) in parallel
@@ -349,14 +349,14 @@ func sendAlgoTransaction(
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid:  basics.Round(round),
 			LastValid:   basics.Round(round + tLife),
 			GenesisHash: genesisHash,
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: receiver,
-			Amount:   basics.MicroAlgos{Raw: amount},
+			Amount:   basics.MicroNovas{Raw: amount},
 		},
 	}
 	return
@@ -378,7 +378,7 @@ func createAssetTransaction(
 		Type: protocol.AssetConfigTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid:  basics.Round(round),
 			LastValid:   basics.Round(round + tLife),
 			GenesisHash: genesisHash,
@@ -410,7 +410,7 @@ func sendAssetTransaction(
 		Type: protocol.AssetTransferTx,
 		Header: transactions.Header{
 			Sender:      sender,
-			Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid:  basics.Round(round),
 			LastValid:   basics.Round(round + tLife),
 			GenesisHash: genesisHash,
@@ -1163,7 +1163,7 @@ int 1
 
 	appTx.Header = transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 		FirstValid:  basics.Round(round),
 		LastValid:   basics.Round(round + tLife),
 		GenesisHash: genesisHash,
@@ -1187,7 +1187,7 @@ func makeOptInAppTransaction(
 
 	appTx.Header = transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 		FirstValid:  basics.Round(round),
 		LastValid:   basics.Round(round + tLife),
 		GenesisHash: genesisHash,
@@ -1293,7 +1293,7 @@ func callAppTransaction(
 
 	appTx.Header = transactions.Header{
 		Sender:      sender,
-		Fee:         basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+		Fee:         basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 		FirstValid:  basics.Round(round),
 		LastValid:   basics.Round(round + tLife),
 		GenesisHash: genesisHash,

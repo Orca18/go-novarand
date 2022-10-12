@@ -21,15 +21,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/daemon/kmd/lib/kmdapi"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/framework/fixtures"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/daemon/kmd/lib/kmdapi"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/framework/fixtures"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func addrToPK(t *testing.T, addr string) crypto.PublicKey {
@@ -191,13 +191,13 @@ func TestMultisigSign(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:     basics.Address(msigAddr),
-			Fee:        basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:        basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid: basics.Round(1),
 			LastValid:  basics.Round(1),
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: basics.Address{},
-			Amount:   basics.MicroAlgos{},
+			Amount:   basics.MicroNovas{},
 		},
 	}
 
@@ -271,13 +271,13 @@ func TestMultisigSignWithSigner(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:     basics.Address(pkSender),
-			Fee:        basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:        basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid: basics.Round(1),
 			LastValid:  basics.Round(1),
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: basics.Address{},
-			Amount:   basics.MicroAlgos{},
+			Amount:   basics.MicroNovas{},
 		},
 	}
 
@@ -352,13 +352,13 @@ func TestMultisigSignWithWrongSigner(t *testing.T) {
 		Type: protocol.PaymentTx,
 		Header: transactions.Header{
 			Sender:     basics.Address(pkSender),
-			Fee:        basics.MicroAlgos{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
+			Fee:        basics.MicroNovas{Raw: config.Consensus[protocol.ConsensusCurrentVersion].MinTxnFee},
 			FirstValid: basics.Round(1),
 			LastValid:  basics.Round(1),
 		},
 		PaymentTxnFields: transactions.PaymentTxnFields{
 			Receiver: basics.Address{},
-			Amount:   basics.MicroAlgos{},
+			Amount:   basics.MicroNovas{},
 		},
 	}
 

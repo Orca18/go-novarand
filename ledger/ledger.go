@@ -25,21 +25,21 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/ledger/apply"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/db"
-	"github.com/algorand/go-algorand/util/execpool"
-	"github.com/algorand/go-algorand/util/metrics"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/ledger/apply"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/db"
+	"github.com/Orca18/go-novarand/util/execpool"
+	"github.com/Orca18/go-novarand/util/metrics"
 )
 
 // Ledger is a database storing the contents of the ledger.
@@ -82,6 +82,8 @@ type Ledger struct {
 	bulletin    bulletin
 	notifier    blockNotifier
 	metrics     metricsTracker
+	//(추가)
+	statedelta stateDeltaTracker
 
 	trackers  trackerRegistry
 	trackerMu deadlock.RWMutex
@@ -211,6 +213,7 @@ func (l *Ledger) reloadLedger() error {
 		&l.txTail,      // update the transaction tail, tracking the recent 1000 txn
 		&l.bulletin,    // provide closed channel signaling support for completed rounds
 		&l.notifier,    // send OnNewBlocks to subscribers
+		&l.statedelta,  // stateDelta Tracker 추가
 		&l.metrics,     // provides metrics reporting support
 	}
 
@@ -402,6 +405,10 @@ func (l *Ledger) RegisterBlockListeners(listeners []BlockListener) {
 	l.notifier.register(listeners)
 }
 
+func (l *Ledger) RegisterBlockTrackingListener(listener ValidateBlockListener) {
+	l.statedelta.register(listener)
+}
+
 // notifyCommit informs the trackers that all blocks up to r have been
 // written to disk.  Returns the minimum block number that must be kept
 // in the database.
@@ -473,14 +480,14 @@ func (l *Ledger) ListApplications(maxAppIdx basics.AppIndex, maxResults uint64) 
 // LookupLatest uses the accounts tracker to return the account state (including
 // resources) for a given address, for the latest round. The returned account values
 // reflect the changes of all blocks up to and including the returned round number.
-func (l *Ledger) LookupLatest(addr basics.Address) (basics.AccountData, basics.Round, basics.MicroAlgos, error) {
+func (l *Ledger) LookupLatest(addr basics.Address) (basics.AccountData, basics.Round, basics.MicroNovas, error) {
 	l.trackerMu.RLock()
 	defer l.trackerMu.RUnlock()
 
 	// Intentionally apply (pending) rewards up to rnd.
 	data, rnd, withoutRewards, err := l.accts.lookupLatest(addr)
 	if err != nil {
-		return basics.AccountData{}, basics.Round(0), basics.MicroAlgos{}, err
+		return basics.AccountData{}, basics.Round(0), basics.MicroNovas{}, err
 	}
 	return data, rnd, withoutRewards, nil
 }
@@ -491,17 +498,17 @@ func (l *Ledger) LookupLatest(addr basics.Address) (basics.AccountData, basics.R
 // The returned AccountData contains the rewards applied up to that round number,
 // and the additional withoutRewards return value contains the value before rewards
 // were applied.
-func (l *Ledger) LookupAccount(round basics.Round, addr basics.Address) (data ledgercore.AccountData, validThrough basics.Round, withoutRewards basics.MicroAlgos, err error) {
+func (l *Ledger) LookupAccount(round basics.Round, addr basics.Address) (data ledgercore.AccountData, validThrough basics.Round, withoutRewards basics.MicroNovas, err error) {
 	l.trackerMu.RLock()
 	defer l.trackerMu.RUnlock()
 
 	data, rnd, rewardsVersion, rewardsLevel, err := l.accts.lookupWithoutRewards(round, addr, true /* take lock */)
 	if err != nil {
-		return ledgercore.AccountData{}, basics.Round(0), basics.MicroAlgos{}, err
+		return ledgercore.AccountData{}, basics.Round(0), basics.MicroNovas{}, err
 	}
 
 	// Intentionally apply (pending) rewards up to rnd, remembering the old value
-	withoutRewards = data.MicroAlgos
+	withoutRewards = data.MicroNovas
 	data = data.WithUpdatedRewards(config.Consensus[rewardsVersion], rewardsLevel)
 	return data, rnd, withoutRewards, nil
 }
@@ -570,7 +577,7 @@ func (l *Ledger) LatestTotals() (basics.Round, ledgercore.AccountTotals, error) 
 }
 
 // OnlineTotals returns the online totals of all accounts at the end of round rnd.
-func (l *Ledger) OnlineTotals(rnd basics.Round) (basics.MicroAlgos, error) {
+func (l *Ledger) OnlineTotals(rnd basics.Round) (basics.MicroNovas, error) {
 	l.trackerMu.RLock()
 	defer l.trackerMu.RUnlock()
 	return l.acctsOnline.onlineTotals(rnd)
@@ -821,3 +828,8 @@ var ledgerInitblocksdbCount = metrics.NewCounter("ledger_initblocksdb_count", "c
 var ledgerInitblocksdbMicros = metrics.NewCounter("ledger_initblocksdb_micros", "µs spent")
 var ledgerVerifygenhashCount = metrics.NewCounter("ledger_verifygenhash_count", "calls")
 var ledgerVerifygenhashMicros = metrics.NewCounter("ledger_verifygenhash_micros", "µs spent")
+
+// Ledger가 가지고 있는 트래커 db 반환
+func (ledger *Ledger) GetTrackerDbs() db.Pair {
+	return ledger.trackerDBs
+}

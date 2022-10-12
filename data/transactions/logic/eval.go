@@ -36,15 +36,15 @@ import (
 
 	"golang.org/x/crypto/sha3"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/secp256k1"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/secp256k1"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // evalMaxVersion is the max version we can interpret and run
@@ -3839,7 +3839,7 @@ func opBalance(cx *EvalContext) error {
 	}
 
 	cx.stack[last].Bytes = nil
-	cx.stack[last].Uint = account.MicroAlgos.Raw
+	cx.stack[last].Uint = account.MicroNovas.Raw
 	return nil
 }
 
@@ -4333,14 +4333,14 @@ func opAcctParamsGet(cx *EvalContext) error {
 
 	switch fs.field {
 	case AcctBalance:
-		value.Uint = account.MicroAlgos.Raw
+		value.Uint = account.MicroNovas.Raw
 	case AcctMinBalance:
 		value.Uint = account.MinBalance(cx.Proto).Raw
 	case AcctAuthAddr:
 		value.Bytes = account.AuthAddr[:]
 	}
 	cx.stack[last] = value
-	cx.stack = append(cx.stack, boolToSV(account.MicroAlgos.Raw > 0))
+	cx.stack = append(cx.stack, boolToSV(account.MicroNovas.Raw > 0))
 	return nil
 }
 
@@ -4409,7 +4409,7 @@ func addInnerTxn(cx *EvalContext) error {
 
 	stxn.Txn.Header = transactions.Header{
 		Sender:     addr,
-		Fee:        basics.MicroAlgos{Raw: fee},
+		Fee:        basics.MicroNovas{Raw: fee},
 		FirstValid: cx.txn.Txn.FirstValid,
 		LastValid:  cx.txn.Txn.LastValid,
 	}

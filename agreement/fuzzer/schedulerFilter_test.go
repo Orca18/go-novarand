@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 var _ = fmt.Printf

@@ -20,17 +20,17 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // The Ledger object in this (data) package provides a wrapper around the
@@ -54,7 +54,7 @@ type Ledger struct {
 // roundCirculationPair used to hold a pair of matching round number and the amount of online money
 type roundCirculationPair struct {
 	round       basics.Round
-	onlineMoney basics.MicroAlgos
+	onlineMoney basics.MicroNovas
 }
 
 // roundCirculation is the cache for the circulating coins
@@ -80,7 +80,7 @@ type roundSeed struct {
 func LoadLedger(
 	log logging.Logger, dbFilenamePrefix string, memory bool,
 	genesisProto protocol.ConsensusVersion, genesisBal bookkeeping.GenesisBalances, genesisID string, genesisHash crypto.Digest,
-	blockListeners []ledger.BlockListener, cfg config.Local,
+	blockListeners []ledger.BlockListener, listener ledger.ValidateBlockListener, cfg config.Local,
 ) (*Ledger, error) {
 	if genesisBal.Balances == nil {
 		genesisBal.Balances = make(map[basics.Address]basics.AccountData)
@@ -115,6 +115,7 @@ func LoadLedger(
 
 	l.Ledger = ll
 	l.RegisterBlockListeners(blockListeners)
+	l.RegisterBlockTrackingListener(listener)
 	return l, nil
 }
 
@@ -174,7 +175,7 @@ func (l *Ledger) NextRound() basics.Round {
 }
 
 // Circulation implements agreement.Ledger.Circulation.
-func (l *Ledger) Circulation(r basics.Round) (basics.MicroAlgos, error) {
+func (l *Ledger) Circulation(r basics.Round) (basics.MicroNovas, error) {
 	circulation, cached := l.lastRoundCirculation.Load().(roundCirculation)
 	if cached && r != basics.Round(0) {
 		for _, element := range circulation.elements {
@@ -186,7 +187,7 @@ func (l *Ledger) Circulation(r basics.Round) (basics.MicroAlgos, error) {
 
 	totals, err := l.OnlineTotals(r)
 	if err != nil {
-		return basics.MicroAlgos{}, err
+		return basics.MicroNovas{}, err
 	}
 
 	if !cached || r > circulation.elements[1].round {

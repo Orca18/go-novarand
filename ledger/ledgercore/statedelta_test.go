@@ -21,9 +21,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func randomAddress() basics.Address {
@@ -52,7 +52,7 @@ func TestAccountDeltas(t *testing.T) {
 
 	a.Equal([]basics.Address{}, ad.ModifiedAccounts())
 
-	sample1 := AccountData{AccountBaseData: AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 123}}}
+	sample1 := AccountData{AccountBaseData: AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 123}}}
 	ad.Upsert(addr, sample1)
 	data, ok = ad.GetData(addr)
 	a.True(ok)
@@ -63,7 +63,7 @@ func TestAccountDeltas(t *testing.T) {
 	a.Equal(addr, address)
 	a.Equal(sample1, data)
 
-	sample2 := AccountData{AccountBaseData: AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 456}}}
+	sample2 := AccountData{AccountBaseData: AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 456}}}
 	ad.Upsert(addr, sample2)
 	data, ok = ad.GetData(addr)
 	a.True(ok)

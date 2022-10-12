@@ -31,19 +31,19 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/internal"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/internal"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 type wrappedLedger struct {
@@ -110,8 +110,8 @@ func getInitState() (genesisInitState ledgercore.InitState) {
 	blk.FeeSink = testSinkAddr
 
 	accts := make(map[basics.Address]basics.AccountData)
-	accts[testPoolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 1234567890})
-	accts[testSinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 1234567890})
+	accts[testPoolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 1234567890})
+	accts[testSinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 1234567890})
 
 	genesisInitState.Accounts = accts
 	genesisInitState.Block = blk
@@ -376,7 +376,7 @@ func TestArchivalCreatables(t *testing.T) {
 		_, err := rand.Read(creator[:])
 		require.NoError(t, err)
 		creators = append(creators, creator)
-		genesisInitState.Accounts[creator] = basics.MakeAccountData(basics.Offline, basics.MicroAlgos{Raw: 1234567890})
+		genesisInitState.Accounts[creator] = basics.MakeAccountData(basics.Offline, basics.MicroNovas{Raw: 1234567890})
 	}
 
 	// open ledger
@@ -711,7 +711,7 @@ func TestArchivalFromNonArchival(t *testing.T) {
 		addr := basics.Address{}
 		_, err := rand.Read(addr[:])
 		require.NoError(t, err)
-		br := basics.BalanceRecord{AccountData: basics.MakeAccountData(basics.Offline, basics.MicroAlgos{Raw: 1234567890}), Addr: addr}
+		br := basics.BalanceRecord{AccountData: basics.MakeAccountData(basics.Offline, basics.MicroNovas{Raw: 1234567890}), Addr: addr}
 		genesisInitState.Accounts[addr] = br.AccountData
 		balanceRecords = append(balanceRecords, br)
 	}

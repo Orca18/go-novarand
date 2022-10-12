@@ -27,20 +27,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/gen"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/codecs"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/gen"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/codecs"
 )
 
 const genesisFolderName = "genesisdata"
@@ -102,7 +102,7 @@ type netState struct {
 	round          basics.Round
 	accounts       []basics.Address
 	txnCount       uint64
-	fundPerAccount basics.MicroAlgos
+	fundPerAccount basics.MicroNovas
 }
 
 const program = `#pragma version 2
@@ -419,9 +419,9 @@ func (cfg DeployedNetwork) GenerateDatabaseFiles(fileCfgs BootstrappedNetwork, g
 	min := fileCfgs.BalanceRange[0]
 	max := fileCfgs.BalanceRange[1]
 	bal := rand.Int63n(max-min) + min
-	bootstrappedNet.fundPerAccount = basics.MicroAlgos{Raw: uint64(bal)}
-	totalFunds := accounts[src].MicroAlgos.Raw + bootstrappedNet.fundPerAccount.Raw*bootstrappedNet.nAccounts + bootstrappedNet.roundTxnCnt*fileCfgs.NumRounds
-	accounts[src] = basics.MakeAccountData(basics.Online, basics.MicroAlgos{Raw: totalFunds})
+	bootstrappedNet.fundPerAccount = basics.MicroNovas{Raw: uint64(bal)}
+	totalFunds := accounts[src].MicroNovas.Raw + bootstrappedNet.fundPerAccount.Raw*bootstrappedNet.nAccounts + bootstrappedNet.roundTxnCnt*fileCfgs.NumRounds
+	accounts[src] = basics.MakeAccountData(basics.Online, basics.MicroNovas{Raw: totalFunds})
 
 	//init block
 	initState, err := generateInitState(accounts, &bootstrappedNet)
@@ -632,7 +632,7 @@ func createSignedTx(src basics.Address, round basics.Round, params config.Consen
 	var sgtxns []transactions.SignedTxn
 
 	header := transactions.Header{
-		Fee:         basics.MicroAlgos{Raw: 1},
+		Fee:         basics.MicroNovas{Raw: 1},
 		FirstValid:  round,
 		LastValid:   round,
 		GenesisID:   bootstrappedNet.genesisID,
@@ -684,7 +684,7 @@ func createSignedTx(src basics.Address, round basics.Round, params config.Consen
 					Header: header,
 					PaymentTxnFields: transactions.PaymentTxnFields{
 						Receiver: bootstrappedNet.accounts[accti],
-						Amount:   basics.MicroAlgos{Raw: 0},
+						Amount:   basics.MicroNovas{Raw: 0},
 					},
 				}
 				t := transactions.SignedTxn{Txn: tx}

@@ -19,12 +19,12 @@ package node
 import (
 	"sort"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/logging/telemetryspec"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/logging/telemetryspec"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 const numTopAccounts = 20
@@ -34,9 +34,9 @@ type topAccountListener struct {
 
 	round basics.Round
 
-	onlineCirculation basics.MicroAlgos
+	onlineCirculation basics.MicroNovas
 
-	totalCirculation basics.MicroAlgos
+	totalCirculation basics.MicroNovas
 
 	// Cached between rounds to optimize ledger lookups.
 	accounts []basics.AccountDetail
@@ -123,7 +123,7 @@ func (t *topAccountListener) update(b bookkeeping.Block, balances basics.Balance
 	t.accounts = removeSome(t.accounts, func(addr basics.AccountDetail) bool { return accountSet[addr.Address] })
 
 	// Grab the smallest record after removing modified accounts
-	smallestAccountSize := basics.MicroAlgos{Raw: 0}
+	smallestAccountSize := basics.MicroNovas{Raw: 0}
 	if len(t.accounts) != 0 {
 		smallestAccountSize = t.accounts[len(t.accounts)-1].Algos
 	}

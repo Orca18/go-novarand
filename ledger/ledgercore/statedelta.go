@@ -19,9 +19,9 @@ package ledgercore
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
 )
 
 const (
@@ -109,7 +109,9 @@ type StateDelta struct {
 
 // NewBalanceRecord is similar to basics.BalanceRecord but with decoupled base and voting data
 type NewBalanceRecord struct {
-	Addr basics.Address
+	_struct struct{} `codec:",omitempty,omitemptyarray"`
+
+	Addr basics.Address `codec:"addr"`
 	AccountData
 }
 

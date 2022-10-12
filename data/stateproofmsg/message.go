@@ -17,9 +17,9 @@
 package stateproofmsg
 
 import (
-	"github.com/algorand/go-algorand/crypto"
-	sp "github.com/algorand/go-algorand/crypto/stateproof"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/crypto"
+	sp "github.com/Orca18/go-novarand/crypto/stateproof"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // Message represents the message that the state proofs are attesting to. This message can be

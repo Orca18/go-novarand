@@ -20,15 +20,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/v2/generated"
-	v1 "github.com/algorand/go-algorand/daemon/algod/api/spec/v1"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/v2/generated"
+	v1 "github.com/Orca18/go-novarand/daemon/algod/api/spec/v1"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 var emptySchema = basics.StateSchema{}
@@ -196,7 +196,7 @@ func (c *Client) SignAndBroadcastTransaction(walletHandle, pw []byte, utx transa
 
 // generateRegistrationTransaction returns a transaction object for registering a Participation with its parent this is
 // similar to account.Participation.GenerateRegistrationTransaction.
-func generateRegistrationTransaction(part generated.ParticipationKey, fee basics.MicroAlgos, txnFirstValid, txnLastValid basics.Round, leaseBytes [32]byte) (transactions.Transaction, error) {
+func generateRegistrationTransaction(part generated.ParticipationKey, fee basics.MicroNovas, txnFirstValid, txnLastValid basics.Round, leaseBytes [32]byte) (transactions.Transaction, error) {
 	addr, err := basics.UnmarshalChecksumAddress(part.Address)
 	if err != nil {
 		return transactions.Transaction{}, err
@@ -269,7 +269,7 @@ func (c *Client) MakeRegistrationTransactionWithGenesisID(part account.Participa
 	}
 
 	goOnlineTx := part.GenerateRegistrationTransaction(
-		basics.MicroAlgos{Raw: fee},
+		basics.MicroNovas{Raw: fee},
 		basics.Round(txnFirstValid),
 		basics.Round(txnLastValid),
 		leaseBytes, includeStateProofKeys)
@@ -317,7 +317,7 @@ func (c *Client) MakeUnsignedGoOnlineTx(address string, firstValid, lastValid, f
 
 	parsedFrstValid := basics.Round(firstValid)
 	parsedLastValid := basics.Round(lastValid)
-	parsedFee := basics.MicroAlgos{Raw: fee}
+	parsedFee := basics.MicroNovas{Raw: fee}
 
 	goOnlineTransaction, err := generateRegistrationTransaction(part, parsedFee, parsedFrstValid, parsedLastValid, leaseBytes)
 	if err != nil {
@@ -334,7 +334,7 @@ func (c *Client) MakeUnsignedGoOnlineTx(address string, firstValid, lastValid, f
 	// transaction to get the size post signing and encoding.
 	// Then, we multiply it by the suggested fee per byte.
 	if fee == 0 {
-		goOnlineTransaction.Fee = basics.MulAIntSaturate(basics.MicroAlgos{Raw: params.Fee}, goOnlineTransaction.EstimateEncodedSize())
+		goOnlineTransaction.Fee = basics.MulAIntSaturate(basics.MicroNovas{Raw: params.Fee}, goOnlineTransaction.EstimateEncodedSize())
 		if goOnlineTransaction.Fee.Raw < cparams.MinTxnFee {
 			goOnlineTransaction.Fee.Raw = cparams.MinTxnFee
 		}
@@ -367,7 +367,7 @@ func (c *Client) MakeUnsignedGoOfflineTx(address string, firstValid, lastValid, 
 
 	parsedFirstRound := basics.Round(firstValid)
 	parsedLastRound := basics.Round(lastValid)
-	parsedFee := basics.MicroAlgos{Raw: fee}
+	parsedFee := basics.MicroNovas{Raw: fee}
 
 	goOfflineTransaction := transactions.Transaction{
 		Type: protocol.KeyRegistrationTx,
@@ -389,7 +389,7 @@ func (c *Client) MakeUnsignedGoOfflineTx(address string, firstValid, lastValid, 
 	// Fee is tricky, should taken care last. We encode the final transaction to get the size post signing and encoding
 	// Then, we multiply it by the suggested fee per byte.
 	if fee == 0 {
-		goOfflineTransaction.Fee = basics.MulAIntSaturate(basics.MicroAlgos{Raw: params.Fee}, goOfflineTransaction.EstimateEncodedSize())
+		goOfflineTransaction.Fee = basics.MulAIntSaturate(basics.MicroNovas{Raw: params.Fee}, goOfflineTransaction.EstimateEncodedSize())
 		if goOfflineTransaction.Fee.Raw < cparams.MinTxnFee {
 			goOfflineTransaction.Fee.Raw = cparams.MinTxnFee
 		}
@@ -422,7 +422,7 @@ func (c *Client) MakeUnsignedBecomeNonparticipatingTx(address string, firstValid
 
 	parsedFirstRound := basics.Round(firstValid)
 	parsedLastRound := basics.Round(lastValid)
-	parsedFee := basics.MicroAlgos{Raw: fee}
+	parsedFee := basics.MicroNovas{Raw: fee}
 
 	becomeNonparticipatingTransaction := transactions.Transaction{
 		Type: protocol.KeyRegistrationTx,
@@ -444,7 +444,7 @@ func (c *Client) MakeUnsignedBecomeNonparticipatingTx(address string, firstValid
 	// Fee is tricky, should taken care last. We encode the final transaction to get the size post signing and encoding
 	// Then, we multiply it by the suggested fee per byte.
 	if fee == 0 {
-		becomeNonparticipatingTransaction.Fee = basics.MulAIntSaturate(basics.MicroAlgos{Raw: params.Fee}, becomeNonparticipatingTransaction.EstimateEncodedSize())
+		becomeNonparticipatingTransaction.Fee = basics.MulAIntSaturate(basics.MicroNovas{Raw: params.Fee}, becomeNonparticipatingTransaction.EstimateEncodedSize())
 		if becomeNonparticipatingTransaction.Fee.Raw < cparams.MinTxnFee {
 			becomeNonparticipatingTransaction.Fee.Raw = cparams.MinTxnFee
 		}
@@ -475,7 +475,7 @@ func (c *Client) FillUnsignedTxTemplate(sender string, firstValid, lastValid, fe
 		return transactions.Transaction{}, err
 	}
 
-	parsedFee := basics.MicroAlgos{Raw: fee}
+	parsedFee := basics.MicroNovas{Raw: fee}
 
 	tx.Header.Sender = parsedAddr
 	tx.Header.Fee = parsedFee
@@ -493,7 +493,7 @@ func (c *Client) FillUnsignedTxTemplate(sender string, firstValid, lastValid, fe
 	// transaction to get the size post signing and encoding.
 	// Then, we multiply it by the suggested fee per byte.
 	if fee == 0 {
-		tx.Fee = basics.MulAIntSaturate(basics.MicroAlgos{Raw: params.Fee}, tx.EstimateEncodedSize())
+		tx.Fee = basics.MulAIntSaturate(basics.MicroNovas{Raw: params.Fee}, tx.EstimateEncodedSize())
 		if tx.Fee.Raw < cparams.MinTxnFee {
 			tx.Fee.Raw = cparams.MinTxnFee
 		}

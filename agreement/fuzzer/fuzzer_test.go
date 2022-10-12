@@ -28,16 +28,16 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/agreement/agreementtest"
-	"github.com/algorand/go-algorand/agreement/gossip"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/util/db"
-	"github.com/algorand/go-algorand/util/timers"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/agreement/agreementtest"
+	"github.com/Orca18/go-novarand/agreement/gossip"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/util/db"
+	"github.com/Orca18/go-novarand/util/timers"
 )
 
 // Fuzzer is a container for the entire network stack across all the nodes.
@@ -188,7 +188,7 @@ func (n *Fuzzer) initAccountsAndBalances(rootSeed []byte, onlineNodes []bool) er
 	}
 
 	for i := 0; i < n.nodesCount; i++ {
-		stake := basics.MicroAlgos{Raw: 1000000}
+		stake := basics.MicroNovas{Raw: 1000000}
 		firstValid := basics.Round(0)
 		lastValid := basics.Round(1000)
 
@@ -216,7 +216,7 @@ func (n *Fuzzer) initAccountsAndBalances(rootSeed []byte, onlineNodes []bool) er
 
 		acctData := basics.AccountData{
 			Status:      basics.Online,
-			MicroAlgos:  stake,
+			MicroNovas:  stake,
 			VoteID:      n.accounts[i].VotingSecrets().OneTimeSignatureVerifier,
 			SelectionID: n.accounts[i].VRFSecrets().PK,
 		}

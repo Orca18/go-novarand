@@ -17,10 +17,10 @@
 package ledgercore
 
 import (
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/data/basics"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/data/basics"
 )
 
 // AccountData provides users of the Balances interface per-account data (like basics.AccountData)
@@ -28,6 +28,8 @@ import (
 // ensures that transaction evaluation must retrieve and mutate account, asset, and application data
 // separately, to better support on-disk and in-memory schemas that do not store them together.
 type AccountData struct {
+	_struct struct{} `codec:",omitempty,omitemptyarray"`
+
 	AccountBaseData
 	VotingData
 }
@@ -35,9 +37,9 @@ type AccountData struct {
 // AccountBaseData contains base account info like balance, status and total number of resources
 type AccountBaseData struct {
 	Status             basics.Status
-	MicroAlgos         basics.MicroAlgos
+	MicroNovas         basics.MicroNovas
 	RewardsBase        uint64
-	RewardedMicroAlgos basics.MicroAlgos
+	RewardedMicroNovas basics.MicroNovas
 	AuthAddr           basics.Address
 
 	TotalAppSchema      basics.StateSchema
@@ -59,9 +61,9 @@ type VotingData struct {
 	VoteKeyDilution uint64
 }
 
-// OnlineAccountData holds MicroAlgosWithRewards and VotingData as needed for agreement
+// OnlineAccountData holds MicroNovasWithRewards and VotingData as needed for agreement
 type OnlineAccountData struct {
-	MicroAlgosWithRewards basics.MicroAlgos
+	MicroNovasWithRewards basics.MicroNovas
 	VotingData
 }
 
@@ -70,9 +72,9 @@ func ToAccountData(acct basics.AccountData) AccountData {
 	return AccountData{
 		AccountBaseData: AccountBaseData{
 			Status:             acct.Status,
-			MicroAlgos:         acct.MicroAlgos,
+			MicroNovas:         acct.MicroNovas,
 			RewardsBase:        acct.RewardsBase,
-			RewardedMicroAlgos: acct.RewardedMicroAlgos,
+			RewardedMicroNovas: acct.RewardedMicroNovas,
 
 			AuthAddr: acct.AuthAddr,
 
@@ -98,9 +100,9 @@ func ToAccountData(acct basics.AccountData) AccountData {
 // but does not touch the AppParams, AppLocalState, AssetHolding, or AssetParams data.
 func AssignAccountData(a *basics.AccountData, acct AccountData) {
 	a.Status = acct.Status
-	a.MicroAlgos = acct.MicroAlgos
+	a.MicroNovas = acct.MicroNovas
 	a.RewardsBase = acct.RewardsBase
-	a.RewardedMicroAlgos = acct.RewardedMicroAlgos
+	a.RewardedMicroNovas = acct.RewardedMicroNovas
 
 	a.VoteID = acct.VoteID
 	a.SelectionID = acct.SelectionID
@@ -116,8 +118,8 @@ func AssignAccountData(a *basics.AccountData, acct AccountData) {
 
 // WithUpdatedRewards calls basics account data WithUpdatedRewards
 func (u AccountData) WithUpdatedRewards(proto config.ConsensusParams, rewardsLevel uint64) AccountData {
-	u.MicroAlgos, u.RewardedMicroAlgos, u.RewardsBase = basics.WithUpdatedRewards(
-		proto, u.Status, u.MicroAlgos, u.RewardedMicroAlgos, u.RewardsBase, rewardsLevel,
+	u.MicroNovas, u.RewardedMicroNovas, u.RewardsBase = basics.WithUpdatedRewards(
+		proto, u.Status, u.MicroNovas, u.RewardedMicroNovas, u.RewardsBase, rewardsLevel,
 	)
 	return u
 }
@@ -131,7 +133,7 @@ func (u *AccountData) ClearOnlineState() {
 // MinBalance computes the minimum balance requirements for an account based on
 // some consensus parameters. MinBalance should correspond roughly to how much
 // storage the account is allowed to store on disk.
-func (u AccountData) MinBalance(proto *config.ConsensusParams) (res basics.MicroAlgos) {
+func (u AccountData) MinBalance(proto *config.ConsensusParams) (res basics.MicroNovas) {
 	return basics.MinBalance(
 		proto,
 		uint64(u.TotalAssets),
@@ -147,9 +149,9 @@ func (u AccountData) IsZero() bool {
 }
 
 // Money is similar to basics account data Money function
-func (u AccountData) Money(proto config.ConsensusParams, rewardsLevel uint64) (money basics.MicroAlgos, rewards basics.MicroAlgos) {
+func (u AccountData) Money(proto config.ConsensusParams, rewardsLevel uint64) (money basics.MicroNovas, rewards basics.MicroNovas) {
 	e := u.WithUpdatedRewards(proto, rewardsLevel)
-	return e.MicroAlgos, e.RewardedMicroAlgos
+	return e.MicroNovas, e.RewardedMicroNovas
 }
 
 // OnlineAccountData calculates the online account data given an AccountData, by adding the rewards.
@@ -159,11 +161,11 @@ func (u AccountData) OnlineAccountData(proto config.ConsensusParams, rewardsLeve
 		return OnlineAccountData{}
 	}
 
-	microAlgos, _, _ := basics.WithUpdatedRewards(
-		proto, u.Status, u.MicroAlgos, u.RewardedMicroAlgos, u.RewardsBase, rewardsLevel,
+	MicroNovas, _, _ := basics.WithUpdatedRewards(
+		proto, u.Status, u.MicroNovas, u.RewardedMicroNovas, u.RewardsBase, rewardsLevel,
 	)
 	return OnlineAccountData{
-		MicroAlgosWithRewards: microAlgos,
+		MicroNovasWithRewards: MicroNovas,
 		VotingData: VotingData{
 			VoteID:          u.VoteID,
 			SelectionID:     u.SelectionID,
@@ -177,5 +179,5 @@ func (u AccountData) OnlineAccountData(proto config.ConsensusParams, rewardsLeve
 
 // NormalizedOnlineBalance wraps basics.NormalizedOnlineAccountBalance
 func (u *AccountData) NormalizedOnlineBalance(genesisProto config.ConsensusParams) uint64 {
-	return basics.NormalizedOnlineAccountBalance(u.Status, u.RewardsBase, u.MicroAlgos, genesisProto)
+	return basics.NormalizedOnlineAccountBalance(u.Status, u.RewardsBase, u.MicroNovas, genesisProto)
 }

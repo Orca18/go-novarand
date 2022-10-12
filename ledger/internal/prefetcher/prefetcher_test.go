@@ -23,15 +23,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/internal/prefetcher"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/internal/prefetcher"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func makeAddressPtr(seed int) (o *basics.Address) {
@@ -192,7 +192,7 @@ func getPrefetcherTestLedger(rnd basics.Round) *prefetcherTestLedger {
 		errorTriggerAddress: make(map[basics.Address]bool),
 	}
 	ledger.balances[makeAddress(1)] = ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+		AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 	}
 	ledger.creators[1001] = makeAddress(2)
 	ledger.creators[2001] = makeAddress(15)
@@ -234,25 +234,25 @@ func TestEvaluatorPrefetcher(t *testing.T) {
 				{
 					Address: &feeSinkAddr,
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(1),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 					},
 				},
 				{
 					Address: makeAddressPtr(2),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(3),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 			},
@@ -275,13 +275,13 @@ func TestEvaluatorPrefetcher(t *testing.T) {
 				{
 					Address: &feeSinkAddr,
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(1),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 					},
 				},
 			},
@@ -312,13 +312,13 @@ func TestEvaluatorPrefetcher(t *testing.T) {
 				{
 					Address: &feeSinkAddr,
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(1),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 					},
 				},
 			},
@@ -352,13 +352,13 @@ func TestEvaluatorPrefetcher(t *testing.T) {
 				{
 					Address: &feeSinkAddr,
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(1),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 					},
 				},
 			},
@@ -402,19 +402,19 @@ func TestEvaluatorPrefetcher(t *testing.T) {
 				{
 					Address: &feeSinkAddr,
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(1),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 					},
 				},
 				{
 					Address: makeAddressPtr(3),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 			},
@@ -462,25 +462,25 @@ func TestEvaluatorPrefetcher(t *testing.T) {
 				{
 					Address: &feeSinkAddr,
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(1),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 					},
 				},
 				{
 					Address: makeAddressPtr(4),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 				{
 					Address: makeAddressPtr(5),
 					Data: &ledgercore.AccountData{
-						AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 0}},
+						AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 0}},
 					},
 				},
 			},
@@ -695,7 +695,7 @@ func TestEvaluatorPrefetcherQueueExpansion(t *testing.T) {
 		creators: make(map[basics.CreatableIndex]basics.Address),
 	}
 	ledger.balances[makeAddress(1)] = ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+		AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 	}
 	type testTransactionCases struct {
 		signedTxn transactions.SignedTxn
@@ -779,7 +779,7 @@ func BenchmarkPrefetcherApps(b *testing.B) {
 		creators: make(map[basics.CreatableIndex]basics.Address),
 	}
 	ledger.balances[makeAddress(1)] = ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+		AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 	}
 
 	b.ResetTimer()
@@ -817,7 +817,7 @@ func BenchmarkPrefetcherPayment(b *testing.B) {
 		creators: make(map[basics.CreatableIndex]basics.Address),
 	}
 	ledger.balances[makeAddress(1)] = ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{MicroAlgos: basics.MicroAlgos{Raw: 100000000}},
+		AccountBaseData: ledgercore.AccountBaseData{MicroNovas: basics.MicroNovas{Raw: 100000000}},
 	}
 
 	b.ResetTimer()

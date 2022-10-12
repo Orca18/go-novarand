@@ -22,7 +22,7 @@ import (
 	"sort"
 	"unsafe"
 
-	"github.com/algorand/go-algorand/crypto"
+	"github.com/Orca18/go-novarand/crypto"
 )
 
 type childEntry struct {

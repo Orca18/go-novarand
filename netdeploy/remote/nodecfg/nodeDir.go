@@ -24,11 +24,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/netdeploy/remote"
-	"github.com/algorand/go-algorand/shared/algoh"
-	"github.com/algorand/go-algorand/util/tokens"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/netdeploy/remote"
+	"github.com/Orca18/go-novarand/shared/algoh"
+	"github.com/Orca18/go-novarand/util/tokens"
 )
 
 type nodeDir struct {

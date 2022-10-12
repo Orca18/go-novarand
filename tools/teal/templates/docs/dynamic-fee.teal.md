@@ -9,7 +9,7 @@ The contract works by approving a group of two transactions (meaning the two tra
 ## Parameters:
 
   - `TMPL_TO`: the recipient of the payment from account A
-  - `TMPL_AMT`: the amount to send from account A to `TMPL_TO` in microAlgos
+  - `TMPL_AMT`: the amount to send from account A to `TMPL_TO` in MicroNovas
   - `TMPL_CLS`: the account to close out the remainder of account A's funds to after paying `TMPL_AMT` to `TMPL_TO`
   - `TMPL_FV`: the required first valid round of the payment from account A
   - `TMPL_LV`: the required last valid round of the payment from account A
@@ -25,7 +25,7 @@ int 2
 ==
 ```
 
-Next, check that the first transaction is a payment, which is required since the first transaction should be paying the fee for the second. The possible valid values of this enum may be found [here](https://github.com/algorand/go-algorand/blob/9978b3aed0643751246af82f5538ba1e7de47310/data/transactions/logic/assembler.go#L569).
+Next, check that the first transaction is a payment, which is required since the first transaction should be paying the fee for the second. The possible valid values of this enum may be found [here](https://github.com/Orca18/go-novarand/blob/9978b3aed0643751246af82f5538ba1e7de47310/data/transactions/logic/assembler.go#L569).
 
 Additionally, fold the result of this check into the previous one with a logical `AND`.
 

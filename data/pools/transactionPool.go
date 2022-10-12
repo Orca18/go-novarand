@@ -25,16 +25,16 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/logging/telemetryspec"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/condvar"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/logging/telemetryspec"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/condvar"
 )
 
 // A TransactionPool prepares valid blocks for proposal and caches
@@ -296,13 +296,13 @@ func (pool *TransactionPool) checkPendingQueueSize(txnGroup []transactions.Signe
 	return nil
 }
 
-// FeePerByte returns the current minimum microalgos per byte a transaction
+// FeePerByte returns the current minimum MicroNovas per byte a transaction
 // needs to pay in order to get into the pool.
 func (pool *TransactionPool) FeePerByte() uint64 {
 	return atomic.LoadUint64(&pool.feePerByte)
 }
 
-// computeFeePerByte computes and returns the current minimum microalgos per byte a transaction
+// computeFeePerByte computes and returns the current minimum MicroNovas per byte a transaction
 // needs to pay in order to get into the pool. It also updates the atomic counter that holds
 // the current fee per byte
 func (pool *TransactionPool) computeFeePerByte() uint64 {

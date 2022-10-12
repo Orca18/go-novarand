@@ -21,10 +21,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func keypair() *crypto.SignatureSecrets {
@@ -37,8 +37,8 @@ func keypair() *crypto.SignatureSecrets {
 func TestAlgosEncoding(t *testing.T) {
 	partitiontest.PartitionTest(t)
 
-	var a basics.MicroAlgos
-	var b basics.MicroAlgos
+	var a basics.MicroNovas
+	var b basics.MicroNovas
 	var i uint64
 
 	a.Raw = 222233333
@@ -65,6 +65,6 @@ func TestAlgosEncoding(t *testing.T) {
 	x := true
 	err = protocol.Decode(protocol.EncodeReflect(x), &a)
 	if err == nil {
-		panic("decode of bool into MicroAlgos succeeded")
+		panic("decode of bool into MicroNovas succeeded")
 	}
 }

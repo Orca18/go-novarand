@@ -28,12 +28,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 var partableColumnNames = [...]string{"parent", "vrf", "voting", "stateProof", "firstValid", "lastValid", "keyDilution"}
@@ -261,10 +261,10 @@ func TestKeyRegCreation(t *testing.T) {
 
 	ppart := setupkeyWithNoDBS(t, a)
 
-	txn := ppart.Participation.GenerateRegistrationTransaction(basics.MicroAlgos{Raw: 1000}, 0, 100, [32]byte{}, false)
+	txn := ppart.Participation.GenerateRegistrationTransaction(basics.MicroNovas{Raw: 1000}, 0, 100, [32]byte{}, false)
 	a.Equal(txn.StateProofPK.IsEmpty(), true)
 
-	txn = ppart.Participation.GenerateRegistrationTransaction(basics.MicroAlgos{Raw: 1000}, 0, 100, [32]byte{}, true)
+	txn = ppart.Participation.GenerateRegistrationTransaction(basics.MicroNovas{Raw: 1000}, 0, 100, [32]byte{}, true)
 	a.Equal(txn.StateProofPK.IsEmpty(), false)
 }
 

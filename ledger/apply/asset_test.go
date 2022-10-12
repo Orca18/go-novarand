@@ -22,11 +22,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func cloneAssetHoldings(m map[basics.AssetIndex]basics.AssetHolding) map[basics.AssetIndex]basics.AssetHolding {
@@ -66,7 +66,7 @@ func TestAssetTransfer(t *testing.T) {
 	// prepare data
 	var addrs = map[basics.Address]basics.AccountData{
 		src: {
-			MicroAlgos: basics.MicroAlgos{Raw: 10000000},
+			MicroNovas: basics.MicroNovas{Raw: 10000000},
 			AssetParams: map[basics.AssetIndex]basics.AssetParams{
 				1: {Total: total},
 			},
@@ -75,13 +75,13 @@ func TestAssetTransfer(t *testing.T) {
 			},
 		},
 		dst: {
-			MicroAlgos: basics.MicroAlgos{Raw: 10000000},
+			MicroNovas: basics.MicroNovas{Raw: 10000000},
 			Assets: map[basics.AssetIndex]basics.AssetHolding{
 				1: {Amount: dstAmount},
 			},
 		},
 		cls: {
-			MicroAlgos: basics.MicroAlgos{Raw: 10000000},
+			MicroNovas: basics.MicroNovas{Raw: 10000000},
 			Assets: map[basics.AssetIndex]basics.AssetHolding{
 				1: {Amount: 0},
 			},
@@ -94,7 +94,7 @@ func TestAssetTransfer(t *testing.T) {
 		Type: protocol.AssetTransferTx,
 		Header: transactions.Header{
 			Sender:     dst,
-			Fee:        basics.MicroAlgos{Raw: 1},
+			Fee:        basics.MicroNovas{Raw: 1},
 			FirstValid: basics.Round(100),
 			LastValid:  basics.Round(1000),
 		},

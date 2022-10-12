@@ -25,12 +25,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/daemon/algod/api/client"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/tokens"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/daemon/algod/api/client"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/tokens"
 )
 
 // StdErrFilename is the name of the file in <datadir> where stderr will be captured if not redirected to host

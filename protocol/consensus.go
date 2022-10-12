@@ -59,7 +59,7 @@ const ConsensusV7 = ConsensusVersion("v7")
 // from the agreement protocol's security analysis.
 const ConsensusV8 = ConsensusVersion("v8")
 
-// ConsensusV9 increases min balance to 100,000 microAlgos.
+// ConsensusV9 increases min balance to 100,000 microNovas.
 const ConsensusV9 = ConsensusVersion("v9")
 
 // ConsensusV10 introduces fast partition recovery.

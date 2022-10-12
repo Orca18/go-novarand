@@ -21,13 +21,13 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/protocol"
 	"github.com/algorand/go-deadlock"
 )
 
@@ -236,7 +236,7 @@ func (l *testLedger) LookupAgreement(r basics.Round, a basics.Address) (basics.O
 	return l.state[a].OnlineAccountData(), nil
 }
 
-func (l *testLedger) Circulation(r basics.Round) (basics.MicroAlgos, error) {
+func (l *testLedger) Circulation(r basics.Round) (basics.MicroNovas, error) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
@@ -245,7 +245,7 @@ func (l *testLedger) Circulation(r basics.Round) (basics.MicroAlgos, error) {
 		panic(err)
 	}
 
-	var sum basics.MicroAlgos
+	var sum basics.MicroNovas
 	var overflowed bool
 	for _, rec := range l.state {
 		sum, overflowed = basics.OAddA(sum, rec.OnlineAccountData().VotingStake())

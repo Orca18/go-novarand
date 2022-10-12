@@ -28,18 +28,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data"
-	"github.com/algorand/go-algorand/data/account"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/db"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data"
+	"github.com/Orca18/go-novarand/data/account"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/db"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 var expectedAgreementTime = 2*config.Protocol.BigLambda + config.Protocol.SmallLambda + config.Consensus[protocol.ConsensusCurrentVersion].AgreementFilterTimeout + 2*time.Second
@@ -134,7 +134,7 @@ func setupFullNodes(t *testing.T, proto protocol.ConsensusVersion, verificationP
 
 		data := basics.AccountData{
 			Status:      basics.Online,
-			MicroAlgos:  basics.MicroAlgos{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))},
+			MicroNovas:  basics.MicroNovas{Raw: uint64(minMoneyAtStart + (gen.Int() % (maxMoneyAtStart - minMoneyAtStart)))},
 			SelectionID: part.VRFSecrets().PK,
 			VoteID:      part.VotingSecrets().OneTimeSignatureVerifier,
 		}
@@ -158,7 +158,7 @@ func setupFullNodes(t *testing.T, proto protocol.ConsensusVersion, verificationP
 		cfg, err := config.LoadConfigFromDisk(rootDirectory)
 		require.NoError(t, err)
 		cfg.Archival = true
-		_, err = data.LoadLedger(logging.Base().With("name", nodeID), ledgerFilenamePrefix, inMem, g.Proto, bootstrap, "", crypto.Digest{}, nil, cfg)
+		_, err = data.LoadLedger(logging.Base().With("name", nodeID), ledgerFilenamePrefix, inMem, g.Proto, bootstrap, "", crypto.Digest{}, nil, nil, cfg)
 		require.NoError(t, err)
 	}
 
@@ -513,16 +513,16 @@ func TestOfflineOnlineClosedBitStatus(t *testing.T) {
 	}{
 		{"online 1", basics.OnlineAccountData{
 			VotingData:            basics.VotingData{VoteFirstValid: 1, VoteLastValid: 100},
-			MicroAlgosWithRewards: basics.MicroAlgos{Raw: 0}}, 0},
+			MicroNovasWithRewards: basics.MicroNovas{Raw: 0}}, 0},
 		{"online 2", basics.OnlineAccountData{
 			VotingData:            basics.VotingData{VoteFirstValid: 1, VoteLastValid: 100},
-			MicroAlgosWithRewards: basics.MicroAlgos{Raw: 1}}, 0},
+			MicroNovasWithRewards: basics.MicroNovas{Raw: 1}}, 0},
 		{"offline & not closed", basics.OnlineAccountData{
 			VotingData:            basics.VotingData{VoteFirstValid: 0, VoteLastValid: 0},
-			MicroAlgosWithRewards: basics.MicroAlgos{Raw: 1}}, 0 | bitAccountOffline},
+			MicroNovasWithRewards: basics.MicroNovas{Raw: 1}}, 0 | bitAccountOffline},
 		{"offline & closed", basics.OnlineAccountData{
 			VotingData:            basics.VotingData{VoteFirstValid: 0, VoteLastValid: 0},
-			MicroAlgosWithRewards: basics.MicroAlgos{Raw: 0}}, 0 | bitAccountOffline | bitAccountIsClosed},
+			MicroNovasWithRewards: basics.MicroNovas{Raw: 0}}, 0 | bitAccountOffline | bitAccountIsClosed},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

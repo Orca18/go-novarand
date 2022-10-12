@@ -22,12 +22,12 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/committee"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/committee"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 type balanceRecord struct {
@@ -251,7 +251,7 @@ func (l *Ledger) AccountData(addr basics.Address) (ledgercore.AccountData, error
 
 	return ledgercore.AccountData{
 		AccountBaseData: ledgercore.AccountBaseData{
-			MicroAlgos:          basics.MicroAlgos{Raw: br.balance},
+			MicroNovas:          basics.MicroNovas{Raw: br.balance},
 			AuthAddr:            br.auth,
 			TotalAppSchema:      schemaTotal,
 			TotalExtraAppPages:  pagesTotal,
@@ -781,7 +781,7 @@ func (l *Ledger) Get(addr basics.Address, withPendingRewards bool) (basics.Accou
 		return basics.AccountData{}, fmt.Errorf("addr %s not in test.Ledger", addr.String())
 	}
 	return basics.AccountData{
-		MicroAlgos:     basics.MicroAlgos{Raw: br.balance},
+		MicroNovas:     basics.MicroNovas{Raw: br.balance},
 		AssetParams:    map[basics.AssetIndex]basics.AssetParams{},
 		Assets:         map[basics.AssetIndex]basics.AssetHolding{},
 		AppLocalStates: map[basics.AppIndex]basics.AppLocalState{},

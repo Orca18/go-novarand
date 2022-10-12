@@ -27,7 +27,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/logging"
 	"github.com/algorand/go-deadlock"
 )
 

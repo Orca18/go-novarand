@@ -33,18 +33,18 @@ import (
 
 	"github.com/algorand/go-deadlock"
 
-	"github.com/algorand/go-algorand/config"
-	apiServer "github.com/algorand/go-algorand/daemon/algod/api/server"
-	"github.com/algorand/go-algorand/daemon/algod/api/server/lib"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/logging/telemetryspec"
-	"github.com/algorand/go-algorand/network/limitlistener"
-	"github.com/algorand/go-algorand/node"
-	"github.com/algorand/go-algorand/util"
-	"github.com/algorand/go-algorand/util/metrics"
-	"github.com/algorand/go-algorand/util/tokens"
+	"github.com/Orca18/go-novarand/config"
+	apiServer "github.com/Orca18/go-novarand/daemon/algod/api/server"
+	"github.com/Orca18/go-novarand/daemon/algod/api/server/lib"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/logging/telemetryspec"
+	"github.com/Orca18/go-novarand/network/limitlistener"
+	"github.com/Orca18/go-novarand/node"
+	"github.com/Orca18/go-novarand/util"
+	"github.com/Orca18/go-novarand/util/metrics"
+	"github.com/Orca18/go-novarand/util/tokens"
 )
 
 var server http.Server
@@ -200,10 +200,10 @@ func makeListener(addr string) (net.Listener, error) {
 
 // Start starts a Node instance and its network services
 func (s *Server) Start() {
-	s.log.Info("Trying to start an Algorand node")
-	fmt.Print("Initializing the Algorand node... ")
+	s.log.Info("Trying to start an Novarandnode")
+	fmt.Print("Initializing the Novarandnode... ")
 	s.node.Start()
-	s.log.Info("Successfully started an Algorand node.")
+	s.log.Info("Successfully started an Novarandnode.")
 	fmt.Println("Success!")
 
 	cfg := s.node.Config()

@@ -32,16 +32,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func TestIsWritingCatchpointFile(t *testing.T) {
@@ -321,12 +321,12 @@ func BenchmarkLargeCatchpointDataWriting(b *testing.B) {
 	accts := []map[basics.Address]basics.AccountData{ledgertesting.RandomAccounts(5, true)}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -357,7 +357,7 @@ func BenchmarkLargeCatchpointDataWriting(b *testing.B) {
 			for k := 0; i < accountsNumber-5-2 && k < 1024; k++ {
 				addr := ledgertesting.RandomAddress()
 				acctData := baseAccountData{}
-				acctData.MicroAlgos.Raw = 1
+				acctData.MicroNovas.Raw = 1
 				updates.upsert(addr, accountDelta{newAcct: acctData})
 				i++
 			}
@@ -398,12 +398,12 @@ func TestReproducibleCatchpointLabels(t *testing.T) {
 	rewardsLevels := []uint64{0}
 
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 100 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 100 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	accts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	accts[0][testSinkAddr] = sinkdata
 
@@ -444,7 +444,7 @@ func TestReproducibleCatchpointLabels(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		curTotals := accumulateTotals(t, protocol.ConsensusCurrentVersion, []map[basics.Address]ledgercore.AccountData{totals}, rewardLevel)

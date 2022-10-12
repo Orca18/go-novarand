@@ -22,19 +22,19 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/data/transactions/verify"
-	"github.com/algorand/go-algorand/ledger/apply"
-	"github.com/algorand/go-algorand/ledger/internal/prefetcher"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/data/transactions/verify"
+	"github.com/Orca18/go-novarand/ledger/apply"
+	"github.com/Orca18/go-novarand/ledger/internal/prefetcher"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 // LedgerForCowBase represents subset of Ledger functionality needed for cow business
@@ -495,7 +495,7 @@ func (cs *roundCowState) putAccount(addr basics.Address, acct ledgercore.Account
 	return nil
 }
 
-func (cs *roundCowState) MinBalance(addr basics.Address, proto *config.ConsensusParams) (res basics.MicroAlgos, err error) {
+func (cs *roundCowState) MinBalance(addr basics.Address, proto *config.ConsensusParams) (res basics.MicroNovas, err error) {
 	acct, err := cs.lookup(addr) // pending rewards unneeded
 	if err != nil {
 		return
@@ -503,7 +503,7 @@ func (cs *roundCowState) MinBalance(addr basics.Address, proto *config.Consensus
 	return acct.MinBalance(proto), nil
 }
 
-func (cs *roundCowState) Move(from basics.Address, to basics.Address, amt basics.MicroAlgos, fromRewards *basics.MicroAlgos, toRewards *basics.MicroAlgos) error {
+func (cs *roundCowState) Move(from basics.Address, to basics.Address, amt basics.MicroNovas, fromRewards *basics.MicroNovas, toRewards *basics.MicroNovas) error {
 	rewardlvl := cs.rewardsLevel()
 
 	fromBal, err := cs.lookup(from)
@@ -514,17 +514,17 @@ func (cs *roundCowState) Move(from basics.Address, to basics.Address, amt basics
 
 	if fromRewards != nil {
 		var ot basics.OverflowTracker
-		newFromRewards := ot.AddA(*fromRewards, ot.SubA(fromBalNew.MicroAlgos, fromBal.MicroAlgos))
+		newFromRewards := ot.AddA(*fromRewards, ot.SubA(fromBalNew.MicroNovas, fromBal.MicroNovas))
 		if ot.Overflowed {
-			return fmt.Errorf("overflowed tracking of fromRewards for account %v: %d + (%d - %d)", from, *fromRewards, fromBalNew.MicroAlgos, fromBal.MicroAlgos)
+			return fmt.Errorf("overflowed tracking of fromRewards for account %v: %d + (%d - %d)", from, *fromRewards, fromBalNew.MicroNovas, fromBal.MicroNovas)
 		}
 		*fromRewards = newFromRewards
 	}
 
 	// Only write the change if it's meaningful (or required by old code).
-	if !amt.IsZero() || fromBal.MicroAlgos.RewardUnits(cs.proto) > 0 || !cs.proto.UnfundedSenders {
+	if !amt.IsZero() || fromBal.MicroNovas.RewardUnits(cs.proto) > 0 || !cs.proto.UnfundedSenders {
 		var overflowed bool
-		fromBalNew.MicroAlgos, overflowed = basics.OSubA(fromBalNew.MicroAlgos, amt)
+		fromBalNew.MicroNovas, overflowed = basics.OSubA(fromBalNew.MicroNovas, amt)
 		if overflowed {
 			return fmt.Errorf("overspend (account %v, data %+v, tried to spend %v)", from, fromBal, amt)
 		}
@@ -542,17 +542,17 @@ func (cs *roundCowState) Move(from basics.Address, to basics.Address, amt basics
 
 	if toRewards != nil {
 		var ot basics.OverflowTracker
-		newToRewards := ot.AddA(*toRewards, ot.SubA(toBalNew.MicroAlgos, toBal.MicroAlgos))
+		newToRewards := ot.AddA(*toRewards, ot.SubA(toBalNew.MicroNovas, toBal.MicroNovas))
 		if ot.Overflowed {
-			return fmt.Errorf("overflowed tracking of toRewards for account %v: %d + (%d - %d)", to, *toRewards, toBalNew.MicroAlgos, toBal.MicroAlgos)
+			return fmt.Errorf("overflowed tracking of toRewards for account %v: %d + (%d - %d)", to, *toRewards, toBalNew.MicroNovas, toBal.MicroNovas)
 		}
 		*toRewards = newToRewards
 	}
 
 	// Only write the change if it's meaningful (or required by old code).
-	if !amt.IsZero() || toBal.MicroAlgos.RewardUnits(cs.proto) > 0 || !cs.proto.UnfundedSenders {
+	if !amt.IsZero() || toBal.MicroNovas.RewardUnits(cs.proto) > 0 || !cs.proto.UnfundedSenders {
 		var overflowed bool
-		toBalNew.MicroAlgos, overflowed = basics.OAddA(toBalNew.MicroAlgos, amt)
+		toBalNew.MicroNovas, overflowed = basics.OAddA(toBalNew.MicroNovas, amt)
 		if overflowed {
 			return fmt.Errorf("balance overflow (account %v, data %+v, was going to receive %v)", to, toBal, amt)
 		}
@@ -713,7 +713,7 @@ func StartEvaluator(l LedgerForEvaluator, hdr bookkeeping.BlockHeader, evalOpts 
 		if eval.proto.SupportGenesisHash {
 			eval.block.BlockHeader.GenesisHash = eval.genesisHash
 		}
-		eval.block.BlockHeader.RewardsState = eval.prevHeader.NextRewardsState(hdr.Round, proto, incentivePoolData.MicroAlgos, prevTotals.RewardUnits(), logging.Base())
+		eval.block.BlockHeader.RewardsState = eval.prevHeader.NextRewardsState(hdr.Round, proto, incentivePoolData.MicroNovas, prevTotals.RewardUnits(), logging.Base())
 	}
 	// set the eval state with the current header
 	eval.state = makeRoundCowState(base, eval.block.BlockHeader, proto, eval.prevHeader.TimeStamp, prevTotals, evalOpts.PaysetHint)
@@ -725,7 +725,7 @@ func StartEvaluator(l LedgerForEvaluator, hdr bookkeeping.BlockHeader, evalOpts 
 		}
 
 		// Check that the rewards rate, level and residue match expected values
-		expectedRewardsState := eval.prevHeader.NextRewardsState(hdr.Round, proto, incentivePoolData.MicroAlgos, prevTotals.RewardUnits(), logging.Base())
+		expectedRewardsState := eval.prevHeader.NextRewardsState(hdr.Round, proto, incentivePoolData.MicroNovas, prevTotals.RewardUnits(), logging.Base())
 		if eval.block.RewardsState != expectedRewardsState {
 			return nil, fmt.Errorf("bad rewards state: %+v != %+v", eval.block.RewardsState, expectedRewardsState)
 		}
@@ -756,7 +756,7 @@ func StartEvaluator(l LedgerForEvaluator, hdr bookkeeping.BlockHeader, evalOpts 
 	}
 
 	poolNew := poolOld
-	poolNew.MicroAlgos = ot.SubA(poolOld.MicroAlgos, basics.MicroAlgos{Raw: ot.Mul(prevTotals.RewardUnits(), rewardsPerUnit)})
+	poolNew.MicroNovas = ot.SubA(poolOld.MicroNovas, basics.MicroNovas{Raw: ot.Mul(prevTotals.RewardUnits(), rewardsPerUnit)})
 	if ot.Overflowed {
 		return nil, fmt.Errorf("overflowed subtracting reward unit for block %v", hdr.Round)
 	}
@@ -767,7 +767,7 @@ func StartEvaluator(l LedgerForEvaluator, hdr bookkeeping.BlockHeader, evalOpts 
 	}
 
 	// ensure that we have at least MinBalance after withdrawing rewards
-	ot.SubA(poolNew.MicroAlgos, basics.MicroAlgos{Raw: proto.MinBalance})
+	ot.SubA(poolNew.MicroNovas, basics.MicroNovas{Raw: proto.MinBalance})
 	if ot.Overflowed {
 		// TODO this should never happen; should we panic here?
 		return nil, fmt.Errorf("overflowed subtracting rewards for block %v", hdr.Round)
@@ -791,7 +791,7 @@ func (eval *BlockEvaluator) workaroundOverspentRewards(rewardPoolBalance ledgerc
 
 	// get the testnet bank ( dispenser ) account address.
 	bankAddr, _ := basics.UnmarshalChecksumAddress("GD64YIY3TWGDMCNPP553DZPPR6LDUSFQOIJVFDPPXWEG3FVOJCCDBBHU5A")
-	amount := basics.MicroAlgos{Raw: 20000000000}
+	amount := basics.MicroNovas{Raw: 20000000000}
 	err = eval.state.Move(bankAddr, eval.prevHeader.RewardsPool, amount, nil, nil)
 	if err != nil {
 		err = fmt.Errorf("unable to move funds from testnet bank to incentive pool: %v", err)
@@ -1009,9 +1009,9 @@ func (eval *BlockEvaluator) checkMinBalance(cow *roundCowState) error {
 
 		dataNew := data.WithUpdatedRewards(eval.proto, rewardlvl)
 		effectiveMinBalance := dataNew.MinBalance(&eval.proto)
-		if dataNew.MicroAlgos.Raw < effectiveMinBalance.Raw {
+		if dataNew.MicroNovas.Raw < effectiveMinBalance.Raw {
 			return fmt.Errorf("account %v balance %d below min %d (%d assets)",
-				addr, dataNew.MicroAlgos.Raw, effectiveMinBalance.Raw, dataNew.TotalAssets)
+				addr, dataNew.MicroNovas.Raw, effectiveMinBalance.Raw, dataNew.TotalAssets)
 		}
 
 		// Check if we have exceeded the maximum minimum balance
@@ -1139,6 +1139,9 @@ func (eval *BlockEvaluator) applyTransaction(tx transactions.Transaction, cow *r
 	case protocol.ApplicationCallTx:
 		err = apply.ApplicationCall(tx.ApplicationCallTxnFields, tx.Header, cow, &ad, gi, evalParams, ctr)
 
+	case protocol.AddressPrintTx:
+		err = apply.AddressPrint(tx.AddressPrintTxnFields, tx.Header, cow, eval.specials, &ad)
+
 	case protocol.StateProofTx:
 		// in case of a StateProofTx transaction, we want to "apply" it only in validate or generate mode. This will deviate the cow's StateProofNextRound depending on
 		// whether we're in validate/generate mode or not, however - given that this variable is only being used in these modes, it would be safe.
@@ -1161,9 +1164,9 @@ func (eval *BlockEvaluator) applyTransaction(tx transactions.Transaction, cow *r
 	// If the protocol does not support rewards in ApplyData,
 	// clear them out.
 	if !params.RewardsInApplyData {
-		ad.SenderRewards = basics.MicroAlgos{}
-		ad.ReceiverRewards = basics.MicroAlgos{}
-		ad.CloseRewards = basics.MicroAlgos{}
+		ad.SenderRewards = basics.MicroNovas{}
+		ad.ReceiverRewards = basics.MicroNovas{}
+		ad.CloseRewards = basics.MicroNovas{}
 	}
 
 	// No separate config for activating these AD fields because inner
@@ -1179,7 +1182,7 @@ func (eval *BlockEvaluator) applyTransaction(tx transactions.Transaction, cow *r
 
 // stateProofVotersAndTotal returns the expected values of StateProofVotersCommitment
 // and StateProofOnlineTotalWeight for a block.
-func (eval *BlockEvaluator) stateProofVotersAndTotal() (root crypto.GenericDigest, total basics.MicroAlgos, err error) {
+func (eval *BlockEvaluator) stateProofVotersAndTotal() (root crypto.GenericDigest, total basics.MicroNovas, err error) {
 	if eval.proto.StateProofInterval == 0 {
 		return
 	}

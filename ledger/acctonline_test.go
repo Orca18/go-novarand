@@ -24,14 +24,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	ledgertesting "github.com/algorand/go-algorand/ledger/testing"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	ledgertesting "github.com/Orca18/go-novarand/ledger/testing"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 	"github.com/stretchr/testify/require"
 )
 
@@ -184,7 +184,7 @@ func TestAcctOnline(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, bal.Addr, data.addr)
 		require.Equal(t, basics.Round(0), data.round)
-		require.Equal(t, bal.AccountData.MicroAlgos, data.accountData.MicroAlgos)
+		require.Equal(t, bal.AccountData.MicroNovas, data.accountData.MicroNovas)
 		require.Equal(t, bal.AccountData.RewardsBase, data.accountData.RewardsBase)
 		require.Equal(t, bal.AccountData.VoteFirstValid, data.accountData.VoteFirstValid)
 		require.Equal(t, bal.AccountData.VoteLastValid, data.accountData.VoteLastValid)
@@ -386,7 +386,7 @@ func TestAcctOnline(t *testing.T) {
 	const delta = 1000
 	for i := start; i <= end; i++ {
 		newAD := ad.AccountBaseData
-		newAD.MicroAlgos.Raw += uint64(i-start+1) * delta
+		newAD.MicroNovas.Raw += uint64(i-start+1) * delta
 		var updates ledgercore.AccountDeltas
 		updates.Upsert(
 			mutAccount.Addr,
@@ -414,9 +414,9 @@ func TestAcctOnline(t *testing.T) {
 	for i := start; i <= end; i++ {
 		oad, err := oa.lookupOnlineAccountData(basics.Round(i), mutAccount.Addr)
 		require.NoError(t, err)
-		// rewardLevel is zero => MicroAlgos == MicroAlgosWithRewards
-		expected := ad.AccountBaseData.MicroAlgos.Raw + uint64(i-start+1)*delta
-		require.Equal(t, expected, oad.MicroAlgosWithRewards.Raw)
+		// rewardLevel is zero => MicroNovas == MicroNovasWithRewards
+		expected := ad.AccountBaseData.MicroNovas.Raw + uint64(i-start+1)*delta
+		require.Equal(t, expected, oad.MicroNovasWithRewards.Raw)
 	}
 }
 
@@ -756,7 +756,7 @@ func TestAcctOnlineRoundParamsCache(t *testing.T) {
 		require.NoError(t, err)
 
 		newPool := totals[testPoolAddr]
-		newPool.MicroAlgos.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
+		newPool.MicroNovas.Raw -= prevTotals.RewardUnits() * rewardLevelDelta
 		updates.Upsert(testPoolAddr, newPool)
 		totals[testPoolAddr] = newPool
 		newAccts := applyPartialDeltas(base, updates)
@@ -1323,7 +1323,7 @@ func compareTopAccounts(a *require.Assertions, testingResult []*ledgercore.Onlin
 		}
 		onlineAccoutsFromTests = append(onlineAccoutsFromTests, &ledgercore.OnlineAccount{
 			Address:                 expectedAccountsBalances[i].Addr,
-			MicroAlgos:              expectedAccountsBalances[i].MicroAlgos,
+			MicroNovas:              expectedAccountsBalances[i].MicroNovas,
 			RewardsBase:             0,
 			NormalizedOnlineBalance: expectedAccountsBalances[i].NormalizedOnlineBalance(config.Consensus[protocol.ConsensusCurrentVersion]),
 			VoteFirstValid:          expectedAccountsBalances[i].VoteFirstValid,
@@ -1331,7 +1331,7 @@ func compareTopAccounts(a *require.Assertions, testingResult []*ledgercore.Onlin
 	}
 
 	sort.Slice(onlineAccoutsFromTests[:], func(i, j int) bool {
-		return onlineAccoutsFromTests[i].MicroAlgos.Raw > onlineAccoutsFromTests[j].MicroAlgos.Raw
+		return onlineAccoutsFromTests[i].MicroNovas.Raw > onlineAccoutsFromTests[j].MicroNovas.Raw
 	})
 
 	for i := 0; i < len(testingResult); i++ {
@@ -1342,12 +1342,12 @@ func compareTopAccounts(a *require.Assertions, testingResult []*ledgercore.Onlin
 
 func addSinkAndPoolAccounts(genesisAccts []map[basics.Address]basics.AccountData) {
 	pooldata := basics.AccountData{}
-	pooldata.MicroAlgos.Raw = 100 * 1000 * 1000 * 1000 * 1000
+	pooldata.MicroNovas.Raw = 100 * 1000 * 1000 * 1000 * 1000
 	pooldata.Status = basics.NotParticipating
 	genesisAccts[0][testPoolAddr] = pooldata
 
 	sinkdata := basics.AccountData{}
-	sinkdata.MicroAlgos.Raw = 1000 * 1000 * 1000 * 1000
+	sinkdata.MicroNovas.Raw = 1000 * 1000 * 1000 * 1000
 	sinkdata.Status = basics.NotParticipating
 	genesisAccts[0][testSinkAddr] = sinkdata
 }
@@ -1373,7 +1373,7 @@ func TestAcctOnlineTop(t *testing.T) {
 		allAccts[i] = basics.BalanceRecord{
 			Addr: ledgertesting.RandomAddress(),
 			AccountData: basics.AccountData{
-				MicroAlgos:  basics.MicroAlgos{Raw: uint64(i + 1)},
+				MicroNovas:  basics.MicroNovas{Raw: uint64(i + 1)},
 				Status:      basics.Offline,
 				RewardsBase: 0},
 		}
@@ -1383,7 +1383,7 @@ func TestAcctOnlineTop(t *testing.T) {
 		allAccts[i] = basics.BalanceRecord{
 			Addr: ledgertesting.RandomAddress(),
 			AccountData: basics.AccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: uint64(i + 1)},
+				MicroNovas:     basics.MicroNovas{Raw: uint64(i + 1)},
 				Status:         basics.Online,
 				VoteLastValid:  1000,
 				VoteFirstValid: 0,
@@ -1395,7 +1395,7 @@ func TestAcctOnlineTop(t *testing.T) {
 	allAccts[i] = basics.BalanceRecord{
 		Addr: ledgertesting.RandomAddress(),
 		AccountData: basics.AccountData{
-			MicroAlgos:  basics.MicroAlgos{Raw: uint64(100000)},
+			MicroNovas:  basics.MicroNovas{Raw: uint64(100000)},
 			Status:      basics.Offline,
 			RewardsBase: 0},
 	}
@@ -1420,20 +1420,20 @@ func TestAcctOnlineTop(t *testing.T) {
 	var updates ledgercore.AccountDeltas
 	ac := allAccts[numAccts-3]
 	updates.Upsert(ac.Addr, ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{Status: basics.Offline, MicroAlgos: ac.MicroAlgos}, VotingData: ledgercore.VotingData{}})
+		AccountBaseData: ledgercore.AccountBaseData{Status: basics.Offline, MicroNovas: ac.MicroNovas}, VotingData: ledgercore.VotingData{}})
 	totals = newBlockWithUpdates(genesisAccts, updates, totals, t, ml, 1, oa)
 	accountToBeUpdated := ac
 	accountToBeUpdated.Status = basics.Offline
 	allAccts[numAccts-3] = accountToBeUpdated
 
-	updatedOnlineStake := algops.Sub(initialOnlineTotals, ac.MicroAlgos)
+	updatedOnlineStake := algops.Sub(initialOnlineTotals, ac.MicroNovas)
 	top = compareOnlineTotals(a, oa, 1, 1, 5, updatedOnlineStake, updatedOnlineStake)
 	compareTopAccounts(a, top, allAccts)
 
 	// update an account to have expired keys
 	updates = ledgercore.AccountDeltas{}
 	updates.Upsert(allAccts[numAccts-2].Addr, ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{Status: basics.Online, MicroAlgos: allAccts[numAccts-2].MicroAlgos},
+		AccountBaseData: ledgercore.AccountBaseData{Status: basics.Online, MicroNovas: allAccts[numAccts-2].MicroNovas},
 		VotingData: ledgercore.VotingData{
 			VoteFirstValid: 0,
 			VoteLastValid:  1,
@@ -1445,24 +1445,24 @@ func TestAcctOnlineTop(t *testing.T) {
 	accountToBeUpdated.Status = basics.Offline
 	allAccts[numAccts-2] = accountToBeUpdated
 
-	notValidAccountStake := accountToBeUpdated.MicroAlgos
+	notValidAccountStake := accountToBeUpdated.MicroNovas
 	voteRndExpectedOnlineStake := algops.Sub(updatedOnlineStake, notValidAccountStake)
 	top = compareOnlineTotals(a, oa, 2, 2, 5, updatedOnlineStake, voteRndExpectedOnlineStake)
 	compareTopAccounts(a, top, allAccts)
 
 	// mark an account with high stake as online - it should be pushed to the top of the list
 	updates.Upsert(allAccts[numAccts-1].Addr, ledgercore.AccountData{
-		AccountBaseData: ledgercore.AccountBaseData{Status: basics.Online, MicroAlgos: allAccts[numAccts-1].MicroAlgos},
+		AccountBaseData: ledgercore.AccountBaseData{Status: basics.Online, MicroNovas: allAccts[numAccts-1].MicroNovas},
 		VotingData:      ledgercore.VotingData{VoteLastValid: basics.Round(1000)}})
 	totals = newBlockWithUpdates(genesisAccts, updates, totals, t, ml, 3, oa)
 	accountToBeUpdated = allAccts[numAccts-1]
 	accountToBeUpdated.Status = basics.Online
-	accountToBeUpdated.MicroAlgos = allAccts[numAccts-1].MicroAlgos
+	accountToBeUpdated.MicroNovas = allAccts[numAccts-1].MicroNovas
 	accountToBeUpdated.VoteLastValid = basics.Round(1000)
 	allAccts[numAccts-1] = accountToBeUpdated
 
-	updatedOnlineStake = algops.Add(updatedOnlineStake, accountToBeUpdated.MicroAlgos)
-	voteRndExpectedOnlineStake = algops.Add(voteRndExpectedOnlineStake, accountToBeUpdated.MicroAlgos)
+	updatedOnlineStake = algops.Add(updatedOnlineStake, accountToBeUpdated.MicroNovas)
+	voteRndExpectedOnlineStake = algops.Add(voteRndExpectedOnlineStake, accountToBeUpdated.MicroNovas)
 	top = compareOnlineTotals(a, oa, 3, 3, 5, updatedOnlineStake, voteRndExpectedOnlineStake)
 	compareTopAccounts(a, top, allAccts)
 
@@ -1482,7 +1482,7 @@ func TestAcctOnlineTopInBatches(t *testing.T) {
 		allAccts[i] = basics.BalanceRecord{
 			Addr: ledgertesting.RandomAddress(),
 			AccountData: basics.AccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: uint64(i + 1)},
+				MicroNovas:     basics.MicroNovas{Raw: uint64(i + 1)},
 				Status:         basics.Online,
 				VoteLastValid:  1000,
 				VoteFirstValid: 0,
@@ -1518,7 +1518,7 @@ func TestAcctOnlineTopBetweenCommitAndPostCommit(t *testing.T) {
 		allAccts[i] = basics.BalanceRecord{
 			Addr: ledgertesting.RandomAddress(),
 			AccountData: basics.AccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: uint64(i + 1)},
+				MicroNovas:     basics.MicroNovas{Raw: uint64(i + 1)},
 				Status:         basics.Online,
 				VoteLastValid:  1000,
 				VoteFirstValid: 0,
@@ -1611,7 +1611,7 @@ func TestAcctOnlineTopDBBehindMemRound(t *testing.T) {
 		allAccts[i] = basics.BalanceRecord{
 			Addr: ledgertesting.RandomAddress(),
 			AccountData: basics.AccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: uint64(i + 1)},
+				MicroNovas:     basics.MicroNovas{Raw: uint64(i + 1)},
 				Status:         basics.Online,
 				VoteLastValid:  1000,
 				VoteFirstValid: 0,
@@ -1705,7 +1705,7 @@ func TestAcctOnlineTop_ChangeOnlineStake(t *testing.T) {
 		allAccts[i] = basics.BalanceRecord{
 			Addr: ledgertesting.RandomAddress(),
 			AccountData: basics.AccountData{
-				MicroAlgos:     basics.MicroAlgos{Raw: uint64(i + 1)},
+				MicroNovas:     basics.MicroNovas{Raw: uint64(i + 1)},
 				Status:         basics.Online,
 				VoteLastValid:  1000,
 				VoteFirstValid: 0,
@@ -1717,7 +1717,7 @@ func TestAcctOnlineTop_ChangeOnlineStake(t *testing.T) {
 	allAccts[numAccts-1] = basics.BalanceRecord{
 		Addr: ledgertesting.RandomAddress(),
 		AccountData: basics.AccountData{
-			MicroAlgos:     basics.MicroAlgos{Raw: uint64(numAccts)},
+			MicroNovas:     basics.MicroNovas{Raw: uint64(numAccts)},
 			Status:         basics.Online,
 			VoteLastValid:  1,
 			VoteFirstValid: 0,
@@ -1743,31 +1743,31 @@ func TestAcctOnlineTop_ChangeOnlineStake(t *testing.T) {
 		var updates ledgercore.AccountDeltas
 		if i == 15 { // round 15 should be in deltas (memory)
 			// turn account `i` offline
-			updates.Upsert(allAccts[i].Addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{Status: basics.Offline, MicroAlgos: allAccts[i].MicroAlgos}, VotingData: ledgercore.VotingData{}})
+			updates.Upsert(allAccts[i].Addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{Status: basics.Offline, MicroNovas: allAccts[i].MicroNovas}, VotingData: ledgercore.VotingData{}})
 		}
 		if i == 18 {
-			updates.Upsert(allAccts[i].Addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{Status: basics.Online, MicroAlgos: allAccts[i].MicroAlgos}, VotingData: ledgercore.VotingData{VoteLastValid: basics.Round(18)}})
+			updates.Upsert(allAccts[i].Addr, ledgercore.AccountData{AccountBaseData: ledgercore.AccountBaseData{Status: basics.Online, MicroNovas: allAccts[i].MicroNovas}, VotingData: ledgercore.VotingData{VoteLastValid: basics.Round(18)}})
 		} // else: insert empty block
 		totals = newBlockWithUpdates(genesisAccts, updates, totals, t, ml, i, oa)
 	}
 
 	initialOnlineStake, err := oa.onlineTotals(0)
 	a.NoError(err)
-	rnd15TotalOnlineStake := algops.Sub(initialOnlineStake, allAccts[15].MicroAlgos) // 15 is offline
+	rnd15TotalOnlineStake := algops.Sub(initialOnlineStake, allAccts[15].MicroNovas) // 15 is offline
 
 	// Case 1: sanity check
 	top := compareOnlineTotals(a, oa, 0, 1, 5, initialOnlineStake, initialOnlineStake)
 	compareTopAccounts(a, top, allAccts)
 
 	// Case 2: In db
-	voteRndExpectedStake := algops.Sub(initialOnlineStake, acctInvalidFromRnd2.MicroAlgos) // Online on rnd but not valid on voteRnd
+	voteRndExpectedStake := algops.Sub(initialOnlineStake, acctInvalidFromRnd2.MicroNovas) // Online on rnd but not valid on voteRnd
 	top = compareOnlineTotals(a, oa, 0, 2, 5, initialOnlineStake, voteRndExpectedStake)
 	updatedAccts := allAccts[:numAccts-1]
 	compareTopAccounts(a, top, updatedAccts)
 
 	// Case 3: In memory (deltas)
-	voteRndExpectedStake = algops.Sub(rnd15TotalOnlineStake, acctInvalidFromRnd2.MicroAlgos)
-	voteRndExpectedStake = algops.Sub(voteRndExpectedStake, allAccts[18].MicroAlgos) // Online on rnd but not valid on voteRnd
+	voteRndExpectedStake = algops.Sub(rnd15TotalOnlineStake, acctInvalidFromRnd2.MicroNovas)
+	voteRndExpectedStake = algops.Sub(voteRndExpectedStake, allAccts[18].MicroNovas) // Online on rnd but not valid on voteRnd
 	updatedAccts[15].Status = basics.Offline                                         // Mark account 15 offline for comparison
 	updatedAccts[18].Status = basics.Offline                                         // Mark account 18 offline for comparison
 	top = compareOnlineTotals(a, oa, 18, 19, 5, rnd15TotalOnlineStake, voteRndExpectedStake)
@@ -1779,19 +1779,19 @@ type MicroAlgoOperations struct {
 	ot basics.OverflowTracker
 }
 
-func (m *MicroAlgoOperations) Sub(x, y basics.MicroAlgos) basics.MicroAlgos {
+func (m *MicroAlgoOperations) Sub(x, y basics.MicroNovas) basics.MicroNovas {
 	res := m.ot.SubA(x, y)
 	m.a.False(m.ot.Overflowed)
 	return res
 }
 
-func (m *MicroAlgoOperations) Add(x, y basics.MicroAlgos) basics.MicroAlgos {
+func (m *MicroAlgoOperations) Add(x, y basics.MicroNovas) basics.MicroNovas {
 	res := m.ot.AddA(x, y)
 	m.a.False(m.ot.Overflowed)
 	return res
 }
 
-func compareOnlineTotals(a *require.Assertions, oa *onlineAccounts, rnd, voteRnd basics.Round, n uint64, expectedForRnd, expectedForVoteRnd basics.MicroAlgos) []*ledgercore.OnlineAccount {
+func compareOnlineTotals(a *require.Assertions, oa *onlineAccounts, rnd, voteRnd basics.Round, n uint64, expectedForRnd, expectedForVoteRnd basics.MicroNovas) []*ledgercore.OnlineAccount {
 	proto := config.Consensus[protocol.ConsensusCurrentVersion]
 	top, onlineTotalVoteRnd, err := oa.TopOnlineAccounts(rnd, voteRnd, n, &proto, 0)
 	a.NoError(err)

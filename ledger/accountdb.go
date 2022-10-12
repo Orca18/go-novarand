@@ -30,17 +30,17 @@ import (
 
 	"github.com/algorand/msgp/msgp"
 
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/crypto/merklesignature"
-	"github.com/algorand/go-algorand/crypto/merkletrie"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/util/db"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/crypto/merklesignature"
+	"github.com/Orca18/go-novarand/crypto/merkletrie"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/util/db"
 )
 
 // accountsDbQueries is used to cache a prepared SQL statement to look up
@@ -91,6 +91,13 @@ var accountsSchema = []string{
 		id string primary key,
 		intval integer,
 		strval text)`,
+	`CREATE TABLE IF NOT EXISTS statedelta(
+		rnd integer primary key,
+		accts blob,
+		hbr blob,
+		compactCertNext integer,
+		prevTimestamp integer,
+		totals blob)`,
 }
 
 // TODO: Post applications, rename assetcreators -> creatables and rename
@@ -178,6 +185,7 @@ var accountsResetExprs = []string{
 	`DROP TABLE IF EXISTS onlineroundparamstail`,
 	`DROP TABLE IF EXISTS catchpointfirststageinfo`,
 	`DROP TABLE IF EXISTS unfinishedcatchpoints`,
+	`DROP TABLE IF EXISTS statedelta`,
 }
 
 // accountDBVersion is the database version that this binary would know how to support and how to upgrade to.
@@ -424,7 +432,7 @@ func prepareNormalizedBalancesV6(bals []encodedBalanceRecordV6, proto config.Con
 		normalizedAccountBalances[i].normalizedBalance = basics.NormalizedOnlineAccountBalance(
 			normalizedAccountBalances[i].accountData.Status,
 			normalizedAccountBalances[i].accountData.RewardsBase,
-			normalizedAccountBalances[i].accountData.MicroAlgos,
+			normalizedAccountBalances[i].accountData.MicroNovas,
 			proto)
 		normalizedAccountBalances[i].encodedAccountData = balance.AccountData
 		normalizedAccountBalances[i].accountHashes = make([][]byte, 1+len(balance.Resources))
@@ -1387,7 +1395,7 @@ type baseOnlineAccountData struct {
 
 	baseVotingData
 
-	MicroAlgos  basics.MicroAlgos `codec:"Y"`
+	MicroNovas  basics.MicroNovas `codec:"Y"`
 	RewardsBase uint64            `codec:"Z"`
 }
 
@@ -1395,9 +1403,9 @@ type baseAccountData struct {
 	_struct struct{} `codec:",omitempty,omitemptyarray"`
 
 	Status                     basics.Status     `codec:"a"`
-	MicroAlgos                 basics.MicroAlgos `codec:"b"`
+	MicroNovas                 basics.MicroNovas `codec:"b"`
 	RewardsBase                uint64            `codec:"c"`
-	RewardedMicroAlgos         basics.MicroAlgos `codec:"d"`
+	RewardedMicroNovas         basics.MicroNovas `codec:"d"`
 	AuthAddr                   basics.Address    `codec:"e"`
 	TotalAppSchemaNumUint      uint64            `codec:"f"`
 	TotalAppSchemaNumByteSlice uint64            `codec:"g"`
@@ -1419,9 +1427,9 @@ type baseAccountData struct {
 // IsEmpty return true if any of the fields other then the UpdateRound are non-zero.
 func (ba *baseAccountData) IsEmpty() bool {
 	return ba.Status == 0 &&
-		ba.MicroAlgos.Raw == 0 &&
+		ba.MicroNovas.Raw == 0 &&
 		ba.RewardsBase == 0 &&
-		ba.RewardedMicroAlgos.Raw == 0 &&
+		ba.RewardedMicroNovas.Raw == 0 &&
 		ba.AuthAddr.IsZero() &&
 		ba.TotalAppSchemaNumUint == 0 &&
 		ba.TotalAppSchemaNumByteSlice == 0 &&
@@ -1434,14 +1442,14 @@ func (ba *baseAccountData) IsEmpty() bool {
 }
 
 func (ba *baseAccountData) NormalizedOnlineBalance(proto config.ConsensusParams) uint64 {
-	return basics.NormalizedOnlineAccountBalance(ba.Status, ba.RewardsBase, ba.MicroAlgos, proto)
+	return basics.NormalizedOnlineAccountBalance(ba.Status, ba.RewardsBase, ba.MicroNovas, proto)
 }
 
 func (ba *baseAccountData) SetCoreAccountData(ad *ledgercore.AccountData) {
 	ba.Status = ad.Status
-	ba.MicroAlgos = ad.MicroAlgos
+	ba.MicroNovas = ad.MicroNovas
 	ba.RewardsBase = ad.RewardsBase
-	ba.RewardedMicroAlgos = ad.RewardedMicroAlgos
+	ba.RewardedMicroNovas = ad.RewardedMicroNovas
 	ba.AuthAddr = ad.AuthAddr
 	ba.TotalAppSchemaNumUint = ad.TotalAppSchema.NumUint
 	ba.TotalAppSchemaNumByteSlice = ad.TotalAppSchema.NumByteSlice
@@ -1456,9 +1464,9 @@ func (ba *baseAccountData) SetCoreAccountData(ad *ledgercore.AccountData) {
 
 func (ba *baseAccountData) SetAccountData(ad *basics.AccountData) {
 	ba.Status = ad.Status
-	ba.MicroAlgos = ad.MicroAlgos
+	ba.MicroNovas = ad.MicroNovas
 	ba.RewardsBase = ad.RewardsBase
-	ba.RewardedMicroAlgos = ad.RewardedMicroAlgos
+	ba.RewardedMicroNovas = ad.RewardedMicroNovas
 	ba.AuthAddr = ad.AuthAddr
 	ba.TotalAppSchemaNumUint = ad.TotalAppSchema.NumUint
 	ba.TotalAppSchemaNumByteSlice = ad.TotalAppSchema.NumByteSlice
@@ -1486,9 +1494,9 @@ func (ba *baseAccountData) GetLedgerCoreAccountData() ledgercore.AccountData {
 func (ba *baseAccountData) GetLedgerCoreAccountBaseData() ledgercore.AccountBaseData {
 	return ledgercore.AccountBaseData{
 		Status:             ba.Status,
-		MicroAlgos:         ba.MicroAlgos,
+		MicroNovas:         ba.MicroNovas,
 		RewardsBase:        ba.RewardsBase,
-		RewardedMicroAlgos: ba.RewardedMicroAlgos,
+		RewardedMicroNovas: ba.RewardedMicroNovas,
 		AuthAddr:           ba.AuthAddr,
 		TotalAppSchema: basics.StateSchema{
 			NumUint:      ba.TotalAppSchemaNumUint,
@@ -1516,9 +1524,9 @@ func (ba *baseAccountData) GetLedgerCoreVotingData() ledgercore.VotingData {
 func (ba *baseAccountData) GetAccountData() basics.AccountData {
 	return basics.AccountData{
 		Status:             ba.Status,
-		MicroAlgos:         ba.MicroAlgos,
+		MicroNovas:         ba.MicroNovas,
 		RewardsBase:        ba.RewardsBase,
-		RewardedMicroAlgos: ba.RewardedMicroAlgos,
+		RewardedMicroNovas: ba.RewardedMicroNovas,
 		AuthAddr:           ba.AuthAddr,
 		TotalAppSchema: basics.StateSchema{
 			NumUint:      ba.TotalAppSchemaNumUint,
@@ -1558,7 +1566,7 @@ func (bo *baseOnlineAccountData) IsVotingEmpty() bool {
 // IsEmpty return true if any of the fields are non-zero.
 func (bo *baseOnlineAccountData) IsEmpty() bool {
 	return bo.IsVotingEmpty() &&
-		bo.MicroAlgos.Raw == 0 &&
+		bo.MicroNovas.Raw == 0 &&
 		bo.RewardsBase == 0
 }
 
@@ -1567,7 +1575,7 @@ func (bo *baseOnlineAccountData) IsEmpty() bool {
 func (bo *baseOnlineAccountData) GetOnlineAccount(addr basics.Address, normBalance uint64) ledgercore.OnlineAccount {
 	return ledgercore.OnlineAccount{
 		Address:                 addr,
-		MicroAlgos:              bo.MicroAlgos,
+		MicroNovas:              bo.MicroNovas,
 		RewardsBase:             bo.RewardsBase,
 		NormalizedOnlineBalance: normBalance,
 		VoteFirstValid:          bo.VoteFirstValid,
@@ -1579,12 +1587,12 @@ func (bo *baseOnlineAccountData) GetOnlineAccount(addr basics.Address, normBalan
 // GetOnlineAccountData returns basics.OnlineAccountData for lookup agreement
 // TODO: unify with GetOnlineAccount/ledgercore.OnlineAccount
 func (bo *baseOnlineAccountData) GetOnlineAccountData(proto config.ConsensusParams, rewardsLevel uint64) ledgercore.OnlineAccountData {
-	microAlgos, _, _ := basics.WithUpdatedRewards(
-		proto, basics.Online, bo.MicroAlgos, basics.MicroAlgos{}, bo.RewardsBase, rewardsLevel,
+	MicroNovas, _, _ := basics.WithUpdatedRewards(
+		proto, basics.Online, bo.MicroNovas, basics.MicroNovas{}, bo.RewardsBase, rewardsLevel,
 	)
 
 	return ledgercore.OnlineAccountData{
-		MicroAlgosWithRewards: microAlgos,
+		MicroNovasWithRewards: MicroNovas,
 		VotingData: ledgercore.VotingData{
 			VoteID:          bo.VoteID,
 			SelectionID:     bo.SelectionID,
@@ -1597,14 +1605,14 @@ func (bo *baseOnlineAccountData) GetOnlineAccountData(proto config.ConsensusPara
 }
 
 func (bo *baseOnlineAccountData) NormalizedOnlineBalance(proto config.ConsensusParams) uint64 {
-	return basics.NormalizedOnlineAccountBalance(basics.Online, bo.RewardsBase, bo.MicroAlgos, proto)
+	return basics.NormalizedOnlineAccountBalance(basics.Online, bo.RewardsBase, bo.MicroNovas, proto)
 }
 
 func (bo *baseOnlineAccountData) SetCoreAccountData(ad *ledgercore.AccountData) {
 	bo.baseVotingData.SetCoreAccountData(ad)
 
-	// MicroAlgos/RewardsBase are updated by the evaluator when accounts are touched
-	bo.MicroAlgos = ad.MicroAlgos
+	// MicroNovas/RewardsBase are updated by the evaluator when accounts are touched
+	bo.MicroNovas = ad.MicroNovas
 	bo.RewardsBase = ad.RewardsBase
 }
 
@@ -2302,13 +2310,13 @@ func performOnlineAccountsTableMigration(ctx context.Context, tx *sql.Tx, progre
 
 		// insert entries into online accounts table
 		if ba.Status == basics.Online {
-			if ba.MicroAlgos.Raw > 0 && !normBal.Valid {
+			if ba.MicroNovas.Raw > 0 && !normBal.Valid {
 				copy(addr[:], addrbuf)
 				return fmt.Errorf("non valid norm balance for online account %s", addr.String())
 			}
 			var baseOnlineAD baseOnlineAccountData
 			baseOnlineAD.baseVotingData = ba.baseVotingData
-			baseOnlineAD.MicroAlgos = ba.MicroAlgos
+			baseOnlineAD.MicroNovas = ba.MicroNovas
 			baseOnlineAD.RewardsBase = ba.RewardsBase
 			encodedOnlineAcctData := protocol.Encode(&baseOnlineAD)
 			insertRes, err = insertOnlineAcct.ExecContext(ctx, addrbuf, encodedOnlineAcctData, normBal.Int64, ba.UpdateRound, baseOnlineAD.VoteLastValid)
@@ -2445,7 +2453,7 @@ func removeEmptyAccountData(tx *sql.Tx, queryAddresses bool) (num int64, address
 func accountDataToOnline(address basics.Address, ad *ledgercore.AccountData, proto config.ConsensusParams) *ledgercore.OnlineAccount {
 	return &ledgercore.OnlineAccount{
 		Address:                 address,
-		MicroAlgos:              ad.MicroAlgos,
+		MicroNovas:              ad.MicroNovas,
 		RewardsBase:             ad.RewardsBase,
 		NormalizedOnlineBalance: ad.NormalizedOnlineBalance(proto),
 		VoteFirstValid:          ad.VoteFirstValid,
@@ -2740,7 +2748,7 @@ func (qs *onlineAccountsDbQueries) lookupOnline(addr basics.Address, rnd basics.
 	return
 }
 
-func (qs *onlineAccountsDbQueries) lookupOnlineTotalsHistory(round basics.Round) (basics.MicroAlgos, error) {
+func (qs *onlineAccountsDbQueries) lookupOnlineTotalsHistory(round basics.Round) (basics.MicroNovas, error) {
 	data := ledgercore.OnlineRoundParamsData{}
 	err := db.Retry(func() error {
 		row := qs.lookupOnlineTotalsStmt.QueryRow(round)
@@ -2755,7 +2763,7 @@ func (qs *onlineAccountsDbQueries) lookupOnlineTotalsHistory(round basics.Round)
 		}
 		return nil
 	})
-	return basics.MicroAlgos{Raw: data.OnlineSupply}, err
+	return basics.MicroNovas{Raw: data.OnlineSupply}, err
 }
 
 func (qs *onlineAccountsDbQueries) lookupOnlineHistory(addr basics.Address) (result []persistedOnlineAccountData, rnd basics.Round, err error) {
@@ -2986,7 +2994,7 @@ ORDER BY normalizedonlinebalance DESC, address DESC LIMIT ? OFFSET ?`, rnd, n, o
 		// The original implementation uses current proto to recalculate norm balance
 		// In the same time, in accountsNewRound genesis protocol is used to fill norm balance value
 		// In order to be consistent with the original implementation recalculate the balance with current proto
-		normBalance := basics.NormalizedOnlineAccountBalance(basics.Online, data.RewardsBase, data.MicroAlgos, proto)
+		normBalance := basics.NormalizedOnlineAccountBalance(basics.Online, data.RewardsBase, data.MicroNovas, proto)
 		oa := data.GetOnlineAccount(addr, normBalance)
 		res[addr] = &oa
 	}

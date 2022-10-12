@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/algorand/go-algorand/test/partitiontest"
+	"github.com/Orca18/go-novarand/test/partitiontest"
 )
 
 func randID() OneTimeSignatureIdentifier {

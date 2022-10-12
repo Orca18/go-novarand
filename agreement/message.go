@@ -17,7 +17,7 @@
 package agreement
 
 import (
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 // A message represents an internal message which is passed between components

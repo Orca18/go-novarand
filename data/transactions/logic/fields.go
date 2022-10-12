@@ -19,8 +19,8 @@ package logic
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/protocol"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/protocol"
 )
 
 //go:generate stringer -type=TxnField,GlobalField,AssetParamsField,AppParamsField,AcctParamsField,AssetHoldingField,OnCompletionConstType,EcdsaCurve,Base64Encoding,JSONRefType,VrfStandard,BlockField -output=fields_string.go
@@ -268,14 +268,14 @@ func (fs txnFieldSpec) Note() string {
 
 var txnFieldSpecs = [...]txnFieldSpec{
 	{Sender, StackBytes, false, 0, 5, false, "32 byte address"},
-	{Fee, StackUint64, false, 0, 5, false, "microalgos"},
+	{Fee, StackUint64, false, 0, 5, false, "MicroNovas"},
 	{FirstValid, StackUint64, false, 0, 0, false, "round number"},
 	{FirstValidTime, StackUint64, false, randomnessVersion, 0, false, "UNIX timestamp of block before txn.FirstValid. Fails if negative"},
 	{LastValid, StackUint64, false, 0, 0, false, "round number"},
 	{Note, StackBytes, false, 0, 6, false, "Any data up to 1024 bytes"},
 	{Lease, StackBytes, false, 0, 0, false, "32 byte lease value"},
 	{Receiver, StackBytes, false, 0, 5, false, "32 byte address"},
-	{Amount, StackUint64, false, 0, 5, false, "microalgos"},
+	{Amount, StackUint64, false, 0, 5, false, "MicroNovas"},
 	{CloseRemainderTo, StackBytes, false, 0, 5, false, "32 byte address"},
 	{VotePK, StackBytes, false, 0, 6, false, "32 byte address"},
 	{SelectionPK, StackBytes, false, 0, 6, false, "32 byte address"},
@@ -437,6 +437,8 @@ var innerTxnTypes = map[string]uint64{
 	string(protocol.AssetConfigTx):     5,
 	string(protocol.AssetFreezeTx):     5,
 	string(protocol.ApplicationCallTx): 6,
+	// (추가)
+	string(protocol.AddressPrintTx): 5,
 }
 
 // TxnTypeNames is the values of Txn.Type in enum order
@@ -448,6 +450,8 @@ var TxnTypeNames = [...]string{
 	string(protocol.AssetTransferTx),
 	string(protocol.AssetFreezeTx),
 	string(protocol.ApplicationCallTx),
+	// (추가)
+	string(protocol.AddressPrintTx),
 }
 
 // map txn type names (long and short) to index/enum value
@@ -565,8 +569,8 @@ func (fs globalFieldSpec) Note() string {
 
 var globalFieldSpecs = [...]globalFieldSpec{
 	// version 0 is the same as v1 (initial release)
-	{MinTxnFee, StackUint64, modeAny, 0, "microalgos"},
-	{MinBalance, StackUint64, modeAny, 0, "microalgos"},
+	{MinTxnFee, StackUint64, modeAny, 0, "MicroNovas"},
+	{MinBalance, StackUint64, modeAny, 0, "MicroNovas"},
 	{MaxTxnLife, StackUint64, modeAny, 0, "rounds"},
 	{ZeroAddress, StackBytes, modeAny, 0, "32 byte address of all zero bytes"},
 	{GroupSize, StackUint64, modeAny, 0,
@@ -1234,8 +1238,8 @@ func (fs acctParamsFieldSpec) Note() string {
 }
 
 var acctParamsFieldSpecs = [...]acctParamsFieldSpec{
-	{AcctBalance, StackUint64, 6, "Account balance in microalgos"},
-	{AcctMinBalance, StackUint64, 6, "Minimum required blance for account, in microalgos"},
+	{AcctBalance, StackUint64, 6, "Account balance in MicroNovas"},
+	{AcctMinBalance, StackUint64, 6, "Minimum required blance for account, in MicroNovas"},
 	{AcctAuthAddr, StackBytes, 6, "Address the account is rekeyed to."},
 }
 

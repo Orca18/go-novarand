@@ -22,8 +22,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/libgoal"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/libgoal"
 )
 
 var (
@@ -293,7 +293,7 @@ var createAssetCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {
@@ -372,7 +372,7 @@ var destroyAssetCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {
@@ -465,7 +465,7 @@ var configAssetCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {
@@ -552,7 +552,7 @@ var sendAssetCmd = &cobra.Command{
 
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {
@@ -621,7 +621,7 @@ var freezeAssetCmd = &cobra.Command{
 		}
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {
@@ -710,7 +710,7 @@ var optinAssetCmd = &cobra.Command{
 
 		explicitFee := cmd.Flags().Changed("fee")
 		if explicitFee {
-			tx.Fee = basics.MicroAlgos{Raw: fee}
+			tx.Fee = basics.MicroNovas{Raw: fee}
 		}
 
 		if outFilename == "" {

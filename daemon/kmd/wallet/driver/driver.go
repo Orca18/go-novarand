@@ -19,10 +19,10 @@ package driver
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/daemon/kmd/config"
-	"github.com/algorand/go-algorand/daemon/kmd/wallet"
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/daemon/kmd/config"
+	"github.com/Orca18/go-novarand/daemon/kmd/wallet"
+	"github.com/Orca18/go-novarand/logging"
 )
 
 var walletDrivers = map[string]Driver{

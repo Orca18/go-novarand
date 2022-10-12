@@ -23,7 +23,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/algorand/go-algorand/util/codecs"
+	"github.com/Orca18/go-novarand/util/codecs"
 )
 
 // ConfigFilename name of configuration file

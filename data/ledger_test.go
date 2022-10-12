@@ -24,18 +24,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/algorand/go-algorand/agreement"
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/crypto"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/ledger"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
-	"github.com/algorand/go-algorand/logging"
-	"github.com/algorand/go-algorand/protocol"
-	"github.com/algorand/go-algorand/test/partitiontest"
-	"github.com/algorand/go-algorand/util/execpool"
+	"github.com/Orca18/go-novarand/agreement"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/crypto"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/ledger"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/logging"
+	"github.com/Orca18/go-novarand/protocol"
+	"github.com/Orca18/go-novarand/test/partitiontest"
+	"github.com/Orca18/go-novarand/util/execpool"
 )
 
 var testPoolAddr = basics.Address{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
@@ -78,14 +78,14 @@ func testGenerateInitState(tb testing.TB, proto protocol.ConsensusVersion) (gene
 		if i%2 == 0 {
 			accountStatus = basics.NotParticipating
 		}
-		initAccounts[genaddrs[i]] = basics.MakeAccountData(accountStatus, basics.MicroAlgos{Raw: uint64((i + 100) * 100000)})
+		initAccounts[genaddrs[i]] = basics.MakeAccountData(accountStatus, basics.MicroNovas{Raw: uint64((i + 100) * 100000)})
 	}
 	initKeys[poolAddr] = poolSecret
-	initAccounts[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 1234567})
+	initAccounts[poolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 1234567})
 	initKeys[sinkAddr] = sinkSecret
-	initAccounts[sinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 7654321})
+	initAccounts[sinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 7654321})
 
-	incentivePoolBalanceAtGenesis := initAccounts[poolAddr].MicroAlgos
+	incentivePoolBalanceAtGenesis := initAccounts[poolAddr].MicroNovas
 	initialRewardsPerRound := incentivePoolBalanceAtGenesis.Raw / uint64(params.RewardsRateRefreshInterval)
 
 	initBlock := bookkeeping.Block{
@@ -159,7 +159,7 @@ func TestLedgerCirculation(t *testing.T) {
 	data, validThrough, _, err := realLedger.LookupAccount(basics.Round(0), destAccount)
 	require.Equal(t, basics.Round(0), validThrough)
 	require.NoError(t, err)
-	baseDestValue := data.MicroAlgos.Raw
+	baseDestValue := data.MicroNovas.Raw
 
 	blk := genesisInitState.Block
 	totalsRound, totals, err := realLedger.LatestTotals()
@@ -175,11 +175,11 @@ func TestLedgerCirculation(t *testing.T) {
 		blk.BlockHeader.TimeStamp += int64(crypto.RandUint64() % 100 * 1000)
 		var tx transactions.Transaction
 		tx.Sender = sourceAccount
-		tx.Fee = basics.MicroAlgos{Raw: 10000}
+		tx.Fee = basics.MicroNovas{Raw: 10000}
 		tx.FirstValid = rnd - 1
 		tx.LastValid = tx.FirstValid + 999
 		tx.Receiver = destAccount
-		tx.Amount = basics.MicroAlgos{Raw: 1}
+		tx.Amount = basics.MicroNovas{Raw: 1}
 		tx.Type = protocol.PaymentTx
 		signedTx := tx.Sign(srcAccountKey)
 		blk.Payset = transactions.Payset{transactions.SignedTxnInBlock{
@@ -195,11 +195,11 @@ func TestLedgerCirculation(t *testing.T) {
 			data, validThrough, _, err = realLedger.LookupAccount(rnd, destAccount)
 			require.NoError(t, err)
 			require.Equal(t, rnd, validThrough)
-			require.Equal(t, baseDestValue+uint64(rnd), data.MicroAlgos.Raw)
+			require.Equal(t, baseDestValue+uint64(rnd), data.MicroNovas.Raw)
 			data, validThrough, _, err = realLedger.LookupAccount(rnd, destAccount)
 			require.NoError(t, err)
 			require.Equal(t, rnd, validThrough)
-			require.Equal(t, baseDestValue+uint64(rnd), data.MicroAlgos.Raw)
+			require.Equal(t, baseDestValue+uint64(rnd), data.MicroNovas.Raw)
 
 			roundCirculation, err := realLedger.OnlineTotals(rnd)
 			require.NoError(t, err)
@@ -213,11 +213,11 @@ func TestLedgerCirculation(t *testing.T) {
 			data, validThrough, _, err = realLedger.LookupAccount(rnd-1, destAccount)
 			require.NoError(t, err)
 			require.Equal(t, rnd-1, validThrough)
-			require.Equal(t, baseDestValue+uint64(rnd)-1, data.MicroAlgos.Raw)
+			require.Equal(t, baseDestValue+uint64(rnd)-1, data.MicroNovas.Raw)
 			data, validThrough, _, err = l.LookupAccount(rnd-1, destAccount)
 			require.NoError(t, err)
 			require.Equal(t, rnd-1, validThrough)
-			require.Equal(t, baseDestValue+uint64(rnd)-1, data.MicroAlgos.Raw)
+			require.Equal(t, baseDestValue+uint64(rnd)-1, data.MicroNovas.Raw)
 
 			roundCirculation, err := realLedger.OnlineTotals(rnd - 1)
 			require.NoError(t, err)
@@ -230,10 +230,10 @@ func TestLedgerCirculation(t *testing.T) {
 			// test one round in the future ( expected error )
 			data, _, _, err = realLedger.LookupAccount(rnd+1, destAccount)
 			require.Error(t, err)
-			require.Equal(t, uint64(0), data.MicroAlgos.Raw)
+			require.Equal(t, uint64(0), data.MicroNovas.Raw)
 			data, _, _, err = l.LookupAccount(rnd+1, destAccount)
 			require.Error(t, err)
-			require.Equal(t, uint64(0), data.MicroAlgos.Raw)
+			require.Equal(t, uint64(0), data.MicroNovas.Raw)
 
 			_, err = realLedger.OnlineTotals(rnd + 1)
 			require.Error(t, err)
@@ -491,8 +491,8 @@ func TestLedgerErrorValidate(t *testing.T) {
 	blk.BlockHeader.GenesisHash = crypto.Hash([]byte(t.Name()))
 
 	accts := make(map[basics.Address]basics.AccountData)
-	accts[testPoolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 0})
-	accts[testSinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroAlgos{Raw: 0})
+	accts[testPoolAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 0})
+	accts[testSinkAddr] = basics.MakeAccountData(basics.NotParticipating, basics.MicroNovas{Raw: 0})
 
 	genesisInitState := ledgercore.InitState{
 		Accounts:    accts,

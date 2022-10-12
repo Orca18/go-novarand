@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/algorand/go-algorand/logging"
+	"github.com/Orca18/go-novarand/logging"
 	"github.com/spf13/cobra"
 )
 

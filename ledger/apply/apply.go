@@ -17,12 +17,12 @@
 package apply
 
 import (
-	"github.com/algorand/go-algorand/config"
-	"github.com/algorand/go-algorand/data/basics"
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/data/transactions"
-	"github.com/algorand/go-algorand/data/transactions/logic"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
+	"github.com/Orca18/go-novarand/config"
+	"github.com/Orca18/go-novarand/data/basics"
+	"github.com/Orca18/go-novarand/data/bookkeeping"
+	"github.com/Orca18/go-novarand/data/transactions"
+	"github.com/Orca18/go-novarand/data/transactions/logic"
+	"github.com/Orca18/go-novarand/ledger/ledgercore"
 )
 
 // StateProofsApplier allows fetching and updating state-proofs state on the ledger
@@ -32,7 +32,7 @@ type StateProofsApplier interface {
 	SetStateProofNextRound(rnd basics.Round)
 }
 
-// Balances allow to move MicroAlgos from one address to another and to update balance records, or to access and modify individual balance records
+// Balances allow to move MicroNovas from one address to another and to update balance records, or to access and modify individual balance records
 // After a call to Put (or Move), future calls to Get or Move will reflect the updated balance record(s)
 type Balances interface {
 	// Get looks up the account data for an address, ignoring application and asset data
@@ -92,9 +92,9 @@ type Balances interface {
 	// an EvalDelta that contains the changes made by the program.
 	StatefulEval(gi int, params *logic.EvalParams, aidx basics.AppIndex, program []byte) (passed bool, evalDelta transactions.EvalDelta, err error)
 
-	// Move MicroAlgos from one account to another, doing all necessary overflow checking (convenience method)
+	// Move MicroNovas from one account to another, doing all necessary overflow checking (convenience method)
 	// TODO: Does this need to be part of the balances interface, or can it just be implemented here as a function that calls Put and Get?
-	Move(src, dst basics.Address, amount basics.MicroAlgos, srcRewards *basics.MicroAlgos, dstRewards *basics.MicroAlgos) error
+	Move(src, dst basics.Address, amount basics.MicroNovas, srcRewards *basics.MicroNovas, dstRewards *basics.MicroNovas) error
 
 	// Balances correspond to a Round, which mean that they also correspond
 	// to a ConsensusParams.  This returns those parameters.
