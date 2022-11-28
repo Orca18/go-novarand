@@ -1,4 +1,4 @@
-go-novarand
+go-novarand(from algorand)
 ====================
 Novarand's official implementation in Go.
 
@@ -93,7 +93,7 @@ Please refer to our [CONTRIBUTING](CONTRIBUTING.md) document.
 
 ## Project Layout ##
 
-`go-algorand` is split into various subpackages.
+`go-novarand` is split into various subpackages.
 
 The following packages provide core functionality to the `algod` and `kmd`
 daemons, as well as other tools and commands:
