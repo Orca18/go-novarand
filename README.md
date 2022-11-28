@@ -2,7 +2,7 @@ go-novarand
 ====================
 Novarand's official implementation in Go.
 
-Algorand is a permissionless, pure proof-of-stake blockchain that delivers
+Novarand is a permissionless, pure proof-of-stake blockchain that delivers
 decentralization, scalability, security, and transaction finality.
 
 ## Getting Started ##
