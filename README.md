@@ -1,6 +1,3 @@
-| rel/stable <br> [![CircleCI](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fstable.svg?style=svg)](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fstable) | rel/beta  <br> [![CircleCI](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fbeta.svg?style=svg)](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fbeta) | rel/nightly  <br> [![CircleCI](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fnightly.svg?style=svg)](https://circleci.com/gh/Orca18/go-novarand/tree/rel%2Fnightly) |
-| --- | --- | --- |
-
 go-novarand
 ====================
 Novarand's official implementation in Go.
