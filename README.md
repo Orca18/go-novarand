@@ -7,8 +7,8 @@ decentralization, scalability, security, and transaction finality.
 
 ## Getting Started ##
 
-Our [developer website][developer site url] has the most up to date information
-about using and installing the Algorand platform.
+[algorand developer website][developer site url] has the most up to date information
+about using and installing the Novarand platform.
 
 ## Building from source ##
 
